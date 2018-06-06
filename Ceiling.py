@@ -93,7 +93,7 @@ import sys
 print ("")
 print ("")
 
-serPort = "/dev/tty.usbmodem14311"
+serPort = "/dev/cu.SLAB_USBtoUART"
 baudRate = 9600
 ser = serial.Serial(serPort, baudRate)
 print ("Serial port " + serPort + " opened  Baudrate " + str(baudRate))
@@ -106,7 +106,7 @@ waitForArduino()
 while 1 :
     print ("===========")
     print ("")
-    text = input("Up or Down?: ")
+    text = input("Up 1 or Down 1?: ")
     text = "<" + text + ">"
     runTest(text)
     time.sleep(1)
