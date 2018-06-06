@@ -1,11 +1,15 @@
+// constants
+#define NUMBER_OF_MOTORS 2
+#define UP_SPEED 295
+#define DOWN_SPEED 270
+#define STOP_SPEED 0
 
+// libraries
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <String.h> 
-
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
-#define SERVOSPEED  150
 
 const byte numChars = 32;
 char receivedChars[numChars];
@@ -13,25 +17,28 @@ char receivedChars[numChars];
 boolean newData = false;
 
 String recievedString = "";
+int sensor_value1[NUMBER_OF_MOTORS];
+int sensor_value2[NUMBER_OF_MOTORS];
+int rotation_int[NUMBER_OF_MOTORS];
+String rotation_direction[NUMBER_OF_MOTORS];
 
-int number_of_motors = 2;
-//int rotation_int[number_of_motors];
-// motor 1 variables
-int m1_sensor_pin = A0;  
-int m1_sensor_value1 = 0;
-int m1_sensor_value2 = 0;
-int m1_rotation_int = 0;
-String m1_rotation_direction = "";
+// motor pins
+int m1_sensor_pin = A0; 
+int m2_sensor_pin = A0; 
+
 String m1_rotation = "";
-
-int m2_sensor_pin = A0;  
-int m2_sensor_value1 = 0;
-int m2_sensor_value2 = 0;
-int m2_rotation_int = 0;
-String m2_rotation_direction = "";
 String m2_rotation = "";
 
 void setup() {
+    // set array values
+    memset(sensor_value1, 0, sizeof(sensor_value1));
+    memset(sensor_value2, 0, sizeof(sensor_value2));
+
+    for (int i=0; i<NUMBER_OF_MOTORS; i++) {
+      rotation_direction[i] = "";
+    }
+
+    // setup serial monitor
     Serial.begin(9600);
     Serial.println("<Arduino is ready>");
 
@@ -39,6 +46,7 @@ void setup() {
     pwm.setPWMFreq(50);
     delay(10);
     pwm.setPWM(0, 0, 0);
+
 }
 
 void loop() {
@@ -87,13 +95,13 @@ void processData() {
   
   recievedString = receivedChars;
   
-  m1_rotation_direction = getValue(recievedString, ',', 0);  
+  rotation_direction[0] = getValue(recievedString, ',', 0);  
   m1_rotation = getValue(recievedString, ',', 1);
-  m1_rotation_int = m1_rotation.toInt();
+  rotation_int[0] = m1_rotation.toInt();
 
-  m2_rotation_direction = getValue(recievedString, ',', 2);  
+  rotation_direction[1] = getValue(recievedString, ',', 2);  
   m2_rotation = getValue(recievedString, ',', 3);
-  m2_rotation_int = m2_rotation.toInt();
+  rotation_int[1] = m2_rotation.toInt();
 
   
   //serial print info
@@ -111,38 +119,38 @@ void processData() {
 
  
   
-  if (m1_rotation_direction == "Up") {
+  if (rotation_direction[0] == "Up") {
     Serial.println("<");  
     Serial.print("Arduino: ");
     Serial.println("Moving Up!");
     upMotor(0);
     while (1) {
       readValues();
-      Serial.println(m1_sensor_value2);
-      if (m1_sensor_value1 < 500 && m1_sensor_value2 > 500){
-          m1_rotation_int = m1_rotation_int - 1;
+      Serial.println(sensor_value2[0]);
+      if (sensor_value1[0] < 500 && sensor_value2[0] > 500){
+          rotation_int[0] = rotation_int[0] - 1;
       }
 
-      if (m1_rotation_int == 0){
+      if (rotation_int[0] == 0){
         break;
       }
      delay(500);
     }
    stopMotor(0);
   }
-  else if (m1_rotation_direction == "Down") {
+  else if (rotation_direction[0] == "Down") {
     Serial.println("<");  
     Serial.print("Arduino: ");
     Serial.println("Moving Down!");
     downMotor(0);
     while (1) {
       readValues();
-      Serial.println(m1_sensor_value2);
-      if (m1_sensor_value1 < 500 && m1_sensor_value2 > 500){
-          m1_rotation_int = m1_rotation_int - 1;
+      Serial.println(sensor_value2[0]);
+      if (sensor_value1[0] < 500 && sensor_value2[0] > 500){
+          rotation_int[0] = rotation_int[0] - 1;
       }
 
-      if (m1_rotation_int == 0){
+      if (rotation_int[0] == 0){
         break;
       }
      delay(500);
@@ -150,7 +158,7 @@ void processData() {
    stopMotor(0);
   }
 
-  else if (m1_rotation_direction == "Stop"){
+  else if (rotation_direction[0] == "Stop"){
       Serial.println("<");  
       Serial.print("Arduino: ");
       Serial.println("Moving Stopping!");
@@ -174,8 +182,8 @@ void showNewData() {
 }
 
 void readValues() {
-  m1_sensor_value1 = m1_sensor_value2;
-  m1_sensor_value2 = analogRead(m1_sensor_pin); 
+  sensor_value1[0] = sensor_value2[0];
+  sensor_value2[0] = analogRead(m1_sensor_pin); 
 }
 
 String getValue(String data, char separator, int index)

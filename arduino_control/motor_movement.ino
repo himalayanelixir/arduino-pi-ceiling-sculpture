@@ -1,11 +1,11 @@
 void stopMotor(int motor_number) {
-  pwm.setPWM(motor_number, 0, 0);
+  pwm.setPWM(motor_number, 0, STOP_SPEED);
 }
 
 void upMotor(int motor_number) {
-  pwm.setPWM(motor_number, 0, 295);
+  pwm.setPWM(motor_number, 0, UP_SPEED);
 }
 
 void downMotor(int motor_number) {
-  pwm.setPWM(motor_number, 0, 270);
+  pwm.setPWM(motor_number, 0, DOWN_SPEED);
 }
