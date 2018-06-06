@@ -10,7 +10,7 @@
 #include <String.h> 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
-
+// variables
 const byte numChars = 32;
 char receivedChars[numChars];
 
@@ -29,6 +29,7 @@ int m2_sensor_pin = A0;
 String m1_rotation = "";
 String m2_rotation = "";
 
+
 void setup() {
     // set array values
     memset(sensor_value1, 0, sizeof(sensor_value1));
@@ -40,13 +41,15 @@ void setup() {
 
     // setup serial monitor
     Serial.begin(9600);
-    Serial.println("<Arduino is ready>");
-
+    
+    // setup pwm shield
     pwm.begin();
     pwm.setPWMFreq(50);
-    delay(10);
+    delay(100);
     pwm.setPWM(0, 0, 0);
 
+    // alert user
+    Serial.println("<Arduino is ready>");
 }
 
 void loop() {
