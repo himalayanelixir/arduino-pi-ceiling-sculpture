@@ -1,6 +1,7 @@
 
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
+#include <String.h> 
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
@@ -22,6 +23,7 @@ void setup() {
     pwm.begin();
     pwm.setPWMFreq(50);
     delay(10);
+    pwm.setPWM(3, 0, 0);
 }
 
 void loop() {
@@ -62,22 +64,57 @@ void recvWithStartEndMarkers() {
 }
 
 void processData() {
-  if (strcmp(receivedChars,"Up")==0)
-    {
-      Serial.println("<");  
-      Serial.print("Arduino: ");
-      Serial.println("Moving Up!");
-      pwm.setPWM(3, 0, 295);
+  String recievedString = receivedChars;
+  Serial.println("<"); 
+  Serial.print("RevievedString: ");
+  Serial.println(recievedString);
+  String m1_rotation_direction = getValue(recievedString, ',', 0);  
+  String m1_rotation = getValue(recievedString, ',', 1);
+  int m1_rotation_int = m1_rotation.toInt();
+  Serial.print("Number of Rotations: ");
+  Serial.println(m1_rotation);
+  
+  if (m1_rotation_direction == "Up") {
+    Serial.println("<");  
+    Serial.print("Arduino: ");
+    Serial.println("Moving Up!");
+    pwm.setPWM(3, 0, 295);
+    while (1) {
+      readValues();
+      Serial.println(m1_sensor_value2);
+      if (m1_sensor_value1 < 500 && m1_sensor_value2 > 500){
+          m1_rotation_int = m1_rotation_int - 1;
+      }
+
+      if (m1_rotation_int == 0){
+        break;
+      }
+     delay(500);
     }
-  else if (strcmp(receivedChars,"Down")==0)
-  {
-      Serial.println("<");  
-      Serial.print("Arduino: ");
-      Serial.println("Moving Down!");
-      pwm.setPWM(3, 0, 270);
+   pwm.setPWM(3, 0, 0);
+
   }
-  else if (strcmp(receivedChars,"Stop")==0)
-  {
+  else if (m1_rotation_direction == "Down") {
+    Serial.println("<");  
+    Serial.print("Arduino: ");
+    Serial.println("Moving Down!");
+    pwm.setPWM(3, 0, 270);
+    while (1) {
+      readValues();
+      Serial.println(m1_sensor_value2);
+      if (m1_sensor_value1 < 500 && m1_sensor_value2 > 500){
+          m1_rotation_int = m1_rotation_int - 1;
+      }
+
+      if (m1_rotation_int == 0){
+        break;
+      }
+     delay(500);
+    }
+   pwm.setPWM(3, 0, 0);
+  }
+
+  else if (strcmp(receivedChars,"Stop")==0){
       Serial.println("<");  
       Serial.print("Arduino: ");
       Serial.println("Moving Stopping!");
@@ -102,6 +139,22 @@ void showNewData() {
 
 void readValues() {
   m1_sensor_value1 = m1_sensor_value2;
-  m1_sensor_value2 = analogRead(m1_sensor_pin);
+  m1_sensor_value2 = analogRead(m1_sensor_pin); 
+}
+
+String getValue(String data, char separator, int index)
+{
+    int found = 0;
+    int strIndex[] = { 0, -1 };
+    int maxIndex = data.length() - 1;
+
+    for (int i = 0; i <= maxIndex && found <= index; i++) {
+        if (data.charAt(i) == separator || i == maxIndex) {
+            found++;
+            strIndex[0] = strIndex[1] + 1;
+            strIndex[1] = (i == maxIndex) ? i+1 : i;
+        }
+    }
+    return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 

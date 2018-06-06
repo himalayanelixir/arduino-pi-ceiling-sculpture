@@ -81,9 +81,6 @@ def runTest(td):
 
 
 #======================================
-
-# THE DEMO PROGRAM STARTS HERE
-
 #======================================
 
 import serial
@@ -106,7 +103,7 @@ waitForArduino()
 while 1 :
     print ("===========")
     print ("")
-    text = input("Up 1 or Down 1?: ")
+    text = input("Up or Down?: ")
     text = "<" + text + ">"
     runTest(text)
     time.sleep(1)
