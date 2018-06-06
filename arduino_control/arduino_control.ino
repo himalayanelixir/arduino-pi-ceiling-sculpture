@@ -43,7 +43,8 @@ void setup() {
     // set array values
     memset(sensor_value1, 0, sizeof(sensor_value1));
     memset(sensor_value2, 0, sizeof(sensor_value2));
-
+    memset(rotation_int, 0, sizeof(rotation_int));
+    
     for (int i=0; i<NUMBER_OF_MOTORS; i++) {
       rotation_direction[i] = "";
     }
