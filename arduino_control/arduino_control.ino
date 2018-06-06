@@ -14,7 +14,9 @@ boolean newData = false;
 
 String recievedString = "";
 
-
+int number_of_motors = 2;
+//int rotation_int[number_of_motors];
+// motor 1 variables
 int m1_sensor_pin = A0;  
 int m1_sensor_value1 = 0;
 int m1_sensor_value2 = 0;
@@ -36,7 +38,7 @@ void setup() {
     pwm.begin();
     pwm.setPWMFreq(50);
     delay(10);
-    pwm.setPWM(3, 0, 0);
+    pwm.setPWM(0, 0, 0);
 }
 
 void loop() {
@@ -88,19 +90,32 @@ void processData() {
   m1_rotation_direction = getValue(recievedString, ',', 0);  
   m1_rotation = getValue(recievedString, ',', 1);
   m1_rotation_int = m1_rotation.toInt();
+
+  m2_rotation_direction = getValue(recievedString, ',', 2);  
+  m2_rotation = getValue(recievedString, ',', 3);
+  m2_rotation_int = m2_rotation.toInt();
+
   
-  //comments
+  //serial print info
   Serial.println("<"); 
   Serial.print("RevievedString: ");
   Serial.println(recievedString);
-  Serial.print("Number of Rotations: ");
+  Serial.println("Number of Rotations: ");
+  Serial.print("m1: ");
   Serial.println(m1_rotation);
+  Serial.print("m2: ");
+  Serial.println(m2_rotation);
+
+
+  // while all motors aren't ready
+
+ 
   
   if (m1_rotation_direction == "Up") {
     Serial.println("<");  
     Serial.print("Arduino: ");
     Serial.println("Moving Up!");
-    upMotor(3);
+    upMotor(0);
     while (1) {
       readValues();
       Serial.println(m1_sensor_value2);
@@ -113,13 +128,13 @@ void processData() {
       }
      delay(500);
     }
-   stopMotor(3);
+   stopMotor(0);
   }
   else if (m1_rotation_direction == "Down") {
     Serial.println("<");  
     Serial.print("Arduino: ");
     Serial.println("Moving Down!");
-    downMotor(3);
+    downMotor(0);
     while (1) {
       readValues();
       Serial.println(m1_sensor_value2);
@@ -132,14 +147,14 @@ void processData() {
       }
      delay(500);
     }
-   stopMotor(3);
+   stopMotor(0);
   }
 
   else if (m1_rotation_direction == "Stop"){
       Serial.println("<");  
       Serial.print("Arduino: ");
       Serial.println("Moving Stopping!");
-      stopMotor(3);
+      stopMotor(0);
   }
   else
   {
