@@ -10,6 +10,15 @@
 #include <String.h> 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
+// function declarations
+void recvWithStartEndMarkers();
+void processData();
+void showNewData();
+void readValues();
+void stopMotor(int motor_number);
+void upMotor(int motor_number);
+void downMotor(int motor_number);
+
 // variables
 const byte numChars = 32;
 char receivedChars[numChars];
@@ -46,7 +55,9 @@ void setup() {
     pwm.begin();
     pwm.setPWMFreq(50);
     delay(100);
-    pwm.setPWM(0, 0, 0);
+    for (int i=0; i<16; i++) {
+      stopMotor(i);
+    }
 
     // alert user
     Serial.println("<Arduino is ready>");
@@ -57,9 +68,7 @@ void loop() {
     showNewData();
 }
 
-//////////////////////////////////////
-//////////////////////////////////////
-//////////////////////////////////////
+// functions 
 
 void recvWithStartEndMarkers() {
     static boolean recvInProgress = false;
