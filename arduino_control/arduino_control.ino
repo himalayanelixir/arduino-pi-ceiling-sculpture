@@ -12,9 +12,22 @@ char receivedChars[numChars];
 
 boolean newData = false;
 
+String recievedString = "";
+
+
 int m1_sensor_pin = A0;  
 int m1_sensor_value1 = 0;
 int m1_sensor_value2 = 0;
+int m1_rotation_int = 0;
+String m1_rotation_direction = "";
+String m1_rotation = "";
+
+int m2_sensor_pin = A0;  
+int m2_sensor_value1 = 0;
+int m2_sensor_value2 = 0;
+int m2_rotation_int = 0;
+String m2_rotation_direction = "";
+String m2_rotation = "";
 
 void setup() {
     Serial.begin(9600);
@@ -30,6 +43,10 @@ void loop() {
     recvWithStartEndMarkers();
     showNewData();
 }
+
+//////////////////////////////////////
+//////////////////////////////////////
+//////////////////////////////////////
 
 void recvWithStartEndMarkers() {
     static boolean recvInProgress = false;
@@ -64,13 +81,18 @@ void recvWithStartEndMarkers() {
 }
 
 void processData() {
-  String recievedString = receivedChars;
+  
+  
+  recievedString = receivedChars;
+  
+  m1_rotation_direction = getValue(recievedString, ',', 0);  
+  m1_rotation = getValue(recievedString, ',', 1);
+  m1_rotation_int = m1_rotation.toInt();
+  
+  //comments
   Serial.println("<"); 
   Serial.print("RevievedString: ");
   Serial.println(recievedString);
-  String m1_rotation_direction = getValue(recievedString, ',', 0);  
-  String m1_rotation = getValue(recievedString, ',', 1);
-  int m1_rotation_int = m1_rotation.toInt();
   Serial.print("Number of Rotations: ");
   Serial.println(m1_rotation);
   
@@ -78,7 +100,7 @@ void processData() {
     Serial.println("<");  
     Serial.print("Arduino: ");
     Serial.println("Moving Up!");
-    pwm.setPWM(3, 0, 295);
+    upMotor(3);
     while (1) {
       readValues();
       Serial.println(m1_sensor_value2);
@@ -91,14 +113,13 @@ void processData() {
       }
      delay(500);
     }
-   pwm.setPWM(3, 0, 0);
-
+   stopMotor(3);
   }
   else if (m1_rotation_direction == "Down") {
     Serial.println("<");  
     Serial.print("Arduino: ");
     Serial.println("Moving Down!");
-    pwm.setPWM(3, 0, 270);
+    downMotor(3);
     while (1) {
       readValues();
       Serial.println(m1_sensor_value2);
@@ -111,14 +132,14 @@ void processData() {
       }
      delay(500);
     }
-   pwm.setPWM(3, 0, 0);
+   stopMotor(3);
   }
 
-  else if (strcmp(receivedChars,"Stop")==0){
+  else if (m1_rotation_direction == "Stop"){
       Serial.println("<");  
       Serial.print("Arduino: ");
       Serial.println("Moving Stopping!");
-      pwm.setPWM(3, 0, 0);
+      stopMotor(3);
   }
   else
   {
