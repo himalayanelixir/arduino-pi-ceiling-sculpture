@@ -1,7 +1,7 @@
 // constants
 #define NUMBER_OF_MOTORS 2
 #define UP_SPEED 295
-#define DOWN_SPEED 270
+#define DOWN_SPEED 265
 #define STOP_SPEED 0
 
 // libraries
@@ -30,10 +30,7 @@ int sensor_value1[NUMBER_OF_MOTORS];
 int sensor_value2[NUMBER_OF_MOTORS];
 int rotation_int[NUMBER_OF_MOTORS];
 String rotation_direction[NUMBER_OF_MOTORS];
-
-// motor pins
-int m1_sensor_pin = A0; 
-int m2_sensor_pin = A0; 
+int sensor_pin[] = {A0, A2};
 
 String m1_rotation = "";
 String m2_rotation = "";
@@ -48,6 +45,9 @@ void setup() {
     for (int i=0; i<NUMBER_OF_MOTORS; i++) {
       rotation_direction[i] = "";
     }
+
+    pinMode(14, INPUT);
+    pinMode(15, INPUT);
 
     // setup serial monitor
     Serial.begin(9600);
@@ -123,41 +123,62 @@ void processData() {
   Serial.println(recievedString);
   
   for (int i=0; i<NUMBER_OF_MOTORS; i++) {
-    if (rotation_direction[0] == "Up") {
+    if (rotation_direction[i] == "Up") {
       upMotor(i);
     }
-    else if (rotation_direction[0] == "Down") {
+    else if (rotation_direction[i] == "Down") {
       downMotor(i);
     }
   
-    else if (rotation_direction[0] == "None"){
+    else if (rotation_direction[i] == "None"){
       stopMotor(i);
     }
     else
     {
+        // TODO: make this exit the program
         Serial.println("<");  
         Serial.print("Arduino: ");
         Serial.println("Invalid Input!");
     }
+    
   }
-  
   ////////////////
-  rotation_int[1] = 0;
+  //rotation_int[1] = 0;
   ///////////////
+  
   while (1) {
     int count = 0;
+    
     for (int i=0; i<NUMBER_OF_MOTORS; i++) {
-      count = count + rotation_int[i]; 
+      count = count + rotation_int[i];
+      //Serial.print("Motor: ");
+      //Serial.println(i); 
+      //Serial.print("Rotations: ");
+      //Serial.println(rotation_int[i]); 
     }
-    Serial.println(count);
-    if (count == 0) {
+
+    if (count <= 0) {
       break;
     }
+    
     for (int i=0; i<NUMBER_OF_MOTORS; i++) {
+      if (rotation_int[i] == 0) {
+        stopMotor(i);
+      }
       readValues(i);
+      
       if (sensor_value1[i] < 500 && sensor_value2[i] > 500){
         rotation_int[i] = rotation_int[i] - 1;
+        //Serial.print("Sensor ");
+        //Serial.print(i);
+        //Serial.print(" Value: ");
+        //Serial.println(sensor_value2[i]);
+        if (rotation_int[i] < 0) {
+          rotation_int[i] = 0;
+        }
       }
+    }
+    for (int i=0; i<NUMBER_OF_MOTORS; i++) {
       if (rotation_int[i] == 0) {
         stopMotor(i);
       }
@@ -177,8 +198,8 @@ void showNewData() {
 }
 
 void readValues(int motor_number) {
-  sensor_value1[0] = sensor_value2[0];
-  sensor_value2[0] = analogRead(m1_sensor_pin); 
+  sensor_value1[motor_number] = sensor_value2[motor_number];
+  sensor_value2[motor_number] = analogRead(sensor_pin[motor_number]); 
 }
 
 String getValue(String data, char separator, int index)
