@@ -91,6 +91,7 @@ print ("")
 print ("")
 
 serPort = "/dev/cu.SLAB_USBtoUART"
+#serPort = "/dev/ttyUSB0"
 baudRate = 9600
 ser = serial.Serial(serPort, baudRate)
 print ("Serial port " + serPort + " opened  Baudrate " + str(baudRate))
