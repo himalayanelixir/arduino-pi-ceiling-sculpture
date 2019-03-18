@@ -1,24 +1,7 @@
-void setup() {
-
-  pinMode(motor_counter_port,INPUT_PULLUP);
-  pinMode(motor_reset_port,INPUT_PULLUP);
-  myservo1.attach(motor_port);
-  myservo1.write(90);
-
-  pinMode(motor_counter_port2,INPUT_PULLUP);
-  pinMode(motor_reset_port2,INPUT_PULLUP);
-  myservo2.attach(motor_port2);
-  myservo2.write(90);
-  
-  Serial.begin(9600);
-  Serial.println("<Arduino is ready>");
-  Serial.println(">");
-}
 
 void loop() {
   RecvWithStartEndMarkers();
   ShowNewData();
-  Finished();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -30,6 +13,8 @@ void ShowNewData() {
     Serial.println("<");
     Serial.print("Arduino: ");
     Serial.println(receivedChars);
+    // NOT SURE IF I NEED THIS MARKER
+    // Serial.println(" >");
     // From here we execute the commands that were send via the message
     ProcessData();
   }
@@ -39,6 +24,19 @@ void ShowNewData() {
 //////////////////////////////////////////////////////////////////////////////
 
 void Finished() {
+    Serial.println("Finished Current Job");
+    Serial.println("---------");
+    Serial.println("Ready for New Job");
+    Serial.println(">");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+void Invalid() {
+    Serial.println("<");  
+    Serial.print("Arduino: ");
+    Serial.println("Invalid Input!");
     Serial.println(">");
 }
 

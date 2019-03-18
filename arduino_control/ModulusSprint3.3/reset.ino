@@ -6,12 +6,3 @@ void Reset1() {
     }
   }
 }
-
-void Reset2() {
-  myservo2.write(100);
-    while(true) {
-    if(digitalRead(motor_reset_port2) == 0){
-      break;
-    }
-  }
-}
