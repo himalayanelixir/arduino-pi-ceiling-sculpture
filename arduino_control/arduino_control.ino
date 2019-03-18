@@ -5,7 +5,7 @@
 #define SAMPLE_FREQUENCY  20
 #define MAXIMUM     (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
 
-#define NUMBER_MOTORS 4
+#define NUMBER_MOTORS 2
 
 // create a array of ports. Each line corresponds to the motor number starting from 0
 // ie 0 is motor 1
