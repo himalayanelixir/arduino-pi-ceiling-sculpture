@@ -1,14 +1,15 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-// This file contains funcitons that process the data that is recieved from the raspberry pi
+// This file contains funcitons that process the data that is recieved from the
+// raspberry pi
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
 void ProcessData() {
 
-/*   // variables
+  /*   // variables
   String recievedString = "";
   String motor_rotation_string = "";
   String motor_rotation_string2 = "";
@@ -73,7 +74,6 @@ void ProcessData() {
 
   // Send Finished Signal
   Finished();
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -81,8 +81,8 @@ void ProcessData() {
 
 void checkswitch(int switchPort) {
   // /* Step 1: Update the integrator based on the input signal.  Note that the
-  //   integrator follows the input, decreasing or increasing towards the limits as
-  //   determined by the input state (0 or 1). */
+  //   integrator follows the input, decreasing or increasing towards the limits
+  //   as determined by the input state (0 or 1). */
   // input = digitalRead(switchPort);
 
   // if (input == 0)
@@ -94,8 +94,8 @@ void checkswitch(int switchPort) {
   //   integrator++;
 
   // /* Step 2: Update the output state based on the integrator.  Note that the
-  //   output will only change states if the integrator has reached a limit, either
-  //   0 or MAXIMUM. */
+  //   output will only change states if the integrator has reached a limit,
+  //   either 0 or MAXIMUM. */
 
   // if (integrator == 0)
   //   output = 0;
@@ -105,9 +105,9 @@ void checkswitch(int switchPort) {
   //   integrator = MAXIMUM;  /* defensive code if integrator got corrupted */
   // }
 
-  // /********************************************************* End of debounce.c */
+  // /********************************************************* End of
+  // debounce.c */
 }
-
 
 /* void Reset1() {
   myservo1.write(100);
