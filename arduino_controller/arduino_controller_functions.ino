@@ -1,97 +1,117 @@
-
-void loop() {
-  RecvWithStartEndMarkers();
-  ShowNewData();
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-void ShowNewData() {
-  if (newData == true) {
-    newData = false;
-    Serial.println("<");
-    Serial.print("Arduino: ");
-    Serial.println(receivedChars);
-    // NOT SURE IF I NEED THIS MARKER
-    // Serial.println(" >");
-    // From here we execute the commands that were send via the message
-    ProcessData();
+void ProcessData() {
+
+/*   // variables
+  String recievedString = "";
+  String motor_rotation_string = "";
+  String motor_rotation_string2 = "";
+
+  recievedString = receivedChars;
+
+  // logic
+  motor_direction = getValue(recievedString, ',', 0);
+  motor_rotation_string = getValue(recievedString, ',', 1);
+  motor_rotation_number = motor_rotation_string.toInt();
+
+  //
+  if (motor_direction == "Up") {
+    myservo1.write(100);
   }
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
-void Finished() {
-    Serial.println("Finished Current Job");
-    Serial.println("---------");
-    Serial.println("Ready for New Job");
-    Serial.println(">");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
-void Invalid() {
-    Serial.println("<");  
-    Serial.print("Arduino: ");
-    Serial.println("Invalid Input!");
-    Serial.println(">");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
-void RecvWithStartEndMarkers() {
-  static boolean recvInProgress = false;
-  static byte ndx = 0;
-  char startMarker = '<';
-  char endMarker = '>';
-  char rc;
-
-  while (Serial.available() > 0 && newData == false) {
-    rc = Serial.read();
-
-    if (recvInProgress == true) {
-      if (rc != endMarker) {
-        receivedChars[ndx] = rc;
-        ndx++;
-        if (ndx >= numChars) {
-          ndx = numChars - 1;
-        }
-      }
-      else {
-        receivedChars[ndx] = '\0'; // terminate the string
-        recvInProgress = false;
-        ndx = 0;
-        newData = true;
-      }
-    }
-
-    else if (rc == startMarker) {
-      recvInProgress = true;
-    }
+  else if (motor_direction == "Down") {
+    myservo1.write(80);
   }
 
-}
+  else if (motor_direction == "None") {
+    myservo1.write(90);
+  }
+  else if (motor_direction == "Reset") {
+    Reset1();
+  }
+  else
+  {
+    // Sends Error Message
+    Invalid();
+  }
 
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
+  // Print First Number
+  Serial.println("---------");
+  Serial.print("Motor 1: ");
+  Serial.println(motor_rotation_number);
 
+  while (true) {
 
-String getValue(String data, char separator, int index)
-{
-    int found = 0;
-    int strIndex[] = { 0, -1 };
-    int maxIndex = data.length() - 1;
+    motor_sensor_counter2 = motor_sensor_counter1;
+    checkswitch(motor_counter_port);
+    motor_sensor_counter1 = output;
+    delay(10);
 
-    for (int i = 0; i <= maxIndex && found <= index; i++) {
-        if (data.charAt(i) == separator || i == maxIndex) {
-            found++;
-            strIndex[0] = strIndex[1] + 1;
-            strIndex[1] = (i == maxIndex) ? i+1 : i;
-        }
+    if (motor_rotation_number == 0) {
+      myservo1.write(90);
+      break;
     }
-    return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
+
+    if (digitalRead(motor_reset_port) == 0) {
+      myservo1.write(90);
+      break;
+    }
+
+    if (motor_sensor_counter1 == 1 && motor_sensor_counter2 == 0) {
+      motor_rotation_number--;
+
+      // Print Number Every Time It Changes
+      Serial.print("Motor 1: ");
+      Serial.println(motor_rotation_number);
+    }
+  } */
+
+  // Send Finished Signal
+  Finished();
+
 }
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+void checkswitch(int switchPort) {
+  // /* Step 1: Update the integrator based on the input signal.  Note that the
+  //   integrator follows the input, decreasing or increasing towards the limits as
+  //   determined by the input state (0 or 1). */
+  // input = digitalRead(switchPort);
+
+  // if (input == 0)
+  // {
+  //   if (integrator > 0)
+  //     integrator--;
+  // }
+  // else if (integrator < MAXIMUM)
+  //   integrator++;
+
+  // /* Step 2: Update the output state based on the integrator.  Note that the
+  //   output will only change states if the integrator has reached a limit, either
+  //   0 or MAXIMUM. */
+
+  // if (integrator == 0)
+  //   output = 0;
+  // else if (integrator >= MAXIMUM)
+  // {
+  //   output = 1;
+  //   integrator = MAXIMUM;  /* defensive code if integrator got corrupted */
+  // }
+
+  // /********************************************************* End of debounce.c */
+}
+
+
+
+
+
+/* void Reset1() {
+  myservo1.write(100);
+  while(true) {
+    if(digitalRead(motor_reset_port) == 0){
+      break;
+    }
+  }
+} */

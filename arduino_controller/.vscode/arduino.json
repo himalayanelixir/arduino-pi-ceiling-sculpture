@@ -1,5 +1,5 @@
 {
-    "sketch": "ModulusSprint3.3.ino",
+    "sketch": "arduino_controller.ino",
     "board": "arduino:avr:megaADK",
     "port": "/dev/cu.usbmodem143101",
     "programmer": "AVRISP mkII"
