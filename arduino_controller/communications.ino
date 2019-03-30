@@ -16,7 +16,7 @@ void RecvWithStartEndMarkers()
     char endMarker = '>';
     char rc;
 
-    while (Serial.available() > 0 && newData == false)
+    while (Serial.available() > 0 && new_data == false)
     {
         rc = Serial.read();
 
@@ -24,19 +24,19 @@ void RecvWithStartEndMarkers()
         {
             if (rc != endMarker)
             {
-                receivedChars[ndx] = rc;
+                received_chars[ndx] = rc;
                 ndx++;
-                if (ndx >= numChars)
+                if (ndx >= num_chars)
                 {
-                    ndx = numChars - 1;
+                    ndx = num_chars - 1;
                 }
             }
             else
             {
-                receivedChars[ndx] = '\0'; // terminate the string
+                received_chars[ndx] = '\0'; // terminate the string
                 recvInProgress = false;
                 ndx = 0;
-                newData = true;
+                new_data = true;
             }
         }
 

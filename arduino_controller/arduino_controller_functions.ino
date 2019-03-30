@@ -9,38 +9,9 @@
 
 void ProcessData() {
 
-  /*   // variables
-  String recievedString = "";
-  String motor_rotation_string = "";
-  String motor_rotation_string2 = "";
-
-  recievedString = receivedChars;
-
-  // logic
-  motor_direction = getValue(recievedString, ',', 0);
-  motor_rotation_string = getValue(recievedString, ',', 1);
-  motor_rotation_number = motor_rotation_string.toInt();
-
-  //
-  if (motor_direction == "Up") {
-    myservo1.write(100);
-  }
-  else if (motor_direction == "Down") {
-    myservo1.write(80);
-  }
-
-  else if (motor_direction == "None") {
-    myservo1.write(90);
-  }
-  else if (motor_direction == "Reset") {
-    Reset1();
-  }
-  else
-  {
-    // Sends Error Message
-    Invalid();
-  }
-
+  PopulateArray();
+  
+  /*   
   // Print First Number
   Serial.println("---------");
   Serial.print("Motor 1: ");
@@ -79,7 +50,60 @@ void ProcessData() {
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-void checkswitch(int switchPort) {
+void PopulateArray() {
+
+  // 
+  String recieved_string = "";
+  recieved_string = received_chars;
+
+  for (int i = 0; i < NUMBER_MOTORS; i++)
+  {
+    int search1 = (i * 2);
+    int search2 = ((i * 2 ) + 1);
+    
+    String value1 = getValue(recieved_string, ',', search1);
+    String value2  = getValue(recieved_string, ',', search2);
+    
+    if (value1 == "Up") {
+      motor_commands[i][1] = 0;
+    }
+    else if (value1 == "Down") {
+      motor_commands[i][1] = 1;
+    }
+
+    else if (value1 == "None") {
+      motor_commands[i][1] = 2;
+    }
+    else if (value1 == "Reset") {
+      motor_commands[i][1] = 3;
+    }
+    else
+    {
+      // Sends Error Message
+      Invalid();
+    }
+
+    motor_commands[i][2] = value2.toInt();
+  }
+
+  // print array
+  for (int i = 0; i < NUMBER_MOTORS; i++)
+  {
+    Serial.print("Motor Number: ");
+    Serial.print(i);
+    Serial.print(" - ");
+    Serial.print(motor_commands[i][1]);
+    Serial.print(" - ");
+    Serial.println(motor_commands[i][2]);
+  }
+
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+void CheckSwitch(int switchPort) {
   // /* Step 1: Update the integrator based on the input signal.  Note that the
   //   integrator follows the input, decreasing or increasing towards the limits
   //   as determined by the input state (0 or 1). */

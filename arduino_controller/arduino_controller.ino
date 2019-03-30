@@ -10,23 +10,22 @@
 // function declarations
 void RecvWithStartEndMarkers();
 void ProcessData();
-void ShowNewData();
+void CheckSwitch();
+void PopulateArray();
 
 // variables for communication
-const byte numChars = 32;
-char receivedChars[numChars];
-bool newData = false;
+const byte num_chars = 32;
+char received_chars[num_chars];
+bool new_data = false;
 
 // initialize motors
-Servo myServo[NUMBER_MOTORS];
+Servo my_servo[NUMBER_MOTORS];
 // create a array of ports with the order: motor, counter, reset
 int ports[NUMBER_MOTORS][3] = {{2, 3, 4}, {5, 6, 7}};
 
-// string array of motor directions
-String motor_direction[NUMBER_MOTORS] = {""};
+// integer array that contains the direction and number of rotations a motor needs to go
+int motor_commands[NUMBER_MOTORS][2] = {0};
 
-// array of how many rotations a motor has to go
-byte motor_rotation_number[NUMBER_MOTORS] = {0};
 // array of new switch values
 byte motor_sensor_counter1[NUMBER_MOTORS] = {0};
 
@@ -53,7 +52,7 @@ void setup()
     int x = ports[i][0];
     Serial.print(x);
     Serial.print(" ");
-    myServo[i].attach(x);
+    my_servo[i].attach(x);
   }
 
   // initialize all counter ports
@@ -89,12 +88,12 @@ void loop()
   RecvWithStartEndMarkers();
 
   // if there is new data process it
-  if (newData == true)
+  if (new_data == true)
   {
-    newData = false;
+    new_data = false;
     Serial.println("<");
     Serial.print("Arduino: ");
-    Serial.println(receivedChars);
+    Serial.println(received_chars);
     ProcessData();
   }
 }
