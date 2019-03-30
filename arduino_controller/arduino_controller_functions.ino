@@ -7,11 +7,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-void ProcessData() {
+void ProcessData()
+{
 
   PopulateArray();
-  
-  /*   
+  //
+  /*
   // Print First Number
   Serial.println("---------");
   Serial.print("Motor 1: ");
@@ -50,31 +51,40 @@ void ProcessData() {
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-void PopulateArray() {
+void PopulateArray()
+{
 
-  // 
+  // temp string used to store the char array
+  // easier to do opperations on string than chars
   String recieved_string = "";
+  // give the string the value of the char array
   recieved_string = received_chars;
 
+  // now lets populate the motor command array with values from the recieved
+  // string
   for (int i = 0; i < NUMBER_MOTORS; i++)
   {
     int search1 = (i * 2);
-    int search2 = ((i * 2 ) + 1);
-    
+    int search2 = ((i * 2) + 1);
+
     String value1 = getValue(recieved_string, ',', search1);
-    String value2  = getValue(recieved_string, ',', search2);
-    
-    if (value1 == "Up") {
+    String value2 = getValue(recieved_string, ',', search2);
+
+    if (value1 == "Up")
+    {
       motor_commands[i][1] = 0;
     }
-    else if (value1 == "Down") {
+    else if (value1 == "Down")
+    {
       motor_commands[i][1] = 1;
     }
 
-    else if (value1 == "None") {
+    else if (value1 == "None")
+    {
       motor_commands[i][1] = 2;
     }
-    else if (value1 == "Reset") {
+    else if (value1 == "Reset")
+    {
       motor_commands[i][1] = 3;
     }
     else
@@ -96,14 +106,13 @@ void PopulateArray() {
     Serial.print(" - ");
     Serial.println(motor_commands[i][2]);
   }
-
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-void CheckSwitch(int switchPort) {
+void CheckSwitch(int switchPort)
+{
   // /* Step 1: Update the integrator based on the input signal.  Note that the
   //   integrator follows the input, decreasing or increasing towards the limits
   //   as determined by the input state (0 or 1). */

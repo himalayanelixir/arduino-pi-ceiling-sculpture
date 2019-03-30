@@ -23,7 +23,8 @@ Servo my_servo[NUMBER_MOTORS];
 // create a array of ports with the order: motor, counter, reset
 int ports[NUMBER_MOTORS][3] = {{2, 3, 4}, {5, 6, 7}};
 
-// integer array that contains the direction and number of rotations a motor needs to go
+// integer array that contains the direction and number of rotations a motor
+// needs to go
 int motor_commands[NUMBER_MOTORS][2] = {0};
 
 // array of new switch values
