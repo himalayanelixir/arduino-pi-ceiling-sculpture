@@ -11,6 +11,35 @@ void ProcessData()
 {
 
   PopulateArray();
+
+  // initialize all motors and get them moving
+  for (int i = 0; i < NUMBER_MOTORS; i++)
+  {
+    if (motor_commands[i][1] == 0)
+    {
+      my_servo[i].write(100);
+    }
+    else if (motor_commands[i][1] == 1)
+    {
+      my_servo[i].write(80);
+    }
+    else if (motor_commands[i][1] == 2)
+    {
+      my_servo[i].write(90);
+    }
+    else if (motor_commands[i][1] == 3)
+    {
+      // call reset function (still needs to be written)
+    }
+    else
+    {
+      // Sends Error Message
+      Invalid();
+    }
+  }
+
+
+
   //
   /*
   // Print First Number
@@ -72,20 +101,19 @@ void PopulateArray()
 
     if (value1 == "Up")
     {
-      motor_commands[i][1] = 0;
+      motor_commands[i][0] = 0;
     }
     else if (value1 == "Down")
     {
-      motor_commands[i][1] = 1;
+      motor_commands[i][0] = 1;
     }
-
     else if (value1 == "None")
     {
-      motor_commands[i][1] = 2;
+      motor_commands[i][0] = 2;
     }
     else if (value1 == "Reset")
     {
-      motor_commands[i][1] = 3;
+      motor_commands[i][0] = 3;
     }
     else
     {
@@ -93,7 +121,7 @@ void PopulateArray()
       Invalid();
     }
 
-    motor_commands[i][2] = value2.toInt();
+    motor_commands[i][1] = value2.toInt();
   }
 
   // print array
@@ -102,9 +130,9 @@ void PopulateArray()
     Serial.print("Motor Number: ");
     Serial.print(i);
     Serial.print(" - ");
-    Serial.print(motor_commands[i][1]);
+    Serial.print(motor_commands[i][0]);
     Serial.print(" - ");
-    Serial.println(motor_commands[i][2]);
+    Serial.println(motor_commands[i][1]);
   }
 }
 
