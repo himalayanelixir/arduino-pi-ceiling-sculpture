@@ -37,27 +37,28 @@ void ProcessData()
       Invalid();
     }
   }
-  
+
   bool go = true;
   int total_turns = 0;
 
-  while (go == true) 
+  while (go == true)
   {
-
+    // subtract from motor rotations when a rotation is detected
     for (int i = 0; i < NUMBER_MOTORS; i++)
     {
       motor_sensor_counter2[i] = motor_sensor_counter1[i];
-      motor_sensor_counter1 = CheckSwitch(i,ports[i][0]);
+      motor_sensor_counter1[i] = CheckSwitch(i, ports[i][0]);
 
-      if(motor_sensor_counter1 == 1 && motor_sensor_counter2 == 0) {
+      if (motor_sensor_counter1[i] == 1 && motor_sensor_counter2[i] == 0)
+      {
         motor_commands[i][1] = motor_commands[i][1] - 1;
       }
-    }    
-
+    }
     // stop motors that have reached 0
     for (int i = 0; i < NUMBER_MOTORS; i++)
     {
-      if (motor_commands[i][1] <= 0) {
+      if (motor_commands[i][1] <= 0)
+      {
         my_servo[i].write(90);
       }
     }
@@ -67,7 +68,8 @@ void ProcessData()
       total_turns += motor_commands[i][1];
     }
     // exit loop if there are no more motor rotations remaining
-    if (total_turns <= 0) {
+    if (total_turns <= 0)
+    {
       go = false;
     }
     total_turns = 0;
@@ -138,7 +140,7 @@ void PopulateArray()
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-void CheckSwitch(int motor_number, int switchPort)
+int CheckSwitch(int motor_number, int switchPort)
 {
   /* Step 1: Update the integrator based on the input signal.  Note that the
     integrator follows the input, decreasing or increasing towards the limits
@@ -158,10 +160,10 @@ void CheckSwitch(int motor_number, int switchPort)
     either 0 or MAXIMUM. */
 
   if (integrator[motor_number] == 0)
-    reuturn(0)
+    return (0);
   else if (integrator[motor_number] >= MAXIMUM)
   {
-    return(1);
-    integrator[motor_number] = MAXIMUM;  /* defensive code if integrator got corrupted */
+    return (1);
+    integrator[motor_number] = MAXIMUM; /* defensive code if integrator got corrupted */
   }
 }

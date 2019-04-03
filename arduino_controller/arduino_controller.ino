@@ -10,9 +10,8 @@
 // function declarations
 void RecvWithStartEndMarkers();
 void ProcessData();
-void CheckSwitch();
+int CheckSwitch();
 void PopulateArray();
-void CheckSwitch();
 
 // variables for communication
 const byte num_chars = 32;
