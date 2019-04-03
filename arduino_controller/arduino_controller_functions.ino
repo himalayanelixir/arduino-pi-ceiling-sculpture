@@ -15,19 +15,19 @@ void ProcessData()
   // initialize all motors and get them moving
   for (int i = 0; i < NUMBER_MOTORS; i++)
   {
-    if (motor_commands[i][1] == 0)
+    if (motor_commands[i][0] == 0)
     {
       my_servo[i].write(100);
     }
-    else if (motor_commands[i][1] == 1)
+    else if (motor_commands[i][0] == 1)
     {
       my_servo[i].write(80);
     }
-    else if (motor_commands[i][1] == 2)
+    else if (motor_commands[i][0] == 2)
     {
       my_servo[i].write(90);
     }
-    else if (motor_commands[i][1] == 3)
+    else if (motor_commands[i][0] == 3)
     {
       // call reset function (still needs to be written)
     }
@@ -37,42 +37,41 @@ void ProcessData()
       Invalid();
     }
   }
+  
+  bool go = true;
+  int total_turns = 0;
 
+  while (go == true) 
+  {
 
+    for (int i = 0; i < NUMBER_MOTORS; i++)
+    {
+      motor_sensor_counter2[i] = motor_sensor_counter1[i];
+      motor_sensor_counter1 = CheckSwitch(i,ports[i][0]);
 
-  //
-  /*
-  // Print First Number
-  Serial.println("---------");
-  Serial.print("Motor 1: ");
-  Serial.println(motor_rotation_number);
+      if(motor_sensor_counter1 == 1 && motor_sensor_counter2 == 0) {
+        motor_commands[i][1] = motor_commands[i][1] - 1;
+      }
+    }    
 
-  while (true) {
-
-    motor_sensor_counter2 = motor_sensor_counter1;
-    checkswitch(motor_counter_port);
-    motor_sensor_counter1 = output;
-    delay(10);
-
-    if (motor_rotation_number == 0) {
-      myservo1.write(90);
-      break;
+    // stop motors that have reached 0
+    for (int i = 0; i < NUMBER_MOTORS; i++)
+    {
+      if (motor_commands[i][1] <= 0) {
+        my_servo[i].write(90);
+      }
     }
-
-    if (digitalRead(motor_reset_port) == 0) {
-      myservo1.write(90);
-      break;
+    // see how many turns are left in the array
+    for (int i = 0; i < NUMBER_MOTORS; i++)
+    {
+      total_turns += motor_commands[i][1];
     }
-
-    if (motor_sensor_counter1 == 1 && motor_sensor_counter2 == 0) {
-      motor_rotation_number--;
-
-      // Print Number Every Time It Changes
-      Serial.print("Motor 1: ");
-      Serial.println(motor_rotation_number);
+    // exit loop if there are no more motor rotations remaining
+    if (total_turns <= 0) {
+      go = false;
     }
-  } */
-
+    total_turns = 0;
+  }
   // Send Finished Signal
   Finished();
 }
@@ -139,42 +138,30 @@ void PopulateArray()
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-void CheckSwitch(int switchPort)
+void CheckSwitch(int motor_number, int switchPort)
 {
-  // /* Step 1: Update the integrator based on the input signal.  Note that the
-  //   integrator follows the input, decreasing or increasing towards the limits
-  //   as determined by the input state (0 or 1). */
-  // input = digitalRead(switchPort);
+  /* Step 1: Update the integrator based on the input signal.  Note that the
+    integrator follows the input, decreasing or increasing towards the limits
+    as determined by the input state (0 or 1). */
+  input[motor_number] = digitalRead(switchPort);
 
-  // if (input == 0)
-  // {
-  //   if (integrator > 0)
-  //     integrator--;
-  // }
-  // else if (integrator < MAXIMUM)
-  //   integrator++;
-
-  // /* Step 2: Update the output state based on the integrator.  Note that the
-  //   output will only change states if the integrator has reached a limit,
-  //   either 0 or MAXIMUM. */
-
-  // if (integrator == 0)
-  //   output = 0;
-  // else if (integrator >= MAXIMUM)
-  // {
-  //   output = 1;
-  //   integrator = MAXIMUM;  /* defensive code if integrator got corrupted */
-  // }
-
-  // /********************************************************* End of
-  // debounce.c */
-}
-
-/* void Reset1() {
-  myservo1.write(100);
-  while(true) {
-    if(digitalRead(motor_reset_port) == 0){
-      break;
-    }
+  if (input[motor_number] == 0)
+  {
+    if (integrator[motor_number] > 0)
+      integrator[motor_number]--;
   }
-} */
+  else if (integrator[motor_number] < MAXIMUM)
+    integrator[motor_number]++;
+
+  /* Step 2: Update the output state based on the integrator.  Note that the
+    output will only change states if the integrator has reached a limit,
+    either 0 or MAXIMUM. */
+
+  if (integrator[motor_number] == 0)
+    reuturn(0)
+  else if (integrator[motor_number] >= MAXIMUM)
+  {
+    return(1);
+    integrator[motor_number] = MAXIMUM;  /* defensive code if integrator got corrupted */
+  }
+}

@@ -12,6 +12,7 @@ void RecvWithStartEndMarkers();
 void ProcessData();
 void CheckSwitch();
 void PopulateArray();
+void CheckSwitch();
 
 // variables for communication
 const byte num_chars = 32;
@@ -77,6 +78,13 @@ void setup()
     Serial.print(" ");
     pinMode(x, INPUT_PULLUP);
   }
+
+  // zero all motors
+  for (int i = 0; i < NUMBER_MOTORS; i++)
+  {
+    my_servo[i].write(90);
+  }
+
   Serial.println("");
   Serial.println("<");
   Serial.println("Arduino is ready");
