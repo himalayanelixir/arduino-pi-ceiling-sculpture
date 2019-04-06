@@ -6,6 +6,7 @@
 #define SAMPLE_FREQUENCY 20
 #define MAXIMUM (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
 #define NUMBER_MOTORS 2
+// #define NUMBER_MOTORS 3
 
 // function declarations
 void RecvWithStartEndMarkers();
@@ -22,21 +23,22 @@ bool new_data = false;
 Servo my_servo[NUMBER_MOTORS];
 // create a array of ports with the order: motor, counter, reset
 int ports[NUMBER_MOTORS][3] = {{2, 3, 4}, {5, 6, 7}};
+// int ports[NUMBER_MOTORS][3] = {{2, 3, 4}, {5, 6, 7},{8, 9, 10}};
 
 // integer array that contains the direction and number of rotations a motor
 // needs to go
 int motor_commands[NUMBER_MOTORS][2] = {0};
 
 // array of new switch values
-byte motor_sensor_counter1[NUMBER_MOTORS] = {0};
+byte motor_sensor_counter1[NUMBER_MOTORS] = {1};
 
 // array of old switch values
-byte motor_sensor_counter2[NUMBER_MOTORS] = {0};
+byte motor_sensor_counter2[NUMBER_MOTORS] = {1};
 
 // 0 or 1 depending on the input signal
 byte input[NUMBER_MOTORS] = {0};
 // will range from 0 to the specified MAXIMUM
-int integrator[NUMBER_MOTORS] = {0};
+int integrator[NUMBER_MOTORS] = {MAXIMUM};
 // cleaned-up version of the input signal
 byte output[NUMBER_MOTORS] = {0};
 

@@ -11,21 +11,23 @@ void ProcessData()
 {
 
   PopulateArray();
-
   // initialize all motors and get them moving
   for (int i = 0; i < NUMBER_MOTORS; i++)
   {
     if (motor_commands[i][0] == 0)
     {
       my_servo[i].write(100);
+      Serial.println("Reached Up");
     }
     else if (motor_commands[i][0] == 1)
     {
       my_servo[i].write(80);
+      Serial.println("Reached Down");
     }
     else if (motor_commands[i][0] == 2)
     {
       my_servo[i].write(90);
+      Serial.println("Reached Stopped");
     }
     else if (motor_commands[i][0] == 3)
     {
@@ -34,7 +36,6 @@ void ProcessData()
     else
     {
       // Sends Error Message
-      Invalid();
     }
   }
 
@@ -47,11 +48,16 @@ void ProcessData()
     for (int i = 0; i < NUMBER_MOTORS; i++)
     {
       motor_sensor_counter2[i] = motor_sensor_counter1[i];
-      motor_sensor_counter1[i] = CheckSwitch(i, ports[i][0]);
-
+      motor_sensor_counter1[i] = CheckSwitch(i, ports[i][1]);
+      
       if (motor_sensor_counter1[i] == 1 && motor_sensor_counter2[i] == 0)
       {
         motor_commands[i][1] = motor_commands[i][1] - 1;
+      }
+
+      if (motor_commands[i][1] < 0)
+      {
+        motor_commands[i][1] = 0;
       }
     }
     // stop motors that have reached 0
@@ -66,7 +72,20 @@ void ProcessData()
     for (int i = 0; i < NUMBER_MOTORS; i++)
     {
       total_turns += motor_commands[i][1];
+      // Serial.print("Total number of turns in array: ");
+      // Serial.println(total_turns);
     }
+    // print the total number of turns left for each motor
+    for (int i = 0; i < NUMBER_MOTORS; i++)
+    {
+      Serial.print("Motor ");
+      Serial.print(i);
+      Serial.print(": ");
+      Serial.print(motor_commands[i][1]);
+      Serial.print(" --  ");
+    }
+      Serial.println("");
+
     // exit loop if there are no more motor rotations remaining
     if (total_turns <= 0)
     {
@@ -130,9 +149,9 @@ void PopulateArray()
   {
     Serial.print("Motor Number: ");
     Serial.print(i);
-    Serial.print(" - ");
+    Serial.print(" - Direction: ");
     Serial.print(motor_commands[i][0]);
-    Serial.print(" - ");
+    Serial.print(" - Rotations: ");
     Serial.println(motor_commands[i][1]);
   }
 }
