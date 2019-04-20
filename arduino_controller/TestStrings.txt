@@ -1,0 +1,16 @@
+<Up,5,Up,5>
+<Down,5,Down,5>
+<Up,5,Up,5,Up,5>
+<Down,5,Down,5,Down,5>
+<Up,5,Up,5,Up,5,Up,5>
+<Down,5,Down,5,Down,5,Down,5>
+<Up,5,Up,5,Up,5,Up,5,Up,5>
+<Down,5,Down,5,Down,5,Down,5,Down,5>
+<Up,5,Up,5,Up,5,Up,5,Up,5,Up,5>
+<Down,5,Down,5,Down,5,Down,5,Down,5,Down,5>
+<Up,5,Up,5,Up,5,Up,5,Up,5,Up,5,Up,5>
+<Down,5,Down,5,Down,5,Down,5,Down,5,Down,5,Down,5>
+<Up,5,Up,5,Up,5,Up,5,Up,5,Up,5,Up,5,Up,5>
+<Down,5,Down,5,Down,5,Down,5,Down,5,Down,5,Down,5,Down,5>
+<Up,5,Up,5,Up,5,Up,5,Up,5,Up,5,Up,5,Up,5,Up,5>
+<Down,5,Down,5,Down,5,Down,5,Down,5,Down,5,Down,5,Down,5,Down,5>    

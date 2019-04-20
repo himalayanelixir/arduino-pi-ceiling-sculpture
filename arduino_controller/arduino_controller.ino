@@ -2,11 +2,10 @@
 #include <String.h>
 
 // constants
-#define DEBOUNCE_TIME .5
+#define DEBOUNCE_TIME .4
 #define SAMPLE_FREQUENCY 20
 #define MAXIMUM (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
-#define NUMBER_MOTORS 2
-// #define NUMBER_MOTORS 3
+#define NUMBER_MOTORS 9
 
 // function declarations
 void RecvWithStartEndMarkers();
@@ -15,15 +14,14 @@ int CheckSwitch();
 void PopulateArray();
 
 // variables for communication
-const byte num_chars = 32;
+const byte num_chars = 100;
 char received_chars[num_chars];
 bool new_data = false;
 
 // initialize motors
 Servo my_servo[NUMBER_MOTORS];
 // create a array of ports with the order: motor, counter, reset
-int ports[NUMBER_MOTORS][3] = {{2, 3, 4}, {5, 6, 7}};
-// int ports[NUMBER_MOTORS][3] = {{2, 3, 4}, {5, 6, 7},{8, 9, 10}};
+int ports[NUMBER_MOTORS][3] = {{2, 3, 4}, {5, 6, 7}, {8, 9, 10}, {11, 12, 13}, {22, 23, 24}, {25, 26, 27}, {28, 29, 30}, {31, 32, 33}, {34, 35, 36}};
 
 // integer array that contains the direction and number of rotations a motor
 // needs to go
