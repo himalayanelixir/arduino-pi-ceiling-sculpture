@@ -6,6 +6,7 @@
 #define SAMPLE_FREQUENCY 20
 #define MAXIMUM (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
 #define NUMBER_MOTORS 1
+#define TIMEOUT 10000
 
 // relay pin
 int relayPin = 53;

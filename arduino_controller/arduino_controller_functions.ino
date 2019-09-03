@@ -13,6 +13,7 @@ void ProcessData()
   bool is_reset = false;
   bool go = true;
   int total_turns = 0;
+  long timeout_counter = 0 
 
   PopulateArray();
   
@@ -103,6 +104,15 @@ void ProcessData()
         go = false;
       }
       total_turns = 0;
+
+      // time out loop if stall
+      if (timeout_counter >= TIMEOUT)
+      {
+        go = false;
+      }
+      timeout_counter = timeout_counter + 1
+      
+
     }
   }
   else
@@ -110,7 +120,6 @@ void ProcessData()
     int reset_counter[NUMBER_MOTORS] = {1}
     while (go == true)
     {
-
       // stop motors that have reached 0
       for (int i = 0; i < NUMBER_MOTORS; i++)
       {
@@ -128,10 +137,16 @@ void ProcessData()
         // Serial.print("Total number of turns in array: ");
         // Serial.println(total_turns);
       }
+      
       if (total_turns <= 0)
+        {
+          go = false;
+        }
+      if (timeout_counter >= TIMEOUT)
       {
         go = false;
       }
+      timeout_counter = timeout_counter + 1
     }
   }
   // Send Finished Signal
