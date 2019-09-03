@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-// This file contains funcitons that process the data that is recieved from the
+// This file contains functions that process the data that is received from the
 // raspberry pi
 
 //////////////////////////////////////////////////////////////////////////////
@@ -105,19 +105,19 @@ void PopulateArray()
 
   // temp string used to store the char array
   // easier to do opperations on string than chars
-  String recieved_string = "";
+  String received_string = "";
   // give the string the value of the char array
-  recieved_string = received_chars;
+  received_string = received_chars;
 
-  // now lets populate the motor command array with values from the recieved
+  // now lets populate the motor command array with values from the received
   // string
   for (int i = 0; i < NUMBER_MOTORS; i++)
   {
     int search1 = (i * 2);
     int search2 = ((i * 2) + 1);
 
-    String value1 = getValue(recieved_string, ',', search1);
-    String value2 = getValue(recieved_string, ',', search2);
+    String value1 = getValue(received_string, ',', search1);
+    String value2 = getValue(received_string, ',', search2);
 
     if (value1 == "Up")
     {
