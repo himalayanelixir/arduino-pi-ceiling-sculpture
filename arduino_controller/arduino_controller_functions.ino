@@ -109,10 +109,13 @@ void ProcessData()
       if (timeout_counter >= TIMEOUT)
       {
         go = false;
+        for (int i = 0; i < NUMBER_MOTORS; i++)
+        {
+            my_servo[i].write(90);
+        }
       }
       timeout_counter = timeout_counter + 1
       
-
     }
   }
   else
@@ -145,6 +148,10 @@ void ProcessData()
       if (timeout_counter >= TIMEOUT)
       {
         go = false;
+        for (int i = 0; i < NUMBER_MOTORS; i++)
+        {
+            my_servo[i].write(90);
+        }
       }
       timeout_counter = timeout_counter + 1
     }
