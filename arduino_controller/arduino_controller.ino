@@ -25,7 +25,7 @@ bool new_data = false;
 // initialize motors
 Servo my_servo[NUMBER_MOTORS];
 // create a array of ports with the order: motor, counter, reset
-int ports[NUMBER_MOTORS][3] = {{21, 19, 20}};
+int ports[NUMBER_MOTORS][3] = {{2, 3, 4}};
 // int ports[NUMBER_MOTORS][3] = {{2, 3, 4}, {5, 6, 7}, {8, 9, 10}, {11, 12, 13}, {22, 23, 24}, {25, 26, 27}, {28, 29, 30}, {31, 32, 33}, {34, 35, 36}};
 // int ports[NUMBER_MOTORS][3] = {{2, 3, 4}, {5, 6, 7}, {8, 9, 10}, {11, 12, 13}, {22, 23, 24}, {25, 26, 27}};
 // integer array that contains the direction and number of rotations a motor
@@ -52,7 +52,7 @@ void setup()
 
   // initialize relay pin
   pinMode(relayPin, OUTPUT);
-  
+
   // initialize all motor ports
   Serial.println("Begining Initialization");
   Serial.print("Motor Ports: ");

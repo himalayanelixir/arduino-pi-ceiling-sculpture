@@ -9,14 +9,14 @@
 
 void ProcessData()
 {
-  // Added this because reset code is different from regular movement code 
+  // Added this because reset code is different from regular movement code
   bool is_reset = false;
   bool go = true;
   int total_turns = 0;
-  long timeout_counter = 0 
+  long timeout_counter = 0;
 
   PopulateArray();
-  
+
   // initialize all motors and get them moving
   for (int i = 0; i < NUMBER_MOTORS; i++)
   {
@@ -61,7 +61,7 @@ void ProcessData()
       {
         motor_sensor_counter2[i] = motor_sensor_counter1[i];
         motor_sensor_counter1[i] = CheckSwitch(i, ports[i][1]);
-        
+
         if (motor_sensor_counter1[i] == 1 && motor_sensor_counter2[i] == 0)
         {
           motor_commands[i][1] = motor_commands[i][1] - 1;
@@ -96,7 +96,7 @@ void ProcessData()
         Serial.print(motor_commands[i][1]);
         Serial.print(" --  ");
       }
-        Serial.println("");
+      Serial.println("");
 
       // exit loop if there are no more motor rotations remaining
       if (total_turns <= 0)
@@ -111,16 +111,18 @@ void ProcessData()
         go = false;
         for (int i = 0; i < NUMBER_MOTORS; i++)
         {
-            my_servo[i].write(90);
+          my_servo[i].write(90);
+          Serial.println("Timeout");
         }
       }
-      timeout_counter = timeout_counter + 1
-      
+      timeout_counter = timeout_counter + 1;
+      Serial.println(timeout_counter);
     }
   }
   else
   {
-    int reset_counter[NUMBER_MOTORS] = {1}
+    int reset_counter[NUMBER_MOTORS] = {1};
+
     while (go == true)
     {
       // stop motors that have reached 0
@@ -130,30 +132,31 @@ void ProcessData()
         {
           my_servo[i].write(90);
           reset_counter[i] = 0;
-
         }
       }
       // see how many turns are left in the array
       for (int i = 0; i < NUMBER_MOTORS; i++)
       {
         total_turns += reset_counter[i];
-        // Serial.print("Total number of turns in array: ");
-        // Serial.println(total_turns);
       }
-      
+
       if (total_turns <= 0)
-        {
-          go = false;
-        }
+      {
+        go = false;
+      }
+      total_turns = 0;
+
       if (timeout_counter >= TIMEOUT)
       {
         go = false;
         for (int i = 0; i < NUMBER_MOTORS; i++)
         {
-            my_servo[i].write(90);
+          my_servo[i].write(90);
+          Serial.println("Timeout");
         }
       }
-      timeout_counter = timeout_counter + 1
+      timeout_counter = timeout_counter + 1;
+      Serial.println(timeout_counter);
     }
   }
   // Send Finished Signal
