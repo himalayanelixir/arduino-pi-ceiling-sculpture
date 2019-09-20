@@ -121,7 +121,11 @@ void ProcessData()
   }
   else
   {
-    int reset_counter[NUMBER_MOTORS] = {1};
+    int reset_counter[NUMBER_MOTORS] = {0};
+
+    for (int i = 0; i < NUMBER_MOTORS; ++i){
+      reset_counter[i] = 1;
+    }
 
     while (go == true)
     {
@@ -139,6 +143,9 @@ void ProcessData()
       {
         total_turns += reset_counter[i];
       }
+
+      Serial.print("Total Turns: ");
+      Serial.println(total_turns);
 
       if (total_turns <= 0)
       {
