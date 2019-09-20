@@ -9,8 +9,14 @@
 
 void ProcessData()
 {
+  // Added this because reset code is different from regular movement code
+  bool is_reset = false;
+  bool go = true;
+  int total_turns = 0;
+  long timeout_counter = 0;
 
   PopulateArray();
+
   // initialize all motors and get them moving
   for (int i = 0; i < NUMBER_MOTORS; i++)
   {
@@ -18,19 +24,26 @@ void ProcessData()
     {
       my_servo[i].write(100);
       Serial.println("Reached Up");
+      is_reset = false;
     }
     else if (motor_commands[i][0] == 1)
     {
       my_servo[i].write(80);
       Serial.println("Reached Down");
+      is_reset = false;
     }
     else if (motor_commands[i][0] == 2)
     {
       my_servo[i].write(90);
       Serial.println("Reached Stopped");
+      is_reset = false;
     }
     else if (motor_commands[i][0] == 3)
     {
+      // Start moving pieces up
+      my_servo[i].write(100);
+      Serial.println("Reached Reset");
+      is_reset = true;
       // call reset function (still needs to be written)
     }
     else
@@ -39,59 +52,119 @@ void ProcessData()
     }
   }
 
-  bool go = true;
-  int total_turns = 0;
-
-  while (go == true)
+  if (is_reset == false)
   {
-    // subtract from motor rotations when a rotation is detected
-    for (int i = 0; i < NUMBER_MOTORS; i++)
+    while (go == true)
     {
-      motor_sensor_counter2[i] = motor_sensor_counter1[i];
-      motor_sensor_counter1[i] = CheckSwitch(i, ports[i][1]);
-      
-      if (motor_sensor_counter1[i] == 1 && motor_sensor_counter2[i] == 0)
+      // subtract from motor rotations when a rotation is detected
+      for (int i = 0; i < NUMBER_MOTORS; i++)
       {
-        motor_commands[i][1] = motor_commands[i][1] - 1;
-      }
+        motor_sensor_counter2[i] = motor_sensor_counter1[i];
+        motor_sensor_counter1[i] = CheckSwitch(i, ports[i][1]);
 
-      if (motor_commands[i][1] < 0)
-      {
-        motor_commands[i][1] = 0;
+        if (motor_sensor_counter1[i] == 1 && motor_sensor_counter2[i] == 0)
+        {
+          motor_commands[i][1] = motor_commands[i][1] - 1;
+        }
+
+        if (motor_commands[i][1] < 0)
+        {
+          motor_commands[i][1] = 0;
+        }
       }
-    }
-    // stop motors that have reached 0
-    for (int i = 0; i < NUMBER_MOTORS; i++)
-    {
-      if (motor_commands[i][1] <= 0)
+      // stop motors that have reached 0
+      for (int i = 0; i < NUMBER_MOTORS; i++)
       {
-        my_servo[i].write(90);
+        if (motor_commands[i][1] <= 0)
+        {
+          my_servo[i].write(90);
+        }
       }
-    }
-    // see how many turns are left in the array
-    for (int i = 0; i < NUMBER_MOTORS; i++)
-    {
-      total_turns += motor_commands[i][1];
-      // Serial.print("Total number of turns in array: ");
-      // Serial.println(total_turns);
-    }
-    // print the total number of turns left for each motor
-    for (int i = 0; i < NUMBER_MOTORS; i++)
-    {
-      Serial.print("Motor ");
-      Serial.print(i);
-      Serial.print(": ");
-      Serial.print(motor_commands[i][1]);
-      Serial.print(" --  ");
-    }
+      // see how many turns are left in the array
+      for (int i = 0; i < NUMBER_MOTORS; i++)
+      {
+        total_turns += motor_commands[i][1];
+        // Serial.print("Total number of turns in array: ");
+        // Serial.println(total_turns);
+      }
+      // print the total number of turns left for each motor
+      for (int i = 0; i < NUMBER_MOTORS; i++)
+      {
+        Serial.print("Motor ");
+        Serial.print(i);
+        Serial.print(": ");
+        Serial.print(motor_commands[i][1]);
+        Serial.print(" --  ");
+      }
       Serial.println("");
 
-    // exit loop if there are no more motor rotations remaining
-    if (total_turns <= 0)
-    {
-      go = false;
+      // exit loop if there are no more motor rotations remaining
+      if (total_turns <= 0)
+      {
+        go = false;
+      }
+      total_turns = 0;
+
+      // time out loop if stall
+      if (timeout_counter >= TIMEOUT)
+      {
+        go = false;
+        for (int i = 0; i < NUMBER_MOTORS; i++)
+        {
+          my_servo[i].write(90);
+          Serial.println("Timeout");
+        }
+      }
+      timeout_counter = timeout_counter + 1;
+      Serial.println(timeout_counter);
     }
-    total_turns = 0;
+  }
+  else
+  {
+    int reset_counter[NUMBER_MOTORS] = {0};
+
+    for (int i = 0; i < NUMBER_MOTORS; ++i){
+      reset_counter[i] = 1;
+    }
+
+    while (go == true)
+    {
+      // stop motors that have reached 0
+      for (int i = 0; i < NUMBER_MOTORS; i++)
+      {
+        if (digitalRead(ports[i][2]) == 0)
+        {
+          my_servo[i].write(90);
+          reset_counter[i] = 0;
+        }
+      }
+      // see how many turns are left in the array
+      for (int i = 0; i < NUMBER_MOTORS; i++)
+      {
+        total_turns += reset_counter[i];
+      }
+
+      Serial.print("Total Turns: ");
+      Serial.println(total_turns);
+
+      if (total_turns <= 0)
+      {
+        go = false;
+      }
+      total_turns = 0;
+
+      if (timeout_counter >= TIMEOUT)
+      {
+        go = false;
+        for (int i = 0; i < NUMBER_MOTORS; i++)
+        {
+          my_servo[i].write(90);
+          Serial.println("Timeout");
+        }
+      }
+      timeout_counter = timeout_counter + 1;
+      Serial.println(timeout_counter);
+    }
   }
   // Send Finished Signal
   Finished();
