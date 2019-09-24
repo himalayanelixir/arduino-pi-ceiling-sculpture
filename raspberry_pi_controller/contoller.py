@@ -45,17 +45,18 @@ def recvFromArduino(port):
   return(ck)
   
 #=====================================
+# get rid of this function
 
-def sendToArduino(sendStr):
-  ser.write(sendStr.encode())
+def sendToArduino(sendStr, port):
+  ser[port].write(sendStr.encode())
 
 #======================================
 
-def runTest(td):
+def run(td,port):
   waitingForReply = False
 
   if waitingForReply == False:
-    sendToArduino(td)
+    sendToArduino(td, port)
     print ("-> -> -> -> -> ->")
     print ("Message Sent:")
     print ("PC: " + td)
@@ -63,14 +64,13 @@ def runTest(td):
 
   if waitingForReply == True:
 
-    while ser.inWaiting() == 0:
+    while ser[port].inWaiting() == 0:
       pass
       
-    dataRecvd = recvFromArduino()
+    dataRecvd = recvFromArduino(port)
     print ("<- <- <- <- <- <-")
     print ("Message Received:  " + dataRecvd)
     waitingForReply = False
-
     time.sleep(.1)
 
 
@@ -80,38 +80,52 @@ def runTest(td):
 import serial
 import time
 import sys
+from threading import Thread
 
-
+# global variables
 NUMBER_OF_SLAVES = 2
 startMarker = 60
 endMarker = 62
 baudRate = 9600
+# alternative serPort = "/dev/ttyUSB0"
 serPort = ["/dev/cu.usbmodem1412101", "/dev/cu.usbmodem1412201"]
-#serPort = "/dev/cu.SLAB_USBtoUART"
-#serPort = "/dev/ttyUSB0"
 
+# initialize serial variable array
 ser = [None] * NUMBER_OF_SLAVES
+threads = [None] * NUMBER_OF_SLAVES
 
 for x in range(len(serPort)):
   ser[x] = serial.Serial(serPort[x], baudRate)
-  # print(ser[x])
   print ("Serial port " + serPort[x] + " opened")
 
-# Better Printout
 print("")
 
 for port in range(len(serPort)):
   waitForArduino(port)
 
-#while 1 :
-#    print ("===========")
-#    print ("")
-#    text = input("Up or Down?: ")
-#    text = "<" + text + ">"
-#    runTest(text)
-#    time.sleep(1)
+while 1 :
+    print ("===========")
+    print ("")
+    text = input("Enter Commands: ")
+    parse_text = text.split(';')
+    print (parse_text)
+    
+    # create threads
+    for x in range(len(parse_text)):
+      print (parse_text[x])
+      print (x)
+      threads[x] = Thread(target=run, args=(parse_text[x],x))
 
+    # start threads
+    for x in range(len(parse_text)):
+      threads[x].start()
+
+    # wait for threads to finish
+    for x in range(len(parse_text)):
+      threads[x].join()
+
+    
+# close all serial connections
 for x in range(len(serPort)):
   print ("Serial port " + serPort[x] + " closed")
   ser[x].close
-
