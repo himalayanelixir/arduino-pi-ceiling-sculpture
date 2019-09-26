@@ -123,7 +123,7 @@ void ProcessData()
   {
     int reset_counter[NUMBER_MOTORS] = {0};
 
-    for (int i = 0; i < NUMBER_MOTORS; ++i){
+    for (int i = 0; i < NUMBER_MOTORS; ++i) {
       reset_counter[i] = 1;
     }
 
