@@ -43,12 +43,6 @@ def recvFromArduino(port):
     x = x.decode("utf-8") 
     #print(x) 
   return(ck)
-  
-#=====================================
-# get rid of this function
-
-def sendToArduino(sendStr, port):
-  ser[port].write(sendStr.encode())
 
 #======================================
 
@@ -56,8 +50,9 @@ def run(td,port):
   waitingForReply = False
 
   if waitingForReply == False:
-    sendToArduino(td, port)
+    ser[port].write(td.encode())
     print ("-> -> -> -> -> ->")
+    print ("Thread: " + str(port) + " started")
     print ("Message Sent:")
     print ("PC: " + td)
     waitingForReply = True
@@ -69,6 +64,7 @@ def run(td,port):
       
     dataRecvd = recvFromArduino(port)
     print ("<- <- <- <- <- <-")
+    print ("Thread: " + str(port) + " complete")
     print ("Message Received:  " + dataRecvd)
     waitingForReply = False
     time.sleep(.1)
@@ -112,8 +108,6 @@ while 1 :
     
     # create threads
     for x in range(len(parse_text)):
-      print (parse_text[x])
-      print (x)
       threads[x] = Thread(target=run, args=(parse_text[x],x))
 
     # start threads
