@@ -1,10 +1,3 @@
-# =====================================
-
-#  Function Definitions
-
-# =====================================
-
-
 def waitForArduino(port):
 
     # wait until the Arduino sends 'Arduino Ready' - allows time for Arduino reset
@@ -19,9 +12,6 @@ def waitForArduino(port):
         msg = recvFromArduino(port)
         print("Arduino Number:", port, "Is Ready")
         print("Message from Arduino:" + msg)
-
-
-# ======================================
 
 
 def recvFromArduino(port):
@@ -49,9 +39,6 @@ def recvFromArduino(port):
     return ck
 
 
-# ======================================
-
-
 def run(td, port):
     waitingForReply = False
 
@@ -76,7 +63,6 @@ def run(td, port):
         time.sleep(0.1)
 
 
-# ======================================
 # ======================================
 
 import serial
