@@ -5,7 +5,7 @@
 #define DEBOUNCE_TIME .4
 #define SAMPLE_FREQUENCY 20
 #define MAXIMUM (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
-#define NUMBER_MOTORS 3
+#define NUMBER_MOTORS 2
 #define TIMEOUT 10000
 
 // relay pin
@@ -27,7 +27,7 @@ bool new_data = false;
 Servo my_servo[NUMBER_MOTORS];
 // create a array of ports with the order: motor, counter, reset
 // int ports[NUMBER_MOTORS][3] = {{62, 66, 67}};
-int ports[NUMBER_MOTORS][3] = {{2, 3, 4}, {5, 6, 7}, {8, 9, 10}};
+int ports[NUMBER_MOTORS][3] = {{2, 3, 4}, {5, 6, 7}};
 // integer array that contains the direction and number of rotations a motor
 // needs to go
 int motor_commands[NUMBER_MOTORS][2] = {0};

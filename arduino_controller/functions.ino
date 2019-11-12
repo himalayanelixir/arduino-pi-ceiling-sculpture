@@ -22,13 +22,13 @@ void ProcessData()
   {
     if (motor_commands[i][0] == 0)
     {
-      my_servo[i].write(100);
+      my_servo[i].write(80);
       Serial.println("Reached Up");
       is_reset = false;
     }
     else if (motor_commands[i][0] == 1)
     {
-      my_servo[i].write(80);
+      my_servo[i].write(100);
       Serial.println("Reached Down");
       is_reset = false;
     }
@@ -41,7 +41,7 @@ void ProcessData()
     else if (motor_commands[i][0] == 3)
     {
       // Start moving pieces up
-      my_servo[i].write(100);
+      my_servo[i].write(80);
       Serial.println("Reached Reset");
       is_reset = true;
       // call reset function (still needs to be written)

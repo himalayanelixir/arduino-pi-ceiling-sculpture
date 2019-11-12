@@ -1,0 +1,12 @@
+sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get install git zsh -y && chsh -s /bin/zsh && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/adafruit-pitft.sh && chmod +x adafruit-pitft.sh && sudo ./adafruit-pitft.sh
+
+
+Select Option 1
+Enter "Yes" on next option 
+
+sudo apt install python3-pip -y
+pip3 install pyserial
+
+
+
