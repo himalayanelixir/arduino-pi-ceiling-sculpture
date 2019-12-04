@@ -23,26 +23,22 @@ void ProcessData()
     if (motor_commands[i][0] == 0)
     {
       my_servo[i].write(80);
-      Serial.println("Reached Up");
       is_reset = false;
     }
     else if (motor_commands[i][0] == 1)
     {
       my_servo[i].write(100);
-      Serial.println("Reached Down");
       is_reset = false;
     }
     else if (motor_commands[i][0] == 2)
     {
       my_servo[i].write(90);
-      Serial.println("Reached Stopped");
       is_reset = false;
     }
     else if (motor_commands[i][0] == 3)
     {
       // Start moving pieces up
       my_servo[i].write(80);
-      Serial.println("Reached Reset");
       is_reset = true;
       // call reset function (still needs to be written)
     }
@@ -123,7 +119,8 @@ void ProcessData()
   {
     int reset_counter[NUMBER_MOTORS] = {0};
 
-    for (int i = 0; i < NUMBER_MOTORS; ++i) {
+    for (int i = 0; i < NUMBER_MOTORS; ++i)
+    {
       reset_counter[i] = 1;
     }
 
@@ -138,13 +135,13 @@ void ProcessData()
           reset_counter[i] = 0;
         }
       }
-      // see how many turns are left in the array
+      // see how many motors are still moving
       for (int i = 0; i < NUMBER_MOTORS; i++)
       {
         total_turns += reset_counter[i];
       }
 
-      Serial.print("Total Turns: ");
+      Serial.print("Motors still moving: ");
       Serial.println(total_turns);
 
       if (total_turns <= 0)
