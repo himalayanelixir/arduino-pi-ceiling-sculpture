@@ -8,10 +8,6 @@
 #define NUMBER_MOTORS 2
 #define TIMEOUT 10000
 
-// relay pin
-//int relayPin = 69;
-int relayPin = 53;
-
 // function declarations`
 void RecvWithStartEndMarkers();
 void ProcessData();
@@ -49,9 +45,6 @@ void setup()
 {
   // setup serial port
   Serial.begin(9600);
-
-  // initialize relay pin
-  pinMode(relayPin, OUTPUT);
 
   // initialize all motor ports
   Serial.println("Begining Initialization");
@@ -110,8 +103,6 @@ void loop()
     Serial.println("<");
     Serial.print("Arduino: ");
     Serial.println(received_chars);
-    digitalWrite(relayPin, HIGH);
     ProcessData();
-    digitalWrite(relayPin, LOW);
   }
 }
