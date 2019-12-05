@@ -212,7 +212,6 @@ void PopulateArray()
     else
     {
       // Sends Error Message
-      Invalid();
     }
 
     motor_commands[i][1] = value2.toInt();

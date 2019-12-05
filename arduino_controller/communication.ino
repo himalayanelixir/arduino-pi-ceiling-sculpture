@@ -72,12 +72,3 @@ void Finished()
   Serial.println("Finished Current Job!");
   Serial.println(">");
 }
-
-// sends error message back to raspberry pi
-void Invalid()
-{
-  Serial.println("<");
-  Serial.print("Arduino: ");
-  Serial.println("Invalid Input!");
-  Serial.println(">");
-}

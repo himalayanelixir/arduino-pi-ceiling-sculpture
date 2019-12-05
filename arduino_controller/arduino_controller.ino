@@ -10,6 +10,8 @@
 
 // function declarations`
 void RecvWithStartEndMarkers();
+String getValue();
+void Finished();
 void ProcessData();
 int CheckSwitch();
 void PopulateArray();
@@ -22,7 +24,6 @@ bool new_data = false;
 // initialize motors
 Servo my_servo[NUMBER_MOTORS];
 // create a array of ports with the order: motor, counter, reset
-// int ports[NUMBER_MOTORS][3] = {{62, 66, 67}};
 int ports[NUMBER_MOTORS][3] = {{2, 3, 4}, {5, 6, 7}};
 // integer array that contains the direction and number of rotations a motor
 // needs to go
