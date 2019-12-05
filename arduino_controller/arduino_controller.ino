@@ -8,7 +8,7 @@
 #define NUMBER_MOTORS 2
 #define TIMEOUT 10000
 
-// function declarations`
+// function declarations
 void RecvWithStartEndMarkers();
 void ProcessData();
 int CheckSwitch();
@@ -33,6 +33,9 @@ byte motor_sensor_counter1[NUMBER_MOTORS] = {0};
 
 // array of old switch values
 byte motor_sensor_counter2[NUMBER_MOTORS] = {0};
+
+// Previous return value (CheckSwitch function)
+int previous_value[NUMBER_MOTORS] = {1};
 
 // 0 or 1 depending on the input signal
 byte input[NUMBER_MOTORS] = {0};
