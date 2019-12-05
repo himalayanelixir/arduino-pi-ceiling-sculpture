@@ -22,29 +22,27 @@ void ProcessData()
   {
     if (motor_commands[i][0] == 0)
     {
+      // Move up
       my_servo[i].write(80);
-      Serial.println("Reached Up");
       is_reset = false;
     }
     else if (motor_commands[i][0] == 1)
     {
+      // Move down
       my_servo[i].write(100);
-      Serial.println("Reached Down");
       is_reset = false;
     }
     else if (motor_commands[i][0] == 2)
     {
+      // Don't Move
       my_servo[i].write(90);
-      Serial.println("Reached Stopped");
       is_reset = false;
     }
     else if (motor_commands[i][0] == 3)
     {
-      // Start moving pieces up
+      // Move Up for Reset
       my_servo[i].write(80);
-      Serial.println("Reached Reset");
       is_reset = true;
-      // call reset function (still needs to be written)
     }
     else
     {
@@ -123,7 +121,8 @@ void ProcessData()
   {
     int reset_counter[NUMBER_MOTORS] = {0};
 
-    for (int i = 0; i < NUMBER_MOTORS; ++i) {
+    for (int i = 0; i < NUMBER_MOTORS; ++i)
+    {
       reset_counter[i] = 1;
     }
 
@@ -186,6 +185,8 @@ void PopulateArray()
   // string
   for (int i = 0; i < NUMBER_MOTORS; i++)
   {
+
+    // we break everything in to pairs of values
     int search1 = (i * 2);
     int search2 = ((i * 2) + 1);
 
@@ -218,15 +219,15 @@ void PopulateArray()
   }
 
   // print array
-  for (int i = 0; i < NUMBER_MOTORS; i++)
-  {
-    Serial.print("Motor Number: ");
-    Serial.print(i);
-    Serial.print(" - Direction: ");
-    Serial.print(motor_commands[i][0]);
-    Serial.print(" - Rotations: ");
-    Serial.println(motor_commands[i][1]);
-  }
+  //for (int i = 0; i < NUMBER_MOTORS; i++)
+  //{
+  //  Serial.print("Motor Number: ");
+  //  Serial.print(i);
+  //  Serial.print(" - Direction: ");
+  //  Serial.print(motor_commands[i][0]);
+  //  Serial.print(" - Rotations: ");
+  //  Serial.println(motor_commands[i][1]);
+  //}
 }
 
 //////////////////////////////////////////////////////////////////////////////
