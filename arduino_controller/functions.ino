@@ -15,7 +15,7 @@ void ProcessData()
     for (int i = 0; i < NUMBER_MOTORS; i++)
     {
       CountMoving();
-      while (moving_motors != 3)
+      while (moving_motors != NUMBER_MOTORS_MOVING)
       {
         if (motor_commands[i][1] != 0)
         {
