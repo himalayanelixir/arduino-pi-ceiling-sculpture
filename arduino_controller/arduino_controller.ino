@@ -5,14 +5,16 @@
 #define DEBOUNCE_TIME .4
 #define SAMPLE_FREQUENCY 20
 #define MAXIMUM (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
-#define NUMBER_MOTORS 2
+#define NUMBER_MOTORS 5
+#define NUMBER_MOTORS_MOVING 3
 #define TIMEOUT 10000
 
-// function declarations`
+// function declarations
 void RecvWithStartEndMarkers();
 String getValue();
 void Finished();
 void ProcessData();
+void StartMotors();
 int CheckSwitch();
 void PopulateArray();
 
@@ -20,27 +22,27 @@ void PopulateArray();
 const byte num_chars = 100;
 char received_chars[num_chars];
 bool new_data = false;
-
-// initialize motors
+// create servo objects
 Servo my_servo[NUMBER_MOTORS];
 // create a array of ports with the order: motor, counter, reset
 int ports[NUMBER_MOTORS][3] = {{2, 3, 4}, {5, 6, 7}};
 // integer array that contains the direction and number of rotations a motor
-// needs to go
-int motor_commands[NUMBER_MOTORS][2] = {0};
-
+int motor_commands[NUMBER_MOTORS][3] = {0};
 // array of new switch values
 byte motor_sensor_counter1[NUMBER_MOTORS] = {0};
-
 // array of old switch values
 byte motor_sensor_counter2[NUMBER_MOTORS] = {0};
-
 // 0 or 1 depending on the input signal
 byte input[NUMBER_MOTORS] = {0};
 // will range from 0 to the specified MAXIMUM
 int integrator[NUMBER_MOTORS] = {MAXIMUM};
 // cleaned-up version of the input signal
 byte output[NUMBER_MOTORS] = {0};
+// other variables needed for the ProcessData() function
+bool go = true;
+int total_turns = 0;
+long timeout_counter = 0;
+int moving_motors = 0;
 
 void setup()
 {
@@ -104,6 +106,7 @@ void loop()
     Serial.println("<");
     Serial.print("Arduino: ");
     Serial.println(received_chars);
+    PopulateArray();
     ProcessData();
   }
 }

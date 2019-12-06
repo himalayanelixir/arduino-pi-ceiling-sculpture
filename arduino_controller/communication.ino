@@ -47,6 +47,73 @@ void RecvWithStartEndMarkers()
   }
 }
 
+// sends message back to raspberry pi saying the command has been executed
+void Finished()
+{
+  Serial.println("Finished Current Job!");
+  Serial.println(">");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+void PopulateArray()
+{
+
+  // temp string used to store the char array
+  // easier to do opperations on string than chars
+  String received_string = "";
+  // give the string the value of the char array
+  received_string = received_chars;
+
+  // now lets populate the motor command array with values from the received
+  // string
+  for (int i = 0; i < NUMBER_MOTORS; i++)
+  {
+
+    // we break everything in to pairs of values
+    int search1 = (i * 2);
+    int search2 = ((i * 2) + 1);
+
+    String value1 = getValue(received_string, ',', search1);
+    String value2 = getValue(received_string, ',', search2);
+
+    if (value1 == "Up")
+    {
+      motor_commands[i][0] = 0;
+    }
+    else if (value1 == "Down")
+    {
+      motor_commands[i][0] = 1;
+    }
+    else if (value1 == "None")
+    {
+      motor_commands[i][0] = 2;
+    }
+    else if (value1 == "Reset")
+    {
+      motor_commands[i][0] = 3;
+    }
+    else
+    {
+      // Sends Error Message
+    }
+
+    motor_commands[i][1] = value2.toInt();
+  }
+
+  // print array
+  //for (int i = 0; i < NUMBER_MOTORS; i++)
+  //{
+  //  Serial.print("Motor Number: ");
+  //  Serial.print(i);
+  //  Serial.print(" - Direction: ");
+  //  Serial.print(motor_commands[i][0]);
+  //  Serial.print(" - Rotations: ");
+  //  Serial.println(motor_commands[i][1]);
+  //}
+}
+
 // helps get a particular value from the incoming data string
 String getValue(String data, char separator, int index)
 {
@@ -64,11 +131,4 @@ String getValue(String data, char separator, int index)
     }
   }
   return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
-}
-
-// sends message back to raspberry pi saying the command has been executed
-void Finished()
-{
-  Serial.println("Finished Current Job!");
-  Serial.println(">");
 }
