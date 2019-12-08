@@ -11,12 +11,15 @@
 
 // function declarations
 void RecvWithStartEndMarkers();
-String getValue();
 void Finished();
+void PopulateArray();
+String getValue();
 void ProcessData();
+int CountMoving();
+void CheckCounter();
 void StartMotors();
 int CheckSwitch();
-void PopulateArray();
+void StartMotors();
 
 // variables for communication
 const byte num_chars = 100;
