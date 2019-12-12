@@ -62,7 +62,7 @@ void ProcessData()
 
         if (motor_sensor_counter1[i] == 1 && motor_sensor_counter2[i] == 0)
         {
-          motor_commands[i][1] = motor_commands[i][1] - 1;
+          motor_commands[i][1]--;
         }
 
         if (motor_commands[i][1] < 0)
@@ -245,18 +245,28 @@ int CheckSwitch(int motor_number, int switchPort)
     if (integrator[motor_number] > 0)
       integrator[motor_number]--;
   }
-  else if (integrator[motor_number] < MAXIMUM)
-    integrator[motor_number]++;
+  else
+  {
+    if (integrator[motor_number] < MAXIMUM)
+      integrator[motor_number]++;
+  }
 
   /* Step 2: Update the output state based on the integrator.  Note that the
     output will only change states if the integrator has reached a limit,
     either 0 or MAXIMUM. */
 
   if (integrator[motor_number] == 0)
+  {
+    previous_value[motor_number] = 0;
     return (0);
+  }
   else if (integrator[motor_number] >= MAXIMUM)
   {
+    previous_value[motor_number] = 1;
     return (1);
-    integrator[motor_number] = MAXIMUM; /* defensive code if integrator got corrupted */
+  }
+  else
+  {
+    return (previous_value[motor_number]);
   }
 }

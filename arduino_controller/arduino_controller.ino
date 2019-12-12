@@ -8,7 +8,7 @@
 #define NUMBER_MOTORS 4
 #define TIMEOUT 10000
 
-// function declarations`
+// function declarations
 void RecvWithStartEndMarkers();
 void ProcessData();
 int CheckSwitch();
@@ -34,10 +34,13 @@ byte motor_sensor_counter1[NUMBER_MOTORS] = {0};
 // array of old switch values
 byte motor_sensor_counter2[NUMBER_MOTORS] = {0};
 
+// Previous return value (CheckSwitch function)
+int previous_value[NUMBER_MOTORS] = {1};
+
 // 0 or 1 depending on the input signal
 byte input[NUMBER_MOTORS] = {0};
 // will range from 0 to the specified MAXIMUM
-int integrator[NUMBER_MOTORS] = {MAXIMUM};
+int integrator[NUMBER_MOTORS] = {0};
 // cleaned-up version of the input signal
 byte output[NUMBER_MOTORS] = {0};
 
@@ -79,10 +82,14 @@ void setup()
     pinMode(x, INPUT_PULLUP);
   }
 
-  // zero all motors
+  // zero all motors and initialize reset variables
   for (int i = 0; i < NUMBER_MOTORS; i++)
   {
     my_servo[i].write(90);
+    motor_sensor_counter1[i] = 1;
+    motor_sensor_counter2[i] = 1;
+    output[i] = 1;
+    integrator[i] = MAXIMUM;
   }
 
   Serial.println("");
