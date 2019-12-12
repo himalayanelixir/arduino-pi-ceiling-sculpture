@@ -10,27 +10,28 @@
 
 // function declarations
 void RecvWithStartEndMarkers();
-void ProcessData();
-int CheckSwitch();
+void Finished();
 void PopulateArray();
+String getValue();
+void ProcessData();
+int CountMoving();
+void CheckCounter();
+void StartMotors();
+int CheckSwitch();
+void StartMotors();
 
 // variables for communication
 const byte num_chars = 100;
 char received_chars[num_chars];
 bool new_data = false;
-
-// initialize motors
+// create servo objects
 Servo my_servo[NUMBER_MOTORS];
 // create a array of ports with the order: motor, counter, reset
-// int ports[NUMBER_MOTORS][3] = {{62, 66, 67}};
 int ports[NUMBER_MOTORS][3] = {{11, 12, 13}, {8, 9, 10}, {5, 6, 7}, {2, 3, 4}};
-// integer array that contains the direction and number of rotations a motor
-// needs to go
-int motor_commands[NUMBER_MOTORS][2] = {0};
-
+// integer array that contains the direction and number of rotations a motor, and a flag that determines if it's moving
+int motor_commands[NUMBER_MOTORS][3] = {0};
 // array of new switch values
 byte motor_sensor_counter1[NUMBER_MOTORS] = {0};
-
 // array of old switch values
 byte motor_sensor_counter2[NUMBER_MOTORS] = {0};
 
@@ -43,6 +44,11 @@ byte input[NUMBER_MOTORS] = {0};
 int integrator[NUMBER_MOTORS] = {0};
 // cleaned-up version of the input signal
 byte output[NUMBER_MOTORS] = {0};
+// other variables needed for the ProcessData() function
+bool go = true;
+int total_turns = 0;
+long timeout_counter = 0;
+int moving_motors = 0;
 
 void setup()
 {
@@ -107,9 +113,12 @@ void loop()
   if (new_data == true)
   {
     new_data = false;
+    go = true;
     Serial.println("<");
     Serial.print("Arduino: ");
     Serial.println(received_chars);
+    PopulateArray();
     ProcessData();
+    Finished();
   }
 }
