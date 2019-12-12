@@ -137,13 +137,13 @@ void ProcessData()
           reset_counter[i] = 0;
         }
       }
-      // see how many turns are left in the array
+      // see how many motors are still moving
       for (int i = 0; i < NUMBER_MOTORS; i++)
       {
         total_turns += reset_counter[i];
       }
 
-      Serial.print("Total Turns: ");
+      Serial.print("Motors still moving: ");
       Serial.println(total_turns);
 
       if (total_turns <= 0)
