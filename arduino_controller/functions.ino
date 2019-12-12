@@ -15,7 +15,7 @@ void ProcessData()
     for (int i = 0; i < NUMBER_MOTORS; i++)
     {
       CountMoving();
-      if (moving_motors <= NUMBER_MOTORS_MOVING && motor_commands[i][2] != 1)
+      if (moving_motors < NUMBER_MOTORS_MOVING && motor_commands[i][2] != 1)
       {
         if (motor_commands[i][1] != 0)
         {
@@ -93,8 +93,6 @@ void ProcessData()
     timeout_counter = timeout_counter + 1;
     Serial.println(timeout_counter);
   }
-  // Send Finished Signal
-  Finished();
 }
 
 //////////////////////////////////////////////////////////////////////////////
