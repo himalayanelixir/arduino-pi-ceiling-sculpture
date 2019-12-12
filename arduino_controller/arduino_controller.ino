@@ -5,7 +5,7 @@
 #define DEBOUNCE_TIME .4
 #define SAMPLE_FREQUENCY 20
 #define MAXIMUM (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
-#define NUMBER_MOTORS 2
+#define NUMBER_MOTORS 4
 #define TIMEOUT 10000
 
 // function declarations
@@ -23,7 +23,7 @@ bool new_data = false;
 Servo my_servo[NUMBER_MOTORS];
 // create a array of ports with the order: motor, counter, reset
 // int ports[NUMBER_MOTORS][3] = {{62, 66, 67}};
-int ports[NUMBER_MOTORS][3] = {{2, 3, 4}, {5, 6, 7}};
+int ports[NUMBER_MOTORS][3] = {{11, 12, 13}, {8, 9, 10}, {5, 6, 7}, {2, 3, 4}};
 // integer array that contains the direction and number of rotations a motor
 // needs to go
 int motor_commands[NUMBER_MOTORS][2] = {0};
@@ -40,7 +40,7 @@ int previous_value[NUMBER_MOTORS] = {1};
 // 0 or 1 depending on the input signal
 byte input[NUMBER_MOTORS] = {0};
 // will range from 0 to the specified MAXIMUM
-int integrator[NUMBER_MOTORS] = {MAXIMUM};
+int integrator[NUMBER_MOTORS] = {0};
 // cleaned-up version of the input signal
 byte output[NUMBER_MOTORS] = {0};
 
@@ -82,10 +82,14 @@ void setup()
     pinMode(x, INPUT_PULLUP);
   }
 
-  // zero all motors
+  // zero all motors and initialize reset variables
   for (int i = 0; i < NUMBER_MOTORS; i++)
   {
     my_servo[i].write(90);
+    motor_sensor_counter1[i] = 1;
+    motor_sensor_counter2[i] = 1;
+    output[i] = 1;
+    integrator[i] = MAXIMUM;
   }
 
   Serial.println("");
