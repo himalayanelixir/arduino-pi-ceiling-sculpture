@@ -62,7 +62,7 @@ void ProcessData()
 
         if (motor_sensor_counter1[i] == 1 && motor_sensor_counter2[i] == 0)
         {
-          motor_commands[i][1] = motor_commands[i][1] - 1;
+          motor_commands[i][1]--;
         }
 
         if (motor_commands[i][1] < 0)
@@ -257,16 +257,16 @@ int CheckSwitch(int motor_number, int switchPort)
 
   if (integrator[motor_number] == 0)
   {
-    previous_value = 0;
+    previous_value[motor_number] = 0;
     return (0);
   }
   else if (integrator[motor_number] >= MAXIMUM)
   {
-    previous_value = 1;
+    previous_value[motor_number] = 1;
     return (1);
   }
   else
   {
-    return (previous_value);
+    return (previous_value[motor_number]);
   }
 }
