@@ -5,8 +5,8 @@
 #define DEBOUNCE_TIME .4
 #define SAMPLE_FREQUENCY 20
 #define MAXIMUM (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
-#define NUMBER_MOTORS 5
-#define NUMBER_MOTORS_MOVING 3
+#define NUMBER_MOTORS 4
+#define NUMBER_MOTORS_MOVING 2
 #define TIMEOUT 10000
 
 // function declarations
@@ -28,7 +28,7 @@ bool new_data = false;
 // create servo objects
 Servo my_servo[NUMBER_MOTORS];
 // create a array of ports with the order: motor, counter, reset
-int ports[NUMBER_MOTORS][3] = {{2, 3, 4}, {5, 6, 7}};
+int ports[NUMBER_MOTORS][3] = {{11, 12, 13}, {8, 9, 10}, {5, 6, 7}, {2, 3, 4}};
 // integer array that contains the direction and number of rotations a motor, and a flag that determines if it's moving
 int motor_commands[NUMBER_MOTORS][3] = {0};
 // array of new switch values
@@ -106,10 +106,12 @@ void loop()
   if (new_data == true)
   {
     new_data = false;
+    go = true;
     Serial.println("<");
     Serial.print("Arduino: ");
     Serial.println(received_chars);
     PopulateArray();
     ProcessData();
+    Finished();
   }
 }
