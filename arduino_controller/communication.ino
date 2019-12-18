@@ -133,13 +133,6 @@ String getValue(String data, char separator, int index)
   return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
 
-// sends message back to raspberry pi saying the command has been executed
-void Finished()
-{
-  Serial.println("Finished Current Job!");
-  Serial.println(">");
-}
-
 // sends error message back to raspberry pi
 void Invalid()
 {

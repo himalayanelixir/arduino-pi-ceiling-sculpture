@@ -6,6 +6,7 @@
 #define SAMPLE_FREQUENCY 20
 #define MAXIMUM (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
 #define NUMBER_MOTORS 4
+#define NUMBER_MOTORS_MOVING 2
 #define TIMEOUT 10000
 
 // function declarations
