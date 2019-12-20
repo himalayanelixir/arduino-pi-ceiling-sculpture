@@ -28,7 +28,7 @@ bool new_data = false;
 // create servo objects
 Servo my_servo[NUMBER_MOTORS];
 // create a array of ports with the order: motor, counter, reset
-int ports[NUMBER_MOTORS][3] = {{62, 66, 67}};
+int ports[NUMBER_MOTORS][3] = {{2, 3, 4}};
 // integer array that contains the direction and number of rotations a motor, and a flag that determines if it's moving
 int motor_commands[NUMBER_MOTORS][3] = {0};
 // array of new switch values
@@ -108,18 +108,30 @@ void setup()
 void loop()
 {
   // check to see if there is any new data
-  RecvWithStartEndMarkers();
+  //RecvWithStartEndMarkers();
 
   // if there is new data process it
-  if (new_data == true)
-  {
-    new_data = false;
-    go = true;
-    Serial.println("<");
-    Serial.print("Arduino: ");
-    Serial.println(received_chars);
-    PopulateArray();
-    ProcessData();
-    Finished();
-  }
+  //if (new_data == true)
+  //{
+  // new_data = false;
+  go = true;
+  Serial.println("<");
+  Serial.print("Arduino: ");
+  motor_commands[0][0] = 0;
+  motor_commands[0][1] = 10;
+  Serial.println(received_chars);
+  // PopulateArray();
+  ProcessData();
+  Finished();
+  delay(5000);
+  go = true;
+  Serial.println("<");
+  Serial.print("Arduino: ");
+  motor_commands[0][0] = 1;
+  motor_commands[0][1] = 5;
+  Serial.println(received_chars);
+  // PopulateArray();
+  ProcessData();
+  Finished();
+  //}
 }
