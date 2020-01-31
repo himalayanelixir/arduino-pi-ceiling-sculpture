@@ -63,16 +63,16 @@ void ProcessData()
     {
       total_turns += motor_commands[i][1];
     }
-    // print the total number of turns left for each motor
-    for (int i = 0; i < NUMBER_MOTORS; i++)
-    {
-      Serial.print("Motor ");
-      Serial.print(i);
-      Serial.print(": ");
-      Serial.print(motor_commands[i][1]);
-      Serial.print(" --  ");
-    }
-    Serial.println("");
+//    // print the total number of turns left for each motor
+//    for (int i = 0; i < NUMBER_MOTORS; i++)
+//    {
+//      Serial.print("Motor ");
+//      Serial.print(i);
+//      Serial.print(": ");
+//      Serial.print(motor_commands[i][1]);
+//      Serial.print(" --  ");
+//    }
+//    Serial.println("");
 
     // exit loop if there are no more motor rotations remaining
     if (total_turns <= 0)

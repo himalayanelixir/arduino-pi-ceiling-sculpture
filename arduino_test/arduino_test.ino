@@ -28,7 +28,7 @@ bool new_data = false;
 // create servo objects
 Servo my_servo[NUMBER_MOTORS];
 // create a array of ports with the order: motor, counter, reset
-int ports[NUMBER_MOTORS][3] = {{2, 3, 4}};
+int ports[NUMBER_MOTORS][3] = {{11, 12, 13}};
 // integer array that contains the direction and number of rotations a motor, and a flag that determines if it's moving
 int motor_commands[NUMBER_MOTORS][3] = {0};
 // array of new switch values
