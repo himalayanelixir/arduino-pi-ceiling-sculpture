@@ -93,6 +93,13 @@ void ProcessData()
         Serial.println("Timeout");
       }
       timeout_counter = 0;
+      for (int i = 0; i < NUMBER_MOTORS; i++)
+      {
+        my_servo[i].write(90);
+        motor_commands[i][0] = 2;
+        motor_commands[i][1] = 0;
+        motor_commands[i][2] = 0;
+      }
     }
   }
 }
