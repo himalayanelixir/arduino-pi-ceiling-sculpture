@@ -7,7 +7,7 @@
 #define MAXIMUM (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
 #define NUMBER_MOTORS 11
 #define NUMBER_MOTORS_MOVING 3
-#define TIMEOUT 20000
+#define TIMEOUT 50000
 
 // function declarations
 void RecvWithStartEndMarkers();
@@ -35,10 +35,8 @@ int motor_commands[NUMBER_MOTORS][3] = {0};
 byte motor_sensor_counter1[NUMBER_MOTORS] = {0};
 // array of old switch values
 byte motor_sensor_counter2[NUMBER_MOTORS] = {0};
-
 // Previous return value (CheckSwitch function)
 int previous_value[NUMBER_MOTORS] = {1};
-
 // 0 or 1 depending on the input signal
 byte input[NUMBER_MOTORS] = {0};
 // will range from 0 to the specified MAXIMUM
