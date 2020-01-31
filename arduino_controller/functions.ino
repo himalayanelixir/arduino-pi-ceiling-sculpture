@@ -80,6 +80,9 @@ void ProcessData()
       go = false;
     }
 
+    timeout_counter = timeout_counter + 1;
+    Serial.println(timeout_counter);
+
     // time out loop if stall
     if (timeout_counter >= TIMEOUT)
     {
@@ -89,9 +92,8 @@ void ProcessData()
         my_servo[i].write(90);
         Serial.println("Timeout");
       }
+      timeout_counter = 0;
     }
-    timeout_counter = timeout_counter + 1;
-    Serial.println(timeout_counter);
   }
 }
 
