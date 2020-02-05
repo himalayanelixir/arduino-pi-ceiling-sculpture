@@ -31,35 +31,29 @@ void ProcessData()
       if (motor_commands[i][2] == 1)
       {
         CheckCounter(i);
+        // subtract from IGNORE_INPUT_TIME 
+        if (motor_commands[i][3] > 0)
+        {
+          motor_commands[i][3] = motor_commands[i][3] - 1;
+        }
+        // stop motors that have reached 0
+        if (motor_commands[i][1] <= 0)
+        {
+          my_servo[i].write(90);
+          motor_commands[i][2] = 0;
+        }
       }
-      // subtract from IGNORE_INPUT_TIME 
-      if (motor_commands[i][3] > 0)
-      {
-        motor_commands[i][3] = motor_commands[i][3] - 1;
-      }
-    }
-    // stop motors that have reached 0
-    for (int i = 0; i < NUMBER_MOTORS; i++)
-    {
-      if (motor_commands[i][1] <= 0 && motor_commands[i][2] == 1)
-      {
-        my_servo[i].write(90);
-        motor_commands[i][2] = 0;
-      }
-    }
 
-    // stop motors that have hit the reset
-    // first stop the motor and then tell the code to move it down one rotation
-    for (int i = 0; i < NUMBER_MOTORS; i++)
-    {
+      // stop motors that have hit the reset
+      // first stop the motor and then tell the code to move it down one rotation
       if (digitalRead(ports[i][2]) == 0)
       {
-        my_servo[i].write(90);
+        my_servo[i].write(110);
         motor_commands[i][0] = 2;
         motor_commands[i][1] = 1;
         motor_commands[i][2] = 0;
         // do not set ignore counter as we don't know excatly where it stopped
-        motor_commands[i][3] = 0;
+        motor_commands[i][3] = IGNORE_INPUT_TIME;
       }
     }
 
@@ -71,7 +65,7 @@ void ProcessData()
       total_turns += motor_commands[i][1];
     }
    // print the total number of turns left for each motor
-   for (int i = 0; i < NUMBER_MOTORS; i++)
+/*    for (int i = 0; i < NUMBER_MOTORS; i++)
    {
      Serial.print("Motor ");
      Serial.print(i);
@@ -81,7 +75,7 @@ void ProcessData()
      Serial.print(motor_commands[i][3]);
      Serial.print(" --  ");
    }
-   Serial.println("");
+   Serial.println(""); */
 
     // exit loop if there are no more motor rotations remaining
     if (total_turns <= 0)
@@ -195,7 +189,7 @@ void StartMotors(int i)
   else if (motor_commands[i][0] == 2)
   {
     // Move down
-    my_servo[i].write(100);
+    my_servo[i].write(110);
   }
   else if (motor_commands[i][0] == 0)
   {
