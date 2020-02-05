@@ -50,6 +50,17 @@ void RecvWithStartEndMarkers()
 // sends message back to raspberry pi saying the command has been executed
 void Finished()
 {
+  timeout_counter = 0;
+    // TODO - not sure if we need this 
+    for (int i = 0; i < NUMBER_MOTORS; i++)
+    {
+      my_servo[i].write(90);
+      motor_commands[i][0] = 0;
+      motor_commands[i][1] = 0;
+      motor_commands[i][2] = 0;
+      motor_commands[i][3] = IGNORE_INPUT_TIME;
+    }
+
   Serial.println("Finished Current Job!");
   Serial.println(">");
 }
@@ -70,7 +81,6 @@ void PopulateArray()
   // string
   for (int i = 0; i < NUMBER_MOTORS; i++)
   {
-
     // we break everything in to pairs of values
     int search1 = (i * 2);
     int search2 = ((i * 2) + 1);
@@ -80,15 +90,15 @@ void PopulateArray()
 
     if (value1 == "Up")
     {
-      motor_commands[i][0] = 0;
+      motor_commands[i][0] = 1;
     }
     else if (value1 == "Down")
     {
-      motor_commands[i][0] = 1;
+      motor_commands[i][0] = 2;
     }
     else if (value1 == "None")
     {
-      motor_commands[i][0] = 2;
+      motor_commands[i][0] = 0;
     }
     else if (value1 == "Reset")
     {
