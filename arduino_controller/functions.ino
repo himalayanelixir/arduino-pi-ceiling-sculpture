@@ -32,6 +32,11 @@ void ProcessData()
       {
         CheckCounter(i);
       }
+      // subtract from IGNORE_INPUT_TIME 
+      if (motor_commands[i][3] > 0)
+      {
+        motor_commands[i][3] = motor_commands[i][3] - 1;
+      }
     }
     // stop motors that have reached 0
     for (int i = 0; i < NUMBER_MOTORS; i++)
@@ -53,7 +58,8 @@ void ProcessData()
         motor_commands[i][0] = 2;
         motor_commands[i][1] = 1;
         motor_commands[i][2] = 0;
-        motor_commands[i][3] = 2;
+        // do not set ignore counter as we don't know excatly where it stopped
+        motor_commands[i][3] = 0;
       }
     }
 
@@ -72,7 +78,7 @@ void ProcessData()
      Serial.print(": ");
      Serial.print(motor_commands[i][1]);
      Serial.print(" --  ");
-     Serial.print(motor_commands[i][4]);
+     Serial.print(motor_commands[i][3]);
      Serial.print(" --  ");
    }
    Serial.println("");
@@ -119,11 +125,7 @@ void CheckCounter(int i)
   if (motor_commands[i][0] == 1) {
     if (motor_sensor_counter1[i] == 1 && motor_sensor_counter2[i] == 0)
     {
-      if (motor_commands[i][4] == 1)
-      {
-        motor_commands[i][4] = 0;
-      }
-      else
+      if (motor_commands[i][3] == 0)
       {
         motor_commands[i][1] = motor_commands[i][1] - 1;
       }
@@ -132,11 +134,7 @@ void CheckCounter(int i)
   else {
     if (motor_sensor_counter1[i] == 0 && motor_sensor_counter2[i] == 1)
     {
-      if (motor_commands[i][4] == 1)
-      {
-        motor_commands[i][4] = 0;
-      }
-      else
+      if (motor_commands[i][3] == 0)
       {
         motor_commands[i][1] = motor_commands[i][1] - 1;
       }
@@ -213,17 +211,5 @@ void StartMotors(int i)
   {
     // Don't Move
     my_servo[i].write(90);
-  }
-}
-
-void CheckRotationHistory()
-{
-  for (int i = 0; i < NUMBER_MOTORS; i++)
-  {
-    if (motor_commands[i][0] != motor_commands[i][3] && motor_commands[i][3] != 0 && motor_commands[i][0] != 0)
-    {
-      motor_commands[i][4] = 1; 
-    }
-    motor_commands[i][3] = motor_commands[i][0];
   }
 }
