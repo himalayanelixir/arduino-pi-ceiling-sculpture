@@ -7,7 +7,7 @@
 #define MAXIMUM (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
 #define NUMBER_MOTORS 1
 #define NUMBER_MOTORS_MOVING 1
-#define TIMEOUT 500
+#define TIMEOUT 50000
 
 // function declarations
 void RecvWithStartEndMarkers();
@@ -20,6 +20,7 @@ void CheckCounter();
 void StartMotors();
 int CheckSwitch();
 void StartMotors();
+void CheckRotationHistory();
 
 // variables for communication
 const byte num_chars = 100;
@@ -30,8 +31,9 @@ Servo my_servo[NUMBER_MOTORS];
 // create a array of ports with the order: motor, counter, reset
 //int ports[NUMBER_MOTORS][3] = {{11, 12, 13}, {8, 9, 10}, {5, 6, 7}, {2, 3, 4}, {14, 15, 16}, {17, 18, 19}, {20, 21, 22}, {23, 24, 25}, {29, 30, 31}, {35, 36, 37}};
 int ports[NUMBER_MOTORS][3] = {{11, 12, 13}};
-// integer array that contains the direction and number of rotations a motor, and a flag that determines if it's moving
-int motor_commands[NUMBER_MOTORS][3] = {0};
+// integer array that contains the direction and number of rotations a motor, and a flag that determines if it's moving, and another flag that determines what the last
+// direction that the motor moved, and then whether or not to skip an edge on the next rotation.
+int motor_commands[NUMBER_MOTORS][5] = {0};
 // array of new switch values
 byte motor_sensor_counter1[NUMBER_MOTORS] = {0};
 // array of old switch values
@@ -117,6 +119,7 @@ void loop()
     Serial.println("<");
     Serial.print("Arduino: ");
     Serial.println(received_chars);
+    CheckRotationHistory();
     PopulateArray();
     ProcessData();
     Finished();
