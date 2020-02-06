@@ -1,10 +1,13 @@
 # Arduino_Ceiling_Sculpture_Platform
 
-The function of this code is to be able to pass messages between a Raspberry Pi and an Arduino. This setup has the Raspberry Pi as the master and the Arduino as a slave.
+The function of this code is to run a ceiling sculpture using a Raspberry Pi as a master and multiple Arduinos as slaves. 
 
 ![Diagram](https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/images/%20Arduino_Ceiling_Sculpture_Platform.png)
 
 # Instructions
+
+
+## Everything below this is still being edited
 
 ## Raspberry Pi
  
