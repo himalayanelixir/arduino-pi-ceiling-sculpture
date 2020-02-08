@@ -71,12 +71,13 @@ import sys
 from threading import Thread
 
 # global variables
-NUMBER_OF_SLAVES = 2
+NUMBER_OF_SLAVES = 1
 startMarker = 60
 endMarker = 62
 baudRate = 9600
 # alternative serPort = "/dev/ttyUSB0"
-serPort = ["/dev/cu.usbmodem1412101", "/dev/cu.usbmodem1412201"]
+#serPort = ["/dev/cu.usbmodem1412101", "/dev/cu.usbmodem1412201"]
+serPort = ["/dev/ttyACM0"]
 
 # initialize serial variable array
 ser = [None] * NUMBER_OF_SLAVES
