@@ -5,9 +5,10 @@
 #define DEBOUNCE_TIME .4
 #define SAMPLE_FREQUENCY 20
 #define MAXIMUM (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
-#define NUMBER_MOTORS 1
-#define NUMBER_MOTORS_MOVING 1
-#define TIMEOUT 10000
+#define NUMBER_MOTORS 10
+#define NUMBER_MOTORS_MOVING 3
+#define TIMEOUT 50000
+#define IGNORE_INPUT_TIME 150
 
 // function declarations
 void RecvWithStartEndMarkers();
@@ -28,17 +29,17 @@ bool new_data = false;
 // create servo objects
 Servo my_servo[NUMBER_MOTORS];
 // create a array of ports with the order: motor, counter, reset
-int ports[NUMBER_MOTORS][3] = {{11, 12, 13}};
-// integer array that contains the direction and number of rotations a motor, and a flag that determines if it's moving
-int motor_commands[NUMBER_MOTORS][3] = {0};
+int ports[NUMBER_MOTORS][3] = {{11, 12, 13}, {8, 9, 10}, {5, 6, 7}, {2, 3, 4}, {14, 15, 16}, {17, 18, 19}, {20, 21, 22}, {23, 24, 25}, {29, 30, 31}, {35, 36, 37}};
+// int ports[NUMBER_MOTORS][3] = {{11, 12, 13}, {8, 9, 10}, {2, 3, 4}, {14, 15, 16}, {17, 18, 19}, {20, 21, 22}, {23, 24, 25}, {29, 30, 31}, {35, 36, 37}};
+// integer array that contains the direction and number of rotations a motor, and a flag that determines if it's moving, and another number that determines if we are ignoreing
+// inputs from the switches or not
+int motor_commands[NUMBER_MOTORS][4] = {0};
 // array of new switch values
 byte motor_sensor_counter1[NUMBER_MOTORS] = {0};
 // array of old switch values
 byte motor_sensor_counter2[NUMBER_MOTORS] = {0};
-
 // Previous return value (CheckSwitch function)
 int previous_value[NUMBER_MOTORS] = {1};
-
 // 0 or 1 depending on the input signal
 byte input[NUMBER_MOTORS] = {0};
 // will range from 0 to the specified MAXIMUM
@@ -97,6 +98,7 @@ void setup()
     motor_sensor_counter2[i] = 1;
     output[i] = 1;
     integrator[i] = MAXIMUM;
+    motor_commands[i][3] = IGNORE_INPUT_TIME;
   }
 
   Serial.println("");
@@ -109,29 +111,27 @@ void loop()
 {
   // check to see if there is any new data
   //RecvWithStartEndMarkers();
+  for (int i = 0; i < NUMBER_MOTORS; i++)
+  {
+    motor_commands[i][0] = 2;
+    motor_commands[i][1] = 5;
 
-  // if there is new data process it
-  //if (new_data == true)
-  //{
-  // new_data = false;
+  }
+
   go = true;
-  Serial.println("<");
-  Serial.print("Arduino: ");
-  motor_commands[0][0] = 0;
-  motor_commands[0][1] = 10;
-  Serial.println(received_chars);
-  // PopulateArray();
   ProcessData();
   Finished();
-  delay(5000);
+  delay(10000);
+
+  for (int i = 0; i < NUMBER_MOTORS; i++)
+  {
+    motor_commands[i][0] = 1;
+    motor_commands[i][1] = 100;
+
+  }
+
   go = true;
-  Serial.println("<");
-  Serial.print("Arduino: ");
-  motor_commands[0][0] = 1;
-  motor_commands[0][1] = 5;
-  Serial.println(received_chars);
-  // PopulateArray();
   ProcessData();
   Finished();
-  //}
+  delay(10000);
 }
