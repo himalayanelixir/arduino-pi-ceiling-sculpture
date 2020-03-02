@@ -31,28 +31,29 @@ void ProcessData()
       if (motor_commands[i][2] == 1)
       {
         CheckCounter(i);
+        // subtract from IGNORE_INPUT_TIME 
+        if (motor_commands[i][3] > 0)
+        {
+          motor_commands[i][3] = motor_commands[i][3] - 1;
+        }
+        // stop motors that have reached 0
+        if (motor_commands[i][1] <= 0)
+        {
+          my_servo[i].write(90);
+          motor_commands[i][2] = 0;
+        }
       }
-    }
-    // stop motors that have reached 0
-    for (int i = 0; i < NUMBER_MOTORS; i++)
-    {
-      if (motor_commands[i][1] <= 0 && motor_commands[i][2] == 1)
-      {
-        my_servo[i].write(90);
-        motor_commands[i][2] = 0;
-      }
-    }
 
-    // stop motors that have hit the reset
-    // first stop the motor and then tell the code to move it down one rotation
-    for (int i = 0; i < NUMBER_MOTORS; i++)
-    {
+      // stop motors that have hit the reset
+      // first stop the motor and then tell the code to move it down one rotation
       if (digitalRead(ports[i][2]) == 0)
       {
-        my_servo[i].write(90);
-        motor_commands[i][0] = 1;
+        my_servo[i].write(110);
+        motor_commands[i][0] = 2;
         motor_commands[i][1] = 1;
         motor_commands[i][2] = 0;
+        // do not set ignore counter as we don't know excatly where it stopped
+        motor_commands[i][3] = IGNORE_INPUT_TIME;
       }
     }
 
@@ -63,22 +64,27 @@ void ProcessData()
     {
       total_turns += motor_commands[i][1];
     }
-    // print the total number of turns left for each motor
-    for (int i = 0; i < NUMBER_MOTORS; i++)
-    {
-      Serial.print("Motor ");
-      Serial.print(i);
-      Serial.print(": ");
-      Serial.print(motor_commands[i][1]);
-      Serial.print(" --  ");
-    }
-    Serial.println("");
+   // print the total number of turns left for each motor
+/*    for (int i = 0; i < NUMBER_MOTORS; i++)
+   {
+     Serial.print("Motor ");
+     Serial.print(i);
+     Serial.print(": ");
+     Serial.print(motor_commands[i][1]);
+     Serial.print(" --  ");
+     Serial.print(motor_commands[i][3]);
+     Serial.print(" --  ");
+   }
+   Serial.println(""); */
 
     // exit loop if there are no more motor rotations remaining
     if (total_turns <= 0)
     {
       go = false;
     }
+
+    timeout_counter = timeout_counter + 1;
+    Serial.println(timeout_counter);
 
     // time out loop if stall
     if (timeout_counter >= TIMEOUT)
@@ -90,8 +96,6 @@ void ProcessData()
         Serial.println("Timeout");
       }
     }
-    timeout_counter = timeout_counter + 1;
-    Serial.println(timeout_counter);
   }
 }
 
@@ -112,9 +116,23 @@ void CheckCounter(int i)
   motor_sensor_counter2[i] = motor_sensor_counter1[i];
   motor_sensor_counter1[i] = CheckSwitch(i, ports[i][1]);
 
-  if (motor_sensor_counter1[i] == 1 && motor_sensor_counter2[i] == 0)
-  {
-    motor_commands[i][1] = motor_commands[i][1] - 1;
+  if (motor_commands[i][0] == 1) {
+    if (motor_sensor_counter1[i] == 1 && motor_sensor_counter2[i] == 0)
+    {
+      if (motor_commands[i][3] == 0)
+      {
+        motor_commands[i][1] = motor_commands[i][1] - 1;
+      }
+    }
+  }
+  else {
+    if (motor_sensor_counter1[i] == 0 && motor_sensor_counter2[i] == 1)
+    {
+      if (motor_commands[i][3] == 0)
+      {
+        motor_commands[i][1] = motor_commands[i][1] - 1;
+      }
+    }
   }
 
   if (motor_commands[i][1] < 0)
@@ -163,17 +181,17 @@ int CheckSwitch(int motor_number, int switchPort)
 
 void StartMotors(int i)
 {
-  if (motor_commands[i][0] == 0)
+  if (motor_commands[i][0] == 1)
   {
     // Move up
     my_servo[i].write(80);
   }
-  else if (motor_commands[i][0] == 1)
+  else if (motor_commands[i][0] == 2)
   {
     // Move down
-    my_servo[i].write(100);
+    my_servo[i].write(110);
   }
-  else if (motor_commands[i][0] == 2)
+  else if (motor_commands[i][0] == 0)
   {
     // Don't Move
     my_servo[i].write(90);
