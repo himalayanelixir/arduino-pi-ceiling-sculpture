@@ -9,11 +9,3 @@ Enter "Yes" on next option
 sudo apt-get remove python3-pip; sudo apt-get install python3-pip
 sudo apt install python3-pip -y
 pip3 install pyserial
-
-
-
-system_profiler SPUSBDataType
-
-sudo dd bs=4 if=/dev/disk2 | gzip > /home/your_username/image`date +%d%m%y`.gz
-
-sudo gzip -dc /home/your_username/image.gz | dd bs=4 of=/dev/disk2
