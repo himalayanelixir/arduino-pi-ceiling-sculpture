@@ -97,15 +97,32 @@ def errorCheck():
         closeConnections()
         sys.exit(1)
 
+
 def closeConnections():
     print("\nClosing Ports")
     spinner.start()
     for x in range(len(serPort)):
         try:
             ser[x].close
-            spinner.write("Serial port " + str(x) + " " + serPort[x] + " \033[32m" + "CLOSED" + "\033[0m")
+            spinner.write(
+                "Serial port "
+                + str(x)
+                + " "
+                + serPort[x]
+                + " \033[32m"
+                + "CLOSED"
+                + "\033[0m"
+            )
         except:
-            spinner.write("Serial port " + str(x) + " " + serPort[x] + " \033[31m" + "FAILED" + "\033[0m")
+            spinner.write(
+                "Serial port "
+                + str(x)
+                + " "
+                + serPort[x]
+                + " \033[31m"
+                + "FAILED"
+                + "\033[0m"
+            )
             spinner.stop()
             didErrorOccur = True
             pass
@@ -134,9 +151,25 @@ spinner.start()
 for x in range(len(serPort)):
     try:
         ser[x] = serial.Serial(serPort[x], baudRate)
-        spinner.write("Serial Port " + str(x) + " " + serPort[x] + " \033[32m" + "READY" + "\033[0m")
+        spinner.write(
+            "Serial Port "
+            + str(x)
+            + " "
+            + serPort[x]
+            + " \033[32m"
+            + "READY"
+            + "\033[0m"
+        )
     except:
-        spinner.write("Serial Port " + str(x) + " " + serPort[x] + " \033[31m" + "FAILED" + "\033[0m")
+        spinner.write(
+            "Serial Port "
+            + str(x)
+            + " "
+            + serPort[x]
+            + " \033[31m"
+            + "FAILED"
+            + "\033[0m"
+        )
         spinner.stop()
         didErrorOccur = True
         pass
