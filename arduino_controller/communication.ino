@@ -61,7 +61,7 @@ void Finished()
       motor_commands[i][3] = IGNORE_INPUT_TIME;
     }
 
-  Serial.println("Finished Current Job!");
+  Serial.println("Complete");
   Serial.println(">");
 }
 
@@ -141,12 +141,4 @@ String getValue(String data, char separator, int index)
     }
   }
   return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
-}
-
-// sends error message back to raspberry pi
-void Invalid()
-{
-  Serial.print("Arduino: ");
-  Serial.println("Invalid Input!");
-  Serial.println(">");
 }
