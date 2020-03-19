@@ -84,16 +84,15 @@ void ProcessData()
     }
 
     timeout_counter = timeout_counter + 1;
-    Serial.println(timeout_counter);
 
     // time out loop if stall
     if (timeout_counter >= TIMEOUT)
     {
       go = false;
+      did_timeout = true;
       for (int i = 0; i < NUMBER_MOTORS; i++)
       {
         my_servo[i].write(90);
-        Serial.println("Timeout");
       }
     }
   }

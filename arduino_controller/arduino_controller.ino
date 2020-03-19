@@ -29,7 +29,7 @@ bool new_data = false;
 // create servo objects
 Servo my_servo[NUMBER_MOTORS];
 // create a array of ports with the order: motor, counter, reset
-int ports[NUMBER_MOTORS][3] = {{{8, 9, 10}};
+int ports[NUMBER_MOTORS][3] = {{8, 9, 10}};
 // integer array that contains the direction and number of rotations a motor, and a flag that determines if it's moving, and another number that determines if we are ignoreing
 // inputs from the switches or not
 int motor_commands[NUMBER_MOTORS][4] = {0};
@@ -50,6 +50,7 @@ bool go = true;
 int total_turns = 0;
 long timeout_counter = 0;
 int moving_motors = 0;
+bool did_timeout = false;
 
 void setup()
 {
@@ -100,10 +101,9 @@ void setup()
     motor_commands[i][3] = IGNORE_INPUT_TIME;
   }
 
-  Serial.println("");
-  Serial.println("<");
-  Serial.println("Arduino is ready");
-  Serial.println(">");
+  Serial.print("<");
+  Serial.print("Arduino is ready");
+  Serial.print(">");
 }
 
 void loop()
@@ -116,7 +116,9 @@ void loop()
   {
     new_data = false;
     go = true;
-    Serial.println("<");
+    did_timeout = false;
+    timeout_counter = 0;
+    Serial.print("<");
     PopulateArray();
     ProcessData();
     Finished();
