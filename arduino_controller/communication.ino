@@ -50,8 +50,29 @@ void RecvWithStartEndMarkers()
 // sends message back to raspberry pi saying the command has been executed
 void Finished()
 {
-  timeout_counter = 0;
-    // TODO - not sure if we need this 
+  if(did_timeout == true) 
+  {
+    Serial.print("\033[31m");
+    Serial.print("RECIEVED: TIMEOUT");
+    Serial.print(" - MOTOR(S): ");
+    for (int i = 0; i < NUMBER_MOTORS; i++)
+    {
+      if (motor_commands[i][1] != 0)
+      {
+        Serial.print(i);
+        Serial.print(" ");
+      }
+    }
+    Serial.print("\033[0m");
+    Serial.print(">");
+  }
+  else
+  {
+    Serial.print("\033[32m");
+    Serial.print("RECIEVED: DONE");
+    Serial.print("\033[0m");
+    Serial.print(">");
+  }
     for (int i = 0; i < NUMBER_MOTORS; i++)
     {
       my_servo[i].write(90);
@@ -60,9 +81,6 @@ void Finished()
       motor_commands[i][2] = 0;
       motor_commands[i][3] = IGNORE_INPUT_TIME;
     }
-
-  Serial.println("Complete");
-  Serial.println(">");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -111,17 +129,6 @@ void PopulateArray()
 
     motor_commands[i][1] = value2.toInt();
   }
-
-  // print array
-  //for (int i = 0; i < NUMBER_MOTORS; i++)
-  //{
-  //  Serial.print("Motor Number: ");
-  //  Serial.print(i);
-  //  Serial.print(" - Direction: ");
-  //  Serial.print(motor_commands[i][0]);
-  //  Serial.print(" - Rotations: ");
-  //  Serial.println(motor_commands[i][1]);
-  //}
 }
 
 // helps get a particular value from the incoming data string
