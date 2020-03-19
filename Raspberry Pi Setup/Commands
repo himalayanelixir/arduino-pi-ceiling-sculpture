@@ -9,3 +9,5 @@ Enter "Yes" on next option
 sudo apt-get remove python3-pip; sudo apt-get install python3-pip
 sudo apt install python3-pip -y
 pip3 install pyserial
+pip3 install --upgrade yaspin
+pip3 install timeout-decorator
