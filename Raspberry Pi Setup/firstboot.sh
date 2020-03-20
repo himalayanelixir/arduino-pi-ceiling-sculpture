@@ -1,11 +1,14 @@
 #!/bin/bash
 
+sleep 10
 sudo apt-get update -y
 sudo apt-get upgrade -y
 sudo apt-get install expect git zsh python3-pip -y
 pip3 install pyserial yaspin timeout-decorator
 sudo chsh -s /bin/zsh pi
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+sudo chsh -s /bin/zsh
+sudo -u pi sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/adafruit-pitft.sh
 chmod +x adafruit-pitft.sh
 cat <<EOT > script.exp
@@ -29,4 +32,4 @@ chmod 755 script.exp
 ./script.exp
 rm adafruit-pitft.sh
 rm script.exp
-sudo reboot
+sudo shutdown -r 1
