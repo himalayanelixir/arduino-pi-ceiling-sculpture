@@ -1,3 +1,0 @@
-1. Move ssh file to SD card
-2. Move wpa_supplicant.conf file to SD card
-3. Run "sh setup.sh" the script will run and then reboot the system

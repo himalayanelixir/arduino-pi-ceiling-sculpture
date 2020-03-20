@@ -1,6 +1,7 @@
 #!/bin/bash
 
-sleep 10
+sleep 20
+# enable ssh
 sudo systemctl enable ssh
 sudo apt-get update -y
 sudo apt-get upgrade -y
