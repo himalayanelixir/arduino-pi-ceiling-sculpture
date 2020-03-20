@@ -1,6 +1,7 @@
 #!/bin/bash
 
 sleep 10
+sudo systemctl enable ssh
 sudo apt-get update -y
 sudo apt-get upgrade -y
 sudo apt-get install expect git zsh python3-pip -y
@@ -19,7 +20,7 @@ set timeout -1
 spawn sudo ./adafruit-pitft.sh
 match_max 100000
 expect -exact "SELECT 1-7: "
-send -- "3\r"
+send -- "1\r"
 expect -exact "SELECT 1-4: "
 send -- "1\r"
 expect -exact "Would you like the console to appear on the PiTFT display? \[y/n\] "
