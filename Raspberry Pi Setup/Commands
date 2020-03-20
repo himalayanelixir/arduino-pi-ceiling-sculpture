@@ -1,13 +1,3 @@
-sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get install git zsh -y && chsh -s /bin/zsh && sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/adafruit-pitft.sh && chmod +x adafruit-pitft.sh && sudo ./adafruit-pitft.sh
-
-
-Select 3
-Select 1
-Enter "Yes" on next option 
-
-sudo apt-get remove python3-pip; sudo apt-get install python3-pip
-sudo apt install python3-pip -y
-pip3 install pyserial
-pip3 install --upgrade yaspin
-pip3 install timeout-decorator
+1. Move ssh file to SD card
+2. Move wpa_supplicant.conf file to SD card
+3. Run "sh setup.sh" the script will run and then reboot the system
