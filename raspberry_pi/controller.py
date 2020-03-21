@@ -148,6 +148,8 @@ ser = [None] * NUMBER_OF_SLAVES
 threads = [None] * NUMBER_OF_SLAVES
 connectingThreads = [None] * NUMBER_OF_SLAVES
 
+input("\n\nPress Enter to Start the Program...\n")
+
 print("Opening Ports")
 spinner.start()
 for x in range(len(serPort)):
