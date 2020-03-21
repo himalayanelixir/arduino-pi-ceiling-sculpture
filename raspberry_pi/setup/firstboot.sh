@@ -34,8 +34,10 @@ chmod 755 script.exp
 rm adafruit-pitft.sh
 rm script.exp
 
-wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/contoller.py
+wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/controller.py
 wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/requirements.txt
 pip3 install -r /home/pi/requirements.txt
-
+sudo chmod +x /home/pi/controller.py
+echo 'export PATH=/home/pi/:$PATH' >> /home/pi/.zshrc
+rm /home/pi/requirements.txt
 sudo shutdown -r 1
