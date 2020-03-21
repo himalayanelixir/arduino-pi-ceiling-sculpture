@@ -50,9 +50,15 @@ wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceili
 pip3 install -r /home/pi/requirements.txt
 # make controller program executable
 sudo chmod +x /home/pi/controller.py
+# set so that the controller starts up when a user logs in
+echo "python3 /home/pi/controller.py" >>/home/pi/.zshrc
 # add controller program to PATH
 echo "export PATH=/home/pi/:$PATH" >>/home/pi/.zshrc
 # remove requirements.txt
 rm /home/pi/requirements.txt
+# download gui program from github
+wget -P /root/ https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/gui.py
+# set so that the gui starts up on the adafruit screen when booted
+echo "python3 /root/gui.py" >>/root/.zshrc
 # tell pi to restart after one minute. This is needed for the ssh changes to work and for the adafruit screen drivers
 sudo shutdown -r 1
