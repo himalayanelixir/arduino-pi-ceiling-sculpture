@@ -1,22 +1,28 @@
 #!/bin/bash
 
+# gives a bit of time for the wifi to connect
 sleep 20
 # enable ssh
 sudo systemctl enable ssh
+# update and upgrade 
 sudo apt-get update -y
 sudo apt-get upgrade -y
+# install programs
 sudo apt-get install expect git zsh python3-pip -y
+# change default shell for root and pi users
 sudo chsh -s /bin/zsh pi
 sudo chsh -s /bin/zsh
+# install ohmyzsh for root and pi users
 sudo -u pi sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+# install drivers for adafruit screen
 wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/adafruit-pitft.sh
+# make downloaded script executable
 chmod +x adafruit-pitft.sh
-cat <<EOT > script.exp
+# create script that uses expect to automate adafruit installation prompts
+cat <<EOT >script.exp
 #!/usr/bin/expect -f
-
 set timeout -1
-
 spawn sudo ./adafruit-pitft.sh
 match_max 100000
 expect -exact "SELECT 1-7: "
@@ -29,15 +35,24 @@ expect -exact "REBOOT NOW? \[y/N\] "
 send -- "N\r"
 expect eof
 EOT
+# make script executable 
 chmod 755 script.exp
+# run automation script which installs the adafruit screen drivers
 ./script.exp
+# remove the screen installation script
 rm adafruit-pitft.sh
+# remove expect automation script
 rm script.exp
-
+# download the controller program from github with it's requirements.txt
 wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/controller.py
 wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/requirements.txt
+# install pip dependencies from requirements.txt
 pip3 install -r /home/pi/requirements.txt
+# make controller program executable
 sudo chmod +x /home/pi/controller.py
-echo 'export PATH=/home/pi/:$PATH' >> /home/pi/.zshrc
+# add controller program to PATH
+echo "export PATH=/home/pi/:$PATH" >>/home/pi/.zshrc
+# remove requirements.txt
 rm /home/pi/requirements.txt
+# tell pi to restart after one minute. This is needed for the ssh changes to work and for the adafruit screen drivers
 sudo shutdown -r 1
