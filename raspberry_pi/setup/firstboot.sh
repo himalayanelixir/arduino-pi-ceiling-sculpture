@@ -6,7 +6,6 @@ sudo systemctl enable ssh
 sudo apt-get update -y
 sudo apt-get upgrade -y
 sudo apt-get install expect git zsh python3-pip -y
-pip3 install pyserial yaspin timeout-decorator
 sudo chsh -s /bin/zsh pi
 sudo chsh -s /bin/zsh
 sudo -u pi sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
@@ -34,4 +33,9 @@ chmod 755 script.exp
 ./script.exp
 rm adafruit-pitft.sh
 rm script.exp
+
+wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/contoller.py
+wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/requirements.txt
+pip3 install -r /home/pi/requirements.txt
+
 sudo shutdown -r 1

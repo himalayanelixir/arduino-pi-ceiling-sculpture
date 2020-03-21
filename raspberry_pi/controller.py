@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import serial
 import time
 import sys
@@ -196,7 +198,7 @@ while 1:
     print("===========\n")
     text = input("Enter Commands ('Exit' to close program): ")
     print(text)
-    if text == "Exit":
+    if text == "Exit" or text == "exit":
         break
     parse_text = text.split(";")
     spinner.start()
