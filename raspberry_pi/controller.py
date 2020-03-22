@@ -19,7 +19,6 @@ def waitForArduino(port):
     except:
         spinner.write("Serial Port " + str(port) + " \033[31m" + "FAILED" + "\033[0m")
         didErrorOccur = True
-        pass
 
 
 @timeout_decorator.timeout(10, use_signals=False)
@@ -63,10 +62,9 @@ def run(td, port):
             + "EXECUTION FAILED TIMEOUT"
             + "\033[0m"
         )
-        pass
 
 
-@timeout_decorator.timeout(300, use_signals=False)
+@timeout_decorator.timeout(100, use_signals=False)
 def runExecute(td, port):
     waitingForReply = False
     if waitingForReply == False:
@@ -80,7 +78,6 @@ def runExecute(td, port):
         dataRecvd = recvFromArduino(port)
         spinner.write("<- <- Array: " + str(port) + " " + dataRecvd)
         waitingForReply = False
-        time.sleep(0.1)
 
 
 def errorCheck():
@@ -137,8 +134,7 @@ connectingThreads = [None] * NUMBER_OF_SLAVES
 
 while True:
     didErrorOccur == False
-    inputText1 = input("\n\nPress Enter to Start the Program or type 'Exit' to Close\n")
-    print(inputText1)
+    inputText1 = input("\n\nPress Enter to Start the Program or type 'Exit' to Close:")
     if inputText1 == "Exit" or inputText1 == "exit":
         break
     print("Opening Ports")
@@ -191,11 +187,9 @@ while True:
     else:
         errorCheck()
 
-
-while inputText1 != "Exit" or inputText1 != "exit":
+while inputText1 != "Exit" and inputText1 != "exit":
     print("===========\n")
     inputText2 = input("Enter Commands ('Exit' to close program): ")
-    print(inputText2)
     if inputText2 == "Exit" or inputText2 == "exit":
         # close all serial connections
         closeConnections()
