@@ -9,10 +9,6 @@ from yaspin.spinners import Spinners
 import timeout_decorator
 
 
-class Timeout(Exception):
-    pass
-
-
 def waitForArduino(port):
     global didErrorOccur
     # wait until the Arduino sends "Arduino Ready" - allows time for Arduino reset
@@ -36,7 +32,6 @@ def waitForArduinoExecute(port):
 
 
 def recvFromArduino(port):
-    global startMarker, endMarker
     ck = ""
     # any value that is not an end- or startMarker
     x = "z"
@@ -56,14 +51,10 @@ def recvFromArduino(port):
 
 
 def run(td, port):
-    global didErrorOccur
     # wait until the Arduino sends "Arduino Ready" - allows time for Arduino reset
     # it also ensures that any bytes left over from a previous message are discarded
     try:
         runExecute(td, port)
-    except Timeout:
-        didErrorOccur = True
-        pass
     except:
         spinner.write(
             "== == Array: "
@@ -72,7 +63,6 @@ def run(td, port):
             + "EXECUTION FAILED TIMEOUT"
             + "\033[0m"
         )
-        didErrorOccur = True
         pass
 
 
@@ -91,14 +81,11 @@ def runExecute(td, port):
         spinner.write("<- <- Array: " + str(port) + " " + dataRecvd)
         waitingForReply = False
         time.sleep(0.1)
-        if dataRecvd.find("TIMEOUT"):
-            raise Timeout
 
 
 def errorCheck():
     if didErrorOccur == True:
         closeConnections()
-        sys.exit(1)
 
 
 def closeConnections():
@@ -127,7 +114,6 @@ def closeConnections():
                 + "\033[0m"
             )
             spinner.stop()
-            didErrorOccur = True
             pass
     spinner.stop()
 
@@ -149,77 +135,80 @@ ser = [None] * NUMBER_OF_SLAVES
 threads = [None] * NUMBER_OF_SLAVES
 connectingThreads = [None] * NUMBER_OF_SLAVES
 
-input("\n\nPress Enter to Start the Program...\n")
-
-print("Opening Ports")
-spinner.start()
-for x in range(len(serPort)):
-    try:
-        ser[x] = serial.Serial(serPort[x], baudRate)
-        spinner.write(
-            "Serial Port "
-            + str(x)
-            + " "
-            + serPort[x]
-            + " \033[32m"
-            + "READY"
-            + "\033[0m"
-        )
-    except:
-        spinner.write(
-            "Serial Port "
-            + str(x)
-            + " "
-            + serPort[x]
-            + " \033[31m"
-            + "FAILED"
-            + "\033[0m"
-        )
-        spinner.stop()
-        didErrorOccur = True
-        pass
-spinner.stop()
-errorCheck()
-
-print("\nConnecing to Arrays")
-spinner.start()
-# create threads
-for port in range(len(serPort)):
-    connectingThreads[port] = Thread(target=waitForArduino, args=[port])
-
-# start threads
-for port in range(len(serPort)):
-    connectingThreads[port].start()
-
-# wait for threads to finish
-for port in range(len(serPort)):
-    connectingThreads[port].join()
-spinner.stop()
-errorCheck()
-
-while 1:
-    print("===========\n")
-    text = input("Enter Commands ('Exit' to close program): ")
-    print(text)
-    if text == "Exit" or text == "exit":
+while True:
+    didErrorOccur == False
+    inputText1 = input("\n\nPress Enter to Start the Program or type 'Exit' to Close\n")
+    print(inputText1)
+    if inputText1 == "Exit" or inputText1 == "exit":
         break
-    parse_text = text.split(";")
+    print("Opening Ports")
     spinner.start()
+    for x in range(len(serPort)):
+        try:
+            ser[x] = serial.Serial(serPort[x], baudRate)
+            spinner.write(
+                "Serial Port "
+                + str(x)
+                + " "
+                + serPort[x]
+                + " \033[32m"
+                + "READY"
+                + "\033[0m"
+            )
+        except:
+            spinner.write(
+                "Serial Port "
+                + str(x)
+                + " "
+                + serPort[x]
+                + " \033[31m"
+                + "FAILED"
+                + "\033[0m"
+            )
+            spinner.stop()
+            didErrorOccur = True
+            pass
+    spinner.stop()
 
+    if didErrorOccur == False:
+        print("\nConnecing to Arrays")
+        spinner.start()
+        # create threads
+        for port in range(len(serPort)):
+            connectingThreads[port] = Thread(target=waitForArduino, args=[port])
+
+        # start threads
+        for port in range(len(serPort)):
+            connectingThreads[port].start()
+
+        # wait for threads to finish
+        for port in range(len(serPort)):
+            connectingThreads[port].join()
+        spinner.stop()
+
+    if didErrorOccur == False:
+        break
+    else:
+        errorCheck()
+
+
+while inputText1 != "Exit" or inputText1 != "exit":
+    print("===========\n")
+    inputText2 = input("Enter Commands ('Exit' to close program): ")
+    print(inputText2)
+    if inputText2 == "Exit" or inputText2 == "exit":
+        # close all serial connections
+        closeConnections()
+        break
+    parse_text = inputText2.split(";")
+    spinner.start()
     # create threads
     for x in range(len(parse_text)):
         threads[x] = Thread(target=run, args=(parse_text[x], x))
-
     # start threads
     for x in range(len(parse_text)):
         threads[x].start()
-
     # wait for threads to finish
     for x in range(len(parse_text)):
         threads[x].join()
-
     spinner.stop()
-    errorCheck()
-
-# close all serial connections
-closeConnections()
