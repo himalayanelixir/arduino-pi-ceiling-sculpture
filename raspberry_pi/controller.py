@@ -38,7 +38,8 @@ def waitForArduinoExecute(port):
 def recvFromArduino(port):
     global startMarker, endMarker
     ck = ""
-    x = "z"  # any value that is not an end- or startMarker
+    # any value that is not an end- or startMarker
+    x = "z"
     x = ser[port].read()
     x = x.decode("utf-8")
     # wait for the start character
