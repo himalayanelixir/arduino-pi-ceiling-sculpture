@@ -94,10 +94,37 @@ def lintDesiredState():
             if int(column) > MAX_TURNS:
                 desiredStateList[countRow][countColumn] = str(MAX_TURNS)
             elif int(column) < 0:
-                desiredStateList[countRow][countColumn] = '0'
-    with open("desired_state.csv", "w", newline='') as desiredStateFile:
+                desiredStateList[countRow][countColumn] = "0"
+    with open("desired_state.csv", "w", newline="") as desiredStateFile:
         desiredStateWriter = csv.writer(desiredStateFile, quoting=csv.QUOTE_ALL)
         desiredStateWriter.writerows(desiredStateList)
+
+def getCommands():
+    global commandString
+    desiredStateList = []
+    currentStateList = []
+    with open("desired_state.csv", "r") as desiredStateFile:
+        desiredStateReader = csv.reader(desiredStateFile, delimiter=",")
+        desiredStateList = list(desiredStateReader)
+    with open("current_state.csv", "r", newline='') as currentStateFile:
+        currentstateReader = csv.reader(currentStateFile, delimiter=",")
+        currentStateList = list(currentstateReader)
+    # assumption here is that both csvs are the size
+    for countRow,row in enumerate(desiredStateList):
+        commandString += "<"
+        for countColumn, column in enumerate(row):
+            difference = int(currentStateList[countRow][countColumn]) - int(desiredStateList[countRow][countColumn])
+            if difference < 0:
+                commandString += "Down,"
+            elif difference > 0:
+                commandString += "Up,"
+            else:
+                commandString += "None,"
+            commandString += str(abs(difference)) + ","
+        commandString = commandString[:-1]
+        commandString += ">;"
+    # remove final semicolon
+    commandString = commandString[:-1]
 
 
 def errorCheck():
@@ -156,7 +183,7 @@ connectingThreads = [None] * NUMBER_OF_ARRAYS
 #TODO: See if we actually use these
 NUMBER_OF_MOTORS_IN_ARRAY = 22
 MAX_TURNS = 10
-command_string = ""
+commandString = ""
 parse_text = ""
 
 while True:
@@ -221,8 +248,8 @@ while inputText1 != "Exit" and inputText1 != "exit":
     if inputText2 == "1":
         print("CSV Mode\n")
         lintDesiredState()
-        # getDiff()
-        # getCommands()
+        getCommands()
+        print(commandString)
         # executeCommands()
         # updateCurrentState()
     # csv reset
