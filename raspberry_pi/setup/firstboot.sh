@@ -50,11 +50,8 @@ rm script.exp
 # create virtual environment for controller 
 python3 -m venv /home/pi/controller_env
 # download the controller program from github with it's requirements.txt
-# wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/controller.py
-# wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/requirements.txt
-
-wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/issue-%2310-fix-virtualenv-issue/raspberry_pi/controller.py
-wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/issue-%2310-fix-virtualenv-issue/raspberry_pi/requirements.txt
+wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/controller.py
+wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/requirements.txt
 # install pip dependencies from requirements.txt in the virtual environment
 source /home/pi/controller_env/bin/activate
 pip3 install -r /home/pi/requirements.txt
@@ -72,8 +69,7 @@ rm /home/pi/requirements.txt
 # create virtual environment for gui
 python3 -m venv /root/gui_env
 # download gui program from github
-# wget -P /root/ https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/gui.py
-wget -P /root/ https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/issue-%2310-fix-virtualenv-issue/raspberry_pi/gui.py
+wget -P /root/ https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/gui.py
 # make gui program executable
 sudo chmod +x /root/gui.py
 # add controller program to PATH
