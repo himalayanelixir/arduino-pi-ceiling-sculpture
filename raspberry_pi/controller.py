@@ -4,13 +4,12 @@ import serial
 import time
 import sys
 import shutil
-
 from threading import Thread
 from yaspin import yaspin
 from yaspin.spinners import Spinners
 import timeout_decorator
 import csv
-import pandas
+
 
 def waitForArduino(port):
     global didErrorOccur

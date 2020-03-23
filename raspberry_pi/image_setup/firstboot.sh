@@ -16,7 +16,7 @@ sudo chsh -s /bin/zsh
 sudo -u pi sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 
-#
+
 # install drivers for adafruit screen
 wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/adafruit-pitft.sh
 # make downloaded script executable
@@ -46,7 +46,7 @@ rm adafruit-pitft.sh
 # remove expect automation script
 rm script.exp
 
-#
+
 # create virtual environment for controller 
 python3 -m venv /home/pi/controller_env
 # download the controller program from github with it's requirements.txt
@@ -65,7 +65,7 @@ echo "controller.py" >>/home/pi/.zshrc
 # remove requirements.txt
 rm /home/pi/requirements.txt
 
-#
+
 # create virtual environment for gui
 python3 -m venv /root/gui_env
 # download gui program from github
