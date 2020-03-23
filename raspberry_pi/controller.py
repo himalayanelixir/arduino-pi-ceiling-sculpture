@@ -4,12 +4,13 @@ import serial
 import time
 import sys
 import shutil
-import csv
+
 from threading import Thread
 from yaspin import yaspin
 from yaspin.spinners import Spinners
 import timeout_decorator
-
+import csv
+import pandas
 
 def waitForArduino(port):
     global didErrorOccur
@@ -82,6 +83,27 @@ def runExecute(td, port):
         waitingForReply = False
 
 
+def lintDesiredState():
+    # Note here we are using commands_state.csv as a buffer as we lint desired_state.csv
+    # Didn't want to have an extra file just to store the temp values
+    df = pandas.read_csv('desired_state.csv')
+    print(df)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def errorCheck():
     if didErrorOccur == True:
         closeConnections()
@@ -137,6 +159,7 @@ connectingThreads = [None] * NUMBER_OF_ARRAYS
 
 #TODO: See if we actually use these
 NUMBER_OF_MOTORS_IN_ARRAY = 22
+MAX_TURNS = 10
 command_string = ""
 parse_text = ""
 
@@ -201,7 +224,7 @@ while inputText1 != "Exit" and inputText1 != "exit":
     # csv mode
     if inputText2 == "1":
         print("CSV Mode\n")
-        # lintDesiredState()
+        lintDesiredState()
         # getDiff()
         # getCommands()
         # executeCommands()

@@ -8,7 +8,7 @@ sudo systemctl enable ssh
 sudo apt-get update -y
 sudo apt-get upgrade -y
 # install programs
-sudo apt-get install expect git zsh python3-pip python3-venv -y
+sudo apt-get install expect git zsh python3-pip python3-venv python3-pandas -y
 # change default shell for root and pi users
 sudo chsh -s /bin/zsh pi
 sudo chsh -s /bin/zsh
