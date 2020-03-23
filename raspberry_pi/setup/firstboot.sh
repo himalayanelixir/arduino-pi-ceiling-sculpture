@@ -15,6 +15,8 @@ sudo chsh -s /bin/zsh
 # install ohmyzsh for root and pi users
 sudo -u pi sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+#
 # install drivers for adafruit screen
 wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/adafruit-pitft.sh
 # make downloaded script executable
@@ -43,6 +45,8 @@ chmod 755 script.exp
 rm adafruit-pitft.sh
 # remove expect automation script
 rm script.exp
+
+#
 # create virtual environment for controller 
 python3 -m venv /home/pi/controller_env
 # download the controller program from github with it's requirements.txt
@@ -54,19 +58,23 @@ pip3 install -r /home/pi/requirements.txt
 deactivate
 # make controller program executable
 sudo chmod +x /home/pi/controller.py
-# set so that the controller starts up when a user logs in a virtual environment
-echo "source /home/pi/controller_env/bin/activate" >>/home/pi/.zshrc
-echo "python3 /home/pi/controller.py" >>/home/pi/.zshrc
 # add controller program to PATH
-echo "export PATH=/home/pi/:$PATH" >>/home/pi/.zshrc
+echo "export PATH=\"/home/pi:$PATH\"" >>/home/pi/.zshrc
+# set so that the controller starts up when a user logs in a virtual environment
+echo "controller.py" >>/home/pi/.zshrc
 # remove requirements.txt
 rm /home/pi/requirements.txt
+
+#
 # create virtual environment for gui
 python3 -m venv /root/gui_env
 # download gui program from github
 wget -P /root/ https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/gui.py
+# make gui program executable
+sudo chmod +x /root/gui.py
+# add controller program to PATH
+echo "export PATH=\"/root/:$PATH\"" >>/root/.zshrc
 # set so that the gui starts up on the adafruit screen when booted in a virtual environment
-echo "source /root/gui_env/bin/activate" >>/root/.zshrc
-echo "python3 /root/gui.py" >>/root/.zshrc
+echo "gui.py" >>/root/.zshrc
 # tell pi to restart after one minute. This is needed for the ssh changes to work and for the adafruit screen drivers
 sudo shutdown -r 1

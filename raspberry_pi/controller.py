@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/home/pi/controller_env/bin/python3
 
 import serial
 import time
