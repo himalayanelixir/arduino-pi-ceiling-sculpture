@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/root/gui_env/bin/python3
 
 from datetime import datetime
 import time
