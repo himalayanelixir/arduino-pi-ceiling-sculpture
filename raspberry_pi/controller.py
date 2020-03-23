@@ -1,8 +1,10 @@
-#!/usr/bin/python3
+#!/home/pi/controller_env/bin/python3
 
 import serial
 import time
 import sys
+import shutil
+import csv
 from threading import Thread
 from yaspin import yaspin
 from yaspin.spinners import Spinners
@@ -119,7 +121,7 @@ def closeConnections():
 
 
 # global variables
-NUMBER_OF_SLAVES = 2
+NUMBER_OF_ARRAYS = 2
 startMarker = 60
 endMarker = 62
 baudRate = 9600
@@ -128,9 +130,15 @@ spinner = yaspin(Spinners.weather)
 didErrorOccur = False
 
 # initialize serial variable array
-ser = [None] * NUMBER_OF_SLAVES
-threads = [None] * NUMBER_OF_SLAVES
-connectingThreads = [None] * NUMBER_OF_SLAVES
+ser = [None] * NUMBER_OF_ARRAYS
+threads = [None] * NUMBER_OF_ARRAYS
+connectingThreads = [None] * NUMBER_OF_ARRAYS
+
+
+#TODO: See if we actually use these
+NUMBER_OF_MOTORS_IN_ARRAY = 22
+command_string = ""
+parse_text = ""
 
 while True:
     didErrorOccur == False
@@ -189,20 +197,43 @@ while True:
 
 while inputText1 != "Exit" and inputText1 != "exit":
     print("===========\n")
-    inputText2 = input("Enter Commands ('Exit' to close program): ")
-    if inputText2 == "Exit" or inputText2 == "exit":
+    inputText2 = input("Enter '1' to set ceiling from csv, '2' to reset, '3' for manual mode, and 'Exit' to close program)\n : ")
+    # csv mode
+    if inputText2 == "1":
+        print("CSV Mode\n")
+        # lintDesiredState()
+        # getDiff()
+        # getCommands()
+        # executeCommands()
+        # updateCurrentState()
+    # csv reset
+    elif(inputText2 == "2"):
+        print("CSV Reset Mode\n")
+        # getResetDiff()
+        # getResetCommands()
+        # executeCommands()
+        # updateResetCurrentState()
+    # manual mode
+    elif(inputText2 == "3"):
+        inputText3 = input("Enter Commands (format '<Up,1>;<Up,1>'):\n : ")
+        parse_text = inputText3.split(";")
+        spinner.start()
+        # create threads
+        for x in range(len(parse_text)):
+            threads[x] = Thread(target=run, args=(parse_text[x], x))
+        # start threads
+        for x in range(len(parse_text)):
+            threads[x].start()
+        # wait for threads to finish
+        for x in range(len(parse_text)):
+            threads[x].join()
+        spinner.stop()
+    # exit
+    elif(inputText2 == "Exit" or inputText2 == "exit"):
         # close all serial connections
         closeConnections()
         break
-    parse_text = inputText2.split(";")
-    spinner.start()
-    # create threads
-    for x in range(len(parse_text)):
-        threads[x] = Thread(target=run, args=(parse_text[x], x))
-    # start threads
-    for x in range(len(parse_text)):
-        threads[x].start()
-    # wait for threads to finish
-    for x in range(len(parse_text)):
-        threads[x].join()
-    spinner.stop()
+    else:
+        print("Invalid Input\n")
+
+
