@@ -86,22 +86,19 @@ def runExecute(td, port):
 def lintDesiredState():
     # Note here we are using commands_state.csv as a buffer as we lint desired_state.csv
     # Didn't want to have an extra file just to store the temp values
-    df = pandas.read_csv('desired_state.csv')
-    print(df)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    desiredStateList = []
+    with open("desired_state.csv", "r") as desiredStateFile:
+        desiredStateReader = csv.reader(desiredStateFile, delimiter=",")
+        desiredStateList = list(desiredStateReader)
+    for countRow,row in enumerate(desiredStateList):
+        for countColumn, column in enumerate(row):
+            if int(column) > MAX_TURNS:
+                desiredStateList[countRow][countColumn] = str(MAX_TURNS)
+            elif int(column) < 0:
+                desiredStateList[countRow][countColumn] = '0'
+    with open("desired_state.csv", "w", newline='') as desiredStateFile:
+        desiredStateWriter = csv.writer(desiredStateFile, quoting=csv.QUOTE_ALL)
+        desiredStateWriter.writerows(desiredStateList)
 
 
 def errorCheck():
