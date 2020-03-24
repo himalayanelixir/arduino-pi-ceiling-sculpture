@@ -99,8 +99,10 @@ def lintDesiredState():
         desiredStateWriter = csv.writer(desiredStateFile, quoting=csv.QUOTE_ALL)
         desiredStateWriter.writerows(desiredStateList)
 
+
 def getCommands():
     global commandString
+    commandString = ""
     desiredStateList = []
     currentStateList = []
     with open("desired_state.csv", "r") as desiredStateFile:
@@ -126,6 +128,43 @@ def getCommands():
     # remove final semicolon
     commandString = commandString[:-1]
 
+def getResetCommands():
+    global commandString
+    currentStateList = []
+    commandString = ""
+    print(commandString)
+    with open("current_state.csv", "r") as currentStateFile:
+        currentStateReader = csv.reader(currentStateFile, delimiter=",")
+        currentStateList = list(currentStateReader)
+    for countRow,row in enumerate(currentStateList):
+        commandString += "<"
+        for countColumn, column in enumerate(row):
+            currentStateList[countRow][countColumn] = "0"
+            commandString += "Up,100,"
+        commandString = commandString[:-1]
+        commandString += ">;"
+    commandString = commandString[:-1]
+    with open("current_state.csv", "w", newline="") as currentStateFile:
+        currentStateWriter = csv.writer(currentStateFile, quoting=csv.QUOTE_ALL)
+        currentStateWriter.writerows(currentStateList) 
+    print(commandString)
+
+def executeCommands():
+    parse_text = commandString.split(";")
+    spinner.start()
+    # create threads
+    for x in range(len(parse_text)):
+        threads[x] = Thread(target=run, args=(parse_text[x], x))
+    # start threads
+    for x in range(len(parse_text)):
+        threads[x].start()
+    # wait for threads to finish
+    for x in range(len(parse_text)):
+        threads[x].join()
+    spinner.stop()
+
+def updateCurrentState():
+    shutil.copy2('desired_state.csv"','current_state.csv')
 
 def errorCheck():
     if didErrorOccur == True:
@@ -249,31 +288,18 @@ while inputText1 != "Exit" and inputText1 != "exit":
         print("CSV Mode\n")
         lintDesiredState()
         getCommands()
-        print(commandString)
-        # executeCommands()
+        executeCommands()
         # updateCurrentState()
     # csv reset
     elif(inputText2 == "2"):
         print("CSV Reset Mode\n")
-        # getResetDiff()
-        # getResetCommands()
-        # executeCommands()
-        # updateResetCurrentState()
+        getResetCommands()
+        executeCommands()
     # manual mode
     elif(inputText2 == "3"):
-        inputText3 = input("Enter Commands (format '<Up,1>;<Up,1>'):\n : ")
-        parse_text = inputText3.split(";")
-        spinner.start()
-        # create threads
-        for x in range(len(parse_text)):
-            threads[x] = Thread(target=run, args=(parse_text[x], x))
-        # start threads
-        for x in range(len(parse_text)):
-            threads[x].start()
-        # wait for threads to finish
-        for x in range(len(parse_text)):
-            threads[x].join()
-        spinner.stop()
+        commandString = ""
+        commandString = input("Enter Commands (format '<Up,1>;<Up,1>'):\n : ")
+        executeCommands()
     # exit
     elif(inputText2 == "Exit" or inputText2 == "exit"):
         # close all serial connections
