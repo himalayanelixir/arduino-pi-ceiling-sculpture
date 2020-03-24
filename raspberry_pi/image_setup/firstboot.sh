@@ -67,15 +67,21 @@ rm /home/pi/requirements.txt
 # download state csvs
 wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/current_state.csv
 wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/desired_state.csv
+# make pi user owner of all the files we downloaded
+chown pi /home/pi/controller.py
+chown pi /home/pi/requirements.txt
+chown pi /home/pi/current_state.csv
+chown pi /home/pi/desired_state.csv
+
 
 # create virtual environment for gui
 python3 -m venv /root/gui_env
 # download gui program from github
-wget -P /root/ https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/gui.py
+wget -P /root https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/gui.py
 # make gui program executable
 sudo chmod +x /root/gui.py
 # add controller program to PATH
-echo "export PATH=\"/root/:$PATH\"" >>/root/.zshrc
+echo "export PATH=\"/root:$PATH\"" >>/root/.zshrc
 # set so that the gui starts up on the adafruit screen when booted in a virtual environment
 echo "gui.py" >>/root/.zshrc
 # tell pi to restart after one minute. This is needed for the ssh changes to work and for the adafruit screen drivers
