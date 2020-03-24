@@ -132,7 +132,6 @@ def getResetCommands():
     global commandString
     currentStateList = []
     commandString = ""
-    print(commandString)
     with open("current_state.csv", "r") as currentStateFile:
         currentStateReader = csv.reader(currentStateFile, delimiter=",")
         currentStateList = list(currentStateReader)
@@ -147,7 +146,6 @@ def getResetCommands():
     with open("current_state.csv", "w", newline="") as currentStateFile:
         currentStateWriter = csv.writer(currentStateFile, quoting=csv.QUOTE_ALL)
         currentStateWriter.writerows(currentStateList) 
-    print(commandString)
 
 def executeCommands():
     parse_text = commandString.split(";")
@@ -297,6 +295,7 @@ while inputText1 != "Exit" and inputText1 != "exit":
         executeCommands()
     # manual mode
     elif(inputText2 == "3"):
+        print("Manual Mode\n")
         commandString = ""
         commandString = input("Enter Commands (format '<Up,1>;<Up,1>'):\n : ")
         executeCommands()
