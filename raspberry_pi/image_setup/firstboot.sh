@@ -64,7 +64,9 @@ echo "export PATH=\"/home/pi:$PATH\"" >>/home/pi/.zshrc
 echo "controller.py" >>/home/pi/.zshrc
 # remove requirements.txt
 rm /home/pi/requirements.txt
-
+# download state csvs
+wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/current_state.csv
+wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/desired_state.csv
 
 # create virtual environment for gui
 python3 -m venv /root/gui_env
