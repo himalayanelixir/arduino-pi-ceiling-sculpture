@@ -62,16 +62,15 @@ sudo chmod +x /home/pi/controller.py
 echo "export PATH=\"/home/pi:$PATH\"" >>/home/pi/.zshrc
 # set so that the controller starts up when a user logs in a virtual environment
 echo "controller.py" >>/home/pi/.zshrc
-# remove requirements.txt
-rm /home/pi/requirements.txt
 # download state csvs
 wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/current_state.csv
 wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/raspberry_pi/desired_state.csv
 # make pi user owner of all the files we downloaded
 chown pi /home/pi/controller.py
-chown pi /home/pi/requirements.txt
 chown pi /home/pi/current_state.csv
 chown pi /home/pi/desired_state.csv
+# remove requirements.txt
+rm /home/pi/requirements.txt
 
 
 # create virtual environment for gui
