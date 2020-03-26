@@ -9,6 +9,8 @@ from yaspin import yaspin
 from yaspin.spinners import Spinners
 import timeout_decorator
 import csv
+import os.path
+from os import path
 
 
 def waitForArduino(port):
@@ -223,12 +225,14 @@ MAX_TURNS = 10
 commandString = ""
 parse_text = ""
 
+
 while True:
     didErrorOccur == False
     inputText1 = input("\n\nPress Enter to Start the Program or type 'Exit' to Close:")
     if inputText1 == "Exit" or inputText1 == "exit":
         break
-    print("Opening Ports")
+
+    print("\nOpening Ports")
     spinner.start()
     for x in range(len(serPort)):
         try:
@@ -256,6 +260,19 @@ while True:
             didErrorOccur = True
             pass
     spinner.stop()
+
+    if didErrorOccur == False:
+        print("\nChecking for CSV Files")
+        if path.exists("current_state.csv"):
+            print("current_state CSV: \033[32m FOUND\033[0m")
+        else:
+            print("current_state CSV: \033[31m NOT FOUND\033[0m")
+            didErrorOccur = True
+        if path.exists("desired_state.csv"):
+            print("desired_state CSV: \033[32m FOUND\033[0m")
+        else:
+            print("desired_state CSV: \033[31m NOT FOUND\033[0m")
+            didErrorOccur = True
 
     if didErrorOccur == False:
         print("\nConnecing to Arrays")
