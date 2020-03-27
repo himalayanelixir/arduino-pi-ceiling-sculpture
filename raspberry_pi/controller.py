@@ -133,7 +133,7 @@ def csvCommands():
     # call execute commands
     executeCommands()
     # update current_state.csv with the values of desired_state.csv
-    shutil.copy2('desired_state.csv"', "current_state.csv")
+    shutil.copy2('desired_state.csv', "current_state.csv")
 
 
 def resetCommands():
