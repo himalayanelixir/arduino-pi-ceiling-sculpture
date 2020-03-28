@@ -31,7 +31,7 @@ def wait_for_arduino_execute(port):
     timeout and a try catch block"""
     msg = ""
     while msg.find("Arduino is ready") == -1:
-        while SERIAL_OBJECT[port].inWaiting() == 0:
+        while SERIAL_OBJECTS[port].inWaiting() == 0:
             pass
         msg = recieve_from_arduino(port)
 
@@ -41,17 +41,17 @@ def recieve_from_arduino(port):
     recieve_string = ""
     # any value that is not an end- or START_MARKER
     recieve_char = "z"
-    recieve_char = SERIAL_OBJECT[port].read()
+    recieve_char = SERIAL_OBJECTS[port].read()
     recieve_char = recieve_char.decode("utf-8")
     # wait for the start character
     while ord(recieve_char) != START_MARKER:
-        recieve_char = SERIAL_OBJECT[port].read()
+        recieve_char = SERIAL_OBJECTS[port].read()
         recieve_char = recieve_char.decode("utf-8")
     # save data until the end marker is found
     while ord(recieve_char) != END_MARKER:
         if ord(recieve_char) != START_MARKER:
             recieve_string = recieve_string + recieve_char
-        recieve_char = SERIAL_OBJECT[port].read()
+        recieve_char = SERIAL_OBJECTS[port].read()
         recieve_char = recieve_char.decode("utf-8")
     return recieve_string
 
@@ -78,12 +78,12 @@ def run_execute(parce_string, port):
     we can have both a timeout and a try catch block"""
     waiting_for_reply = False
     if not waiting_for_reply:
-        SERIAL_OBJECT[port].write(parce_string.encode())
+        SERIAL_OBJECTS[port].write(parce_string.encode())
         SPINNER.write("-> -> Array: " + str(port) + " \033[32m" + "SENT" + "\033[0m")
         waiting_for_reply = True
 
     if waiting_for_reply:
-        while SERIAL_OBJECT[port].inWaiting() == 0:
+        while SERIAL_OBJECTS[port].inWaiting() == 0:
             pass
         data_recieved = recieve_from_arduino(port)
         SPINNER.write("<- <- Array: " + str(port) + " " + data_recieved)
@@ -188,7 +188,7 @@ def close_connections():
     SPINNER.start()
     for count, _ in enumerate(SERIAL_PORT):
         try:
-            SERIAL_OBJECT[count].close
+            SERIAL_OBJECTS[count].close
             SPINNER.write(
                 "Serial port "
                 + str(count)
@@ -216,7 +216,7 @@ def main():
     """ Main function of the program. Also provides tui in terminal to interact with
     """
     global DID_ERROR_OCCUR
-    global SERIAL_OBJECT
+    global SERIAL_OBJECTS
     while True:
         DID_ERROR_OCCUR = False
         input_text_1 = input(
@@ -229,7 +229,7 @@ def main():
 
         for count, _ in enumerate(SERIAL_PORT):
             try:
-                SERIAL_OBJECT[count] = serial.Serial(SERIAL_PORT[count], BAUD_RATE)
+                SERIAL_OBJECTS[count] = serial.Serial(SERIAL_PORT[count], BAUD_RATE)
                 SPINNER.write(
                     "Serial Port "
                     + str(count)
@@ -325,7 +325,7 @@ START_MARKER = 60
 END_MARKER = 62
 SPINNER = yaspin(Spinners.weather)
 # global serial object
-SERIAL_OBJECT = [None] * NUMBER_OF_ARRAYS
+SERIAL_OBJECTS = [None] * NUMBER_OF_ARRAYS
 # need this for error checking in threads
 DID_ERROR_OCCUR = False
 
