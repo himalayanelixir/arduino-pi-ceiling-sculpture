@@ -198,7 +198,7 @@ def close_connections():
                 + "CLOSED"
                 + "\033[0m"
             )
-        except (OSError, serial.SerialException):
+        except AttributeError:
             SPINNER.write(
                 "Serial port "
                 + str(count)
@@ -236,7 +236,7 @@ def main():
                     + "READY"
                     + "\033[0m"
                 )
-            except (OSError, serial.SerialException):
+            except serial.serialutil.SerialException:
                 SPINNER.write(
                     "Serial Port "
                     + str(count)
