@@ -20,7 +20,7 @@ def wait_for_arduino(port):
     try:
         wait_for_arduino_execute(port)
         SPINNER.write("Serial Port " + str(port) + " \033[32m" + "READY" + "\033[0m")
-    except:
+    except timeout_decorator.TimeoutError:
         SPINNER.write("Serial Port " + str(port) + " \033[31m" + "FAILED" + "\033[0m")
         DID_ERROR_OCCUR = True
 
@@ -62,7 +62,7 @@ def run(parce_string, port):
     discarded"""
     try:
         run_execute(parce_string, port)
-    except:
+    except timeout_decorator.TimeoutError:
         SPINNER.write(
             "== == Array: "
             + str(port)
@@ -93,7 +93,6 @@ def run_execute(parce_string, port):
 def csv_commands():
     """Reads data from desiered_state.csv, lints it, and then executes the
     commands"""
-    global COMMAND_STRING
     # lint desired_state csv values and make sure that they are in range
     desired_state_list = []
     with open("desired_state.csv", "r") as desired_state_file:
@@ -110,7 +109,7 @@ def csv_commands():
         desired_state_writer.writerows(desired_state_list)
 
     # fill command string
-    COMMAND_STRING = ""
+    command_string = ""
     desired_state_list = []
     current_state_list = []
     with open("desired_state.csv", "r") as desired_state_file:
@@ -121,55 +120,54 @@ def csv_commands():
         current_state_list = list(current_state_reader)
     # assumption here is that both csvs are the size
     for count_row, row in enumerate(desired_state_list):
-        COMMAND_STRING += "<"
+        command_string += "<"
         for count_column, column in enumerate(row):
             difference = int(current_state_list[count_row][count_column]) - int(
                 desired_state_list[count_row][count_column]
             )
             if difference < 0:
-                COMMAND_STRING += "Down,"
+                command_string += "Down,"
             elif difference > 0:
-                COMMAND_STRING += "Up,"
+                command_string += "Up,"
             else:
-                COMMAND_STRING += "None,"
-            COMMAND_STRING += str(abs(difference)) + ","
-        COMMAND_STRING = COMMAND_STRING[:-1]
-        COMMAND_STRING += ">;"
+                command_string += "None,"
+            command_string += str(abs(difference)) + ","
+        command_string = command_string[:-1]
+        command_string += ">;"
     # remove final semicolon
-    COMMAND_STRING = COMMAND_STRING[:-1]
+    command_string = command_string[:-1]
     # call execute commands
-    execute_commands()
+    execute_commands(command_string)
     # update current_state.csv with the values of desired_state.csv
     shutil.copy2('desired_state.csv', "current_state.csv")
 
 
 def reset_commands():
     """Preforms a reset on the ceiling """
-    global COMMAND_STRING
     current_state_list = []
-    COMMAND_STRING = ""
+    command_string = ""
     with open("current_state.csv", "r") as current_state_file:
         current_state_reader = csv.reader(current_state_file, delimiter=",")
         current_state_list = list(current_state_reader)
     for count_row, row in enumerate(current_state_list):
-        COMMAND_STRING += "<"
+        command_string += "<"
         for count_column, _ in enumerate(row):
             current_state_list[count_row][count_column] = "0"
-            COMMAND_STRING += "Up,100,"
-        COMMAND_STRING = COMMAND_STRING[:-1]
-        COMMAND_STRING += ">;"
-    COMMAND_STRING = COMMAND_STRING[:-1]
+            command_string += "Up,100,"
+        command_string = command_string[:-1]
+        command_string += ">;"
+    command_string = command_string[:-1]
     with open("current_state.csv", "w", newline="") as current_state_file:
         current_state_writer = csv.writer(current_state_file, quoting=csv.QUOTE_ALL)
         current_state_writer.writerows(current_state_list)
     # call execute commands
-    execute_commands()
+    execute_commands(command_string)
 
 
-def execute_commands():
+def execute_commands(command_string_execute):
     """ Creates threads that send commands to the Arduinos and wait for replies.
     there is one thread for each Arduino"""
-    parse_text = COMMAND_STRING.split(";")
+    parse_text = command_string_execute.split(";")
     threads = [None] * NUMBER_OF_ARRAYS
     SPINNER.start()
     # create threads
@@ -200,7 +198,7 @@ def close_connections():
                 + "CLOSED"
                 + "\033[0m"
             )
-        except:
+        except (OSError, serial.SerialException):
             SPINNER.write(
                 "Serial port "
                 + str(count)
@@ -217,7 +215,6 @@ def close_connections():
 def main():
     """ Main function of the program. Also provides tui in terminal to interact with
     """
-    global COMMAND_STRING
     global DID_ERROR_OCCUR
     while True:
         DID_ERROR_OCCUR = False
@@ -239,7 +236,7 @@ def main():
                     + "READY"
                     + "\033[0m"
                 )
-            except:
+            except (OSError, serial.SerialException):
                 SPINNER.write(
                     "Serial Port "
                     + str(count)
@@ -305,9 +302,7 @@ def main():
         # manual mode
         elif input_text_2 == "3":
             print("Manual Mode\n")
-            COMMAND_STRING = ""
-            COMMAND_STRING = input("Enter Commands (format '<Up,1>;<Up,1>'):\n : ")
-            execute_commands()
+            execute_commands(input("Enter Commands (format '<Up,1>;<Up,1>'):\n : "))
         # exit
         elif input_text_2 in ("Exit", "exit"):
             # close all serial connections
@@ -325,13 +320,10 @@ END_MARKER = 62
 SERIAL_PORT = ["/dev/ttyUSB0", "/dev/ttyUSB1"]
 SPINNER = yaspin(Spinners.weather)
 
-
-
 # initialize serial variable array
 # These three need to be refactored
 SER = [None] * NUMBER_OF_ARRAYS
 DID_ERROR_OCCUR = False
-COMMAND_STRING = ""
 
 
 if __name__ == "__main__":
