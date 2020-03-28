@@ -139,7 +139,7 @@ def csv_commands():
     # call execute commands
     execute_commands(command_string)
     # update current_state.csv with the values of desired_state.csv
-    shutil.copy2('desired_state.csv', "current_state.csv")
+    shutil.copy2("desired_state.csv", "current_state.csv")
 
 
 def reset_commands():
@@ -219,8 +219,10 @@ def main():
     global SERIAL_OBJECT
     while True:
         DID_ERROR_OCCUR = False
-        input_text_1 = input("\n\nPress Enter to Start the Program or type 'Exit' to Close:")
-        if input_text_1 in ('Exit', 'exit'):
+        input_text_1 = input(
+            "\n\nPress Enter to Start the Program or type 'Exit' to Close:"
+        )
+        if input_text_1 in ("Exit", "exit"):
             break
         print("\nOpening Ports")
         SPINNER.start()
@@ -270,7 +272,9 @@ def main():
             SPINNER.start()
             # create threads
             for count, _ in enumerate(SERIAL_PORT):
-                connecting_threads[count] = Thread(target=wait_for_arduino, args=[count])
+                connecting_threads[count] = Thread(
+                    target=wait_for_arduino, args=[count]
+                )
 
             # start threads
             for count, _ in enumerate(SERIAL_PORT):
@@ -286,8 +290,7 @@ def main():
 
         close_connections()
 
-
-    while input_text_1 not in ('Exit', 'exit'):
+    while input_text_1 not in ("Exit", "exit"):
         print("===========\n")
         input_text_2 = input(
             "Enter '1' to set ceiling from csv, '2' to reset, and 'Exit' to close program)\n : "
@@ -311,6 +314,7 @@ def main():
             break
         else:
             print("Invalid Input\n")
+
 
 # global variables
 NUMBER_OF_ARRAYS = 2
