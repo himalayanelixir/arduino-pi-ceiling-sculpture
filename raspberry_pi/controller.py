@@ -213,12 +213,14 @@ def closeConnections():
 
 # global variables
 NUMBER_OF_ARRAYS = 2
+MAX_TURNS = 10
+baudRate = 9600
 startMarker = 60
 endMarker = 62
-baudRate = 9600
 serPort = ["/dev/ttyUSB0", "/dev/ttyUSB1"]
-spinner = yaspin(Spinners.weather)
 didErrorOccur = False
+commandString = ""
+spinner = yaspin(Spinners.weather)
 
 # initialize serial variable array
 ser = [None] * NUMBER_OF_ARRAYS
@@ -226,11 +228,6 @@ threads = [None] * NUMBER_OF_ARRAYS
 connectingThreads = [None] * NUMBER_OF_ARRAYS
 
 
-# TODO: See if we actually use these
-NUMBER_OF_MOTORS_IN_ARRAY = 22
-MAX_TURNS = 10
-commandString = ""
-parse_text = ""
 
 
 while True:
