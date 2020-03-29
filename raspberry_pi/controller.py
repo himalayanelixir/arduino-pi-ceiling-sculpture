@@ -213,46 +213,61 @@ def close_connections():
     SPINNER.stop()
 
 
+def find_arduinos():
+    result = subprocess.run(['ls /dev/ttyU*'], shell=True, capture_output=True)
+    return (result.stdout.decode("utf-8").splitlines())
+
+
 def main():
     """ Main function of the program. Also provides tui in terminal to interact with
     """
     global DID_ERROR_OCCUR
     global SERIAL_OBJECTS
+    global SERIAL_PORT
     while True:
         DID_ERROR_OCCUR = False
+        SERIAL_PORT = []
         input_text_1 = input(
             "\n\nPress Enter to Start the Program or type 'Exit' to Close:"
         )
         if input_text_1 in ("Exit", "exit"):
             break
-        print("\nOpening Ports")
-        SPINNER.start()
 
-        for count, _ in enumerate(SERIAL_PORT):
-            try:
-                SERIAL_OBJECTS[count] = serial.Serial(SERIAL_PORT[count], BAUD_RATE)
-                SPINNER.write(
-                    "Serial Port "
-                    + str(count)
-                    + " "
-                    + SERIAL_PORT[count]
-                    + " \033[32m"
-                    + "READY"
-                    + "\033[0m"
-                )
-            except serial.serialutil.SerialException:
-                SPINNER.write(
-                    "Serial Port "
-                    + str(count)
-                    + " "
-                    + SERIAL_PORT[count]
-                    + " \033[31m"
-                    + "FAILED"
-                    + "\033[0m"
-                )
-                SPINNER.stop()
-                DID_ERROR_OCCUR = True
-        SPINNER.stop()
+        SERIAL_PORT = find_arduinos()
+
+        if len(SERIAL_PORT) != 0:
+            print(f"\nFound \033[32m{len(SERIAL_PORT)}\033[0m Arduinos")
+        else:
+            print(f"\nFound \033[31m{len(SERIAL_PORT)}\033[0m Arduinos")
+            DID_ERROR_OCCUR = True
+        if not DID_ERROR_OCCUR:
+            print("\nOpening Ports")
+            SPINNER.start()
+            for count, _ in enumerate(SERIAL_PORT):
+                try:
+                    SERIAL_OBJECTS[count] = serial.Serial(SERIAL_PORT[count], BAUD_RATE)
+                    SPINNER.write(
+                        "Serial Port "
+                        + str(count)
+                        + " "
+                        + SERIAL_PORT[count]
+                        + " \033[32m"
+                        + "READY"
+                        + "\033[0m"
+                    )
+                except serial.serialutil.SerialException:
+                    SPINNER.write(
+                        "Serial Port "
+                        + str(count)
+                        + " "
+                        + SERIAL_PORT[count]
+                        + " \033[31m"
+                        + "FAILED"
+                        + "\033[0m"
+                    )
+                    SPINNER.stop()
+                    DID_ERROR_OCCUR = True
+            SPINNER.stop()
 
         if not DID_ERROR_OCCUR:
             print("\nChecking for CSV Files")
@@ -288,8 +303,9 @@ def main():
 
         if not DID_ERROR_OCCUR:
             break
-
-        close_connections()
+        
+        if len(SERIAL_PORT) != 0:
+            close_connections()
 
     while input_text_1 not in ("Exit", "exit"):
         print("===========\n")
@@ -316,14 +332,12 @@ def main():
         else:
             print("Invalid Input\n")
 
-def find_arduinos():
-    result = subprocess.run(['ls /dev/ttyU*'], shell=True, capture_output=True)
-    return (result.stdout.decode("utf-8").splitlines())
+
 
 # global variables
 NUMBER_OF_ARRAYS = 10
 # SERIAL_PORT = ["/dev/ttyUSB0", "/dev/ttyUSB1"]
-SERIAL_PORT = find_arduinos()
+SERIAL_PORT = []
 MAX_TURNS = 10
 BAUD_RATE = 9600
 START_MARKER = 60
