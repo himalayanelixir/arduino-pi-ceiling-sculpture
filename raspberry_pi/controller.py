@@ -191,8 +191,8 @@ def execute_commands(command_string_execute):
 
 
 def close_connections():
-    """ Closes serial ports"""
-    print("\nClosing Ports")
+    """ Closes serial port(s)"""
+    print("\nClosing Port(s)")
     SPINNER.start()
     for count, _ in enumerate(SERIAL_PORT):
         try:
@@ -201,7 +201,7 @@ def close_connections():
                 "Serial port "
                 + str(count)
                 + " "
-                + SERIAL_PORT[count]
+                + SERIAL_PORT[count][0]
                 + " \033[32m"
                 + "CLOSED"
                 + "\033[0m"
@@ -211,7 +211,7 @@ def close_connections():
                 "Serial port "
                 + str(count)
                 + " "
-                + SERIAL_PORT[count]
+                + SERIAL_PORT[count][0]
                 + " \033[31m"
                 + "FAILED"
                 + "\033[0m"
@@ -248,7 +248,7 @@ def main():
             print(f"\nFound \033[31m{len(SERIAL_PORT)}\033[0m Arrays")
             DID_ERROR_OCCUR = True
         if not DID_ERROR_OCCUR:
-            print("\nOpening Ports")
+            print("\nOpening Port(s)")
             SPINNER.start()
             for count, _ in enumerate(SERIAL_PORT):
                 try:
