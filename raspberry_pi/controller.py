@@ -18,8 +18,10 @@ def wait_for_arduino(port):
     reset it also ensures that any bytes left over from a previous message are
     discarded """
     global DID_ERROR_OCCUR
+    global SERIAL_PORT
     try:
-        wait_for_arduino_execute(port)
+        array_info = wait_for_arduino_execute(port)
+        SERIAL_PORT[port] = [SERIAL_PORT[port], array_info[0], array_info[1]]
         SPINNER.write("Serial Port " + str(port) + " \033[32m" + "READY" + "\033[0m")
     except timeout_decorator.TimeoutError:
         SPINNER.write("Serial Port " + str(port) + " \033[31m" + "FAILED" + "\033[0m")
@@ -30,11 +32,16 @@ def wait_for_arduino(port):
 def wait_for_arduino_execute(port):
     """ Waits for Arduino to send ready message. Created so we can have a
     timeout and a try catch block"""
+    
     msg = ""
     while msg.find("Arduino is ready") == -1:
         while SERIAL_OBJECTS[port].inWaiting() == 0:
             pass
         msg = recieve_from_arduino(port)
+    # gets the array number and the number of motors in the array
+    array_info = [int(i) for i in msg.split() if i.isdigit()]
+    return array_info
+
 
 
 def recieve_from_arduino(port):
@@ -337,6 +344,7 @@ def main():
 # global variables
 NUMBER_OF_ARRAYS = 10
 # SERIAL_PORT = ["/dev/ttyUSB0", "/dev/ttyUSB1"]
+# address of USB port, array number, number of motors
 SERIAL_PORT = []
 MAX_TURNS = 10
 BAUD_RATE = 9600
