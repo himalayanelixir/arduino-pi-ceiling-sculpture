@@ -1,4 +1,4 @@
-# Arduino_Ceiling_Sculpture_Platform
+# Arduino Ceiling Sculpture
 
 The function of this code is to run a ceiling sculpture using a Raspberry Pi as a master and multiple Arduinos as slaves. 
 
