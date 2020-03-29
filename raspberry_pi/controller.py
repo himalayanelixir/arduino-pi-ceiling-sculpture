@@ -4,6 +4,7 @@ Once a command is sent it then waits a reply"""
 
 import csv
 import shutil
+import subprocess
 from os import path
 from threading import Thread
 import serial
@@ -315,10 +316,14 @@ def main():
         else:
             print("Invalid Input\n")
 
+def find_arduinos():
+    result = subprocess.run(['ls /dev/ttyU*'], shell=True, capture_output=True)
+    return (result.stdout.decode("utf-8").splitlines())
 
 # global variables
-NUMBER_OF_ARRAYS = 2
-SERIAL_PORT = ["/dev/ttyUSB0", "/dev/ttyUSB1"]
+NUMBER_OF_ARRAYS = 10
+# SERIAL_PORT = ["/dev/ttyUSB0", "/dev/ttyUSB1"]
+SERIAL_PORT = find_arduinos()
 MAX_TURNS = 10
 BAUD_RATE = 9600
 START_MARKER = 60
