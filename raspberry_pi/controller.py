@@ -236,9 +236,9 @@ def main():
         SERIAL_PORT = find_arduinos()
 
         if len(SERIAL_PORT) != 0:
-            print(f"\nFound \033[32m{len(SERIAL_PORT)}\033[0m Arduinos")
+            print(f"\nFound \033[32m{len(SERIAL_PORT)}\033[0m Array(s)")
         else:
-            print(f"\nFound \033[31m{len(SERIAL_PORT)}\033[0m Arduinos")
+            print(f"\nFound \033[31m{len(SERIAL_PORT)}\033[0m Arrays")
             DID_ERROR_OCCUR = True
         if not DID_ERROR_OCCUR:
             print("\nOpening Ports")
