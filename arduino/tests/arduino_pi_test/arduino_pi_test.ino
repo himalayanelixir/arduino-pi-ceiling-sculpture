@@ -5,10 +5,12 @@
 #define DEBOUNCE_TIME .4
 #define SAMPLE_FREQUENCY 20
 #define MAXIMUM (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
+#define ARRAY_NUMBER 2
 #define NUMBER_MOTORS 1
 #define NUMBER_MOTORS_MOVING 1
 #define TIMEOUT 150
 #define IGNORE_INPUT_TIME 150
+
 
 // function declarations
 void RecvWithStartEndMarkers();
@@ -98,6 +100,10 @@ void setup()
     }
     Serial.print("<");
     Serial.print("Arduino is ready");
+    Serial.print("Array Number: ");
+    Serial.print(ARRAY_NUMBER);
+    Serial.print(" Number of Motors: ");
+    Serial.print(NUMBER_MOTORS);
     Serial.print(">");
 }
 
