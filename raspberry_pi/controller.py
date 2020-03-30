@@ -181,28 +181,32 @@ def csv_commands():
     with open("current_state.csv", "r", newline="") as current_state_file:
         current_state_reader = csv.reader(current_state_file, delimiter=",")
         current_state_list = list(current_state_reader)
-    # assumption here is that both csvs are the size
-    for count_row, row in enumerate(desired_state_list):
+    
+    for count_row, _ in enumerate(SERIAL_PORT):
         command_string += "<"
-        for count_column, column in enumerate(row):
-            difference = int(current_state_list[count_row][count_column]) - int(
-                desired_state_list[count_row][count_column]
-            )
-            if difference < 0:
-                command_string += "Down,"
-            elif difference > 0:
-                command_string += "Up,"
-            else:
-                command_string += "None,"
-            command_string += str(abs(difference)) + ","
+        array_number = SERIAL_PORT[count_row][1]
+        desired_row = desired_state_list[array_number]
+
+        for count_column, _ in enumerate(desired_row):
+            if count_column >= MAX_NUMBER_OF_MOTORS:
+                difference = int(current_state_list[count_row][count_column]) - int(
+                    desired_state_list[count_row][count_column]
+                )
+                if difference < 0:
+                    command_string += "Down,"
+                elif difference > 0:
+                    command_string += "Up,"
+                else:
+                    command_string += "None,"
+                command_string += str(abs(difference)) + ","
         command_string = command_string[:-1]
         command_string += ">;"
     # remove final semicolon
     command_string = command_string[:-1]
     # call execute commands
     execute_commands(command_string)
-    # update current_state.csv with the values of desired_state.csv
-    shutil.copy2("desired_state.csv", "current_state.csv")
+    # TODO update current_state.csv with the values of desired_state.csv
+    # shutil.copy2("desired_state.csv", "current_state.csv")
 
 
 def reset_commands():
