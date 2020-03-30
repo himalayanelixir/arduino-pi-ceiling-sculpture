@@ -98,56 +98,60 @@ def run_execute(parce_string, port):
         waiting_for_reply = False
 
 
+def check_csv_files():
+    # lint desired_state csv values and make sure that they are in range
+    desired_state_list = []
+    desired_state_list_linted = [["0" for x in range(MAX_NUMBER_OF_ARRAYS)] for y in range(MAX_NUMBER_OF_MOTORS)] 
+    with open("desired_state.csv", "r") as desired_state_file:
+        desired_state_reader = csv.reader(desired_state_file, delimiter=",")
+        desired_state_list = list(desired_state_reader)
+        for count_row in range(0,MAX_NUMBER_OF_ARRAYS):
+            for count_column in range(0,MAX_NUMBER_OF_MOTORS):
+                try:
+                    if int(desired_state_list[count_row][count_column]) <= MAX_TURNS and int(desired_state_list[count_row][count_column]) >= 0 and desired_state_list[count_row][count_column] != "":
+                        desired_state_list_linted[count_row][count_column] = desired_state_list[count_row][count_column]
+                except (IndexError, ValueError):
+                    desired_state_list_linted[count_row][count_column] = "0"
+    with open("desired_state.csv", "w", newline="") as desired_state_file:
+       desired_state_writer = csv.writer(desired_state_file, quoting=csv.QUOTE_ALL)
+       desired_state_writer.writerows(desired_state_list_linted)
+
 def csv_commands():
     """Reads data from desiered_state.csv, lints it, and then executes the
     commands"""
-    # lint desired_state csv values and make sure that they are in range
-    desired_state_list = []
-    with open("desired_state.csv", "r") as desired_state_file:
-        desired_state_reader = csv.reader(desired_state_file, delimiter=",")
-        desired_state_list = list(desired_state_reader)
-    for count_row, row in enumerate(desired_state_list):
-        for count_column, column in enumerate(row):
-            if int(column) > MAX_TURNS:
-                desired_state_list[count_row][count_column] = str(MAX_TURNS)
-            elif int(column) < 0:
-                desired_state_list[count_row][count_column] = "0"
-    with open("desired_state.csv", "w", newline="") as desired_state_file:
-        desired_state_writer = csv.writer(desired_state_file, quoting=csv.QUOTE_ALL)
-        desired_state_writer.writerows(desired_state_list)
-
-    # fill command string
-    command_string = ""
-    desired_state_list = []
-    current_state_list = []
-    with open("desired_state.csv", "r") as desired_state_file:
-        desired_state_reader = csv.reader(desired_state_file, delimiter=",")
-        desired_state_list = list(desired_state_reader)
-    with open("current_state.csv", "r", newline="") as current_state_file:
-        current_state_reader = csv.reader(current_state_file, delimiter=",")
-        current_state_list = list(current_state_reader)
-    # assumption here is that both csvs are the size
-    for count_row, row in enumerate(desired_state_list):
-        command_string += "<"
-        for count_column, column in enumerate(row):
-            difference = int(current_state_list[count_row][count_column]) - int(
-                desired_state_list[count_row][count_column]
-            )
-            if difference < 0:
-                command_string += "Down,"
-            elif difference > 0:
-                command_string += "Up,"
-            else:
-                command_string += "None,"
-            command_string += str(abs(difference)) + ","
-        command_string = command_string[:-1]
-        command_string += ">;"
-    # remove final semicolon
-    command_string = command_string[:-1]
-    # call execute commands
-    execute_commands(command_string)
-    # update current_state.csv with the values of desired_state.csv
-    shutil.copy2("desired_state.csv", "current_state.csv")
+    check_csv_files()
+    # # fill command string
+    # command_string = ""
+    # desired_state_list = []
+    # current_state_list = []
+    # with open("desired_state.csv", "r") as desired_state_file:
+    #     desired_state_reader = csv.reader(desired_state_file, delimiter=",")
+    #     desired_state_list = list(desired_state_reader)
+    # with open("current_state.csv", "r", newline="") as current_state_file:
+    #     current_state_reader = csv.reader(current_state_file, delimiter=",")
+    #     current_state_list = list(current_state_reader)
+    # # assumption here is that both csvs are the size
+    # for count_row, row in enumerate(desired_state_list):
+    #     command_string += "<"
+    #     for count_column, column in enumerate(row):
+    #         difference = int(current_state_list[count_row][count_column]) - int(
+    #             desired_state_list[count_row][count_column]
+    #         )
+    #         if difference < 0:
+    #             command_string += "Down,"
+    #         elif difference > 0:
+    #             command_string += "Up,"
+    #         else:
+    #             command_string += "None,"
+    #         command_string += str(abs(difference)) + ","
+    #     command_string = command_string[:-1]
+    #     command_string += ">;"
+    # # remove final semicolon
+    # command_string = command_string[:-1]
+    # # call execute commands
+    # execute_commands(command_string)
+    # # update current_state.csv with the values of desired_state.csv
+    # shutil.copy2("desired_state.csv", "current_state.csv")
 
 
 def reset_commands():
@@ -347,6 +351,8 @@ NUMBER_OF_ARRAYS = 10
 # address of USB port, array number, number of motors
 SERIAL_PORT = []
 MAX_TURNS = 10
+MAX_NUMBER_OF_ARRAYS = 3
+MAX_NUMBER_OF_MOTORS = 3
 BAUD_RATE = 9600
 START_MARKER = 60
 END_MARKER = 62
