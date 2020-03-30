@@ -27,7 +27,7 @@ void ProcessData()
         {
             go = false;
             did_timeout = true;
-            for (int i = 0; i < NUMBER_MOTORS; i++)
+            for (int i = 0; i < NUMBER_OF_MOTORS; i++)
             {
             my_servo[i].write(90);
             }
@@ -39,7 +39,7 @@ void ProcessData()
 int CountMoving()
 {
     moving_motors = 0;
-    for (int i = 0; i < NUMBER_MOTORS; i++) {
+    for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
         moving_motors += motor_commands[i][2];
     }
 }

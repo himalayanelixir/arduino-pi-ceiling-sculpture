@@ -12,9 +12,9 @@ void ProcessData()
 {
     while (go == true) {
         // initialize motors and get them moving
-        for (int i = 0; i < NUMBER_MOTORS; i++) {
+        for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
             CountMoving();
-            if (moving_motors < NUMBER_MOTORS_MOVING && motor_commands[i][2] != 1) {
+            if (moving_motors < NUMBER_OF_MOTORS_MOVING && motor_commands[i][2] != 1) {
                 if (motor_commands[i][1] != 0) {
                     StartMotors(i);
                     motor_commands[i][2] = 1;
@@ -23,7 +23,7 @@ void ProcessData()
         }
 
         // subtract from motor rotations when a rotation is detected
-        for (int i = 0; i < NUMBER_MOTORS; i++) {
+        for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
             if (motor_commands[i][2] == 1) {
                 CheckCounter(i);
                 // subtract from IGNORE_INPUT_TIME
@@ -52,7 +52,7 @@ void ProcessData()
         // see how many turns are left in the array
         // we want to zero it every time we recalculate the number of turns
         total_turns = 0;
-        for (int i = 0; i < NUMBER_MOTORS; i++) {
+        for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
             total_turns += motor_commands[i][1];
         }
 
@@ -67,7 +67,7 @@ void ProcessData()
         if (timeout_counter >= TIMEOUT) {
             go = false;
             did_timeout = true;
-            for (int i = 0; i < NUMBER_MOTORS; i++) {
+            for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
                 my_servo[i].write(90);
             }
         }
@@ -78,7 +78,7 @@ void ProcessData()
 int CountMoving()
 {
     moving_motors = 0;
-    for (int i = 0; i < NUMBER_MOTORS; i++) {
+    for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
         moving_motors += motor_commands[i][2];
     }
 }

@@ -48,7 +48,7 @@ void Finished()
         Serial.print("\033[31m");
         Serial.print("RECIEVED: TIMEOUT");
         Serial.print(" - MOTOR(S): ");
-        for (int i = 0; i < NUMBER_MOTORS; i++) {
+        for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
             if (motor_commands[i][1] != 0) {
                 Serial.print(i);
                 Serial.print(" ");
@@ -63,7 +63,7 @@ void Finished()
         Serial.print("\033[0m");
         Serial.print(">");
     }
-    for (int i = 0; i < NUMBER_MOTORS; i++) {
+    for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
         my_servo[i].write(90);
         motor_commands[i][0] = 0;
         motor_commands[i][1] = 0;
@@ -84,7 +84,7 @@ void PopulateArray()
 
     // now lets populate the motor command array with values from the received
     // string
-    for (int i = 0; i < NUMBER_MOTORS; i++) {
+    for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
         // we break everything in to pairs of values
         int search1 = (i * 2);
         int search2 = ((i * 2) + 1);
