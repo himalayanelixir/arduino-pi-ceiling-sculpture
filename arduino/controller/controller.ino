@@ -5,10 +5,12 @@
 #define DEBOUNCE_TIME .4
 #define SAMPLE_FREQUENCY 20
 #define MAXIMUM (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
-#define NUMBER_MOTORS 1
-#define NUMBER_MOTORS_MOVING 1
+#define ARRAY_NUMBER 2
+#define NUMBER_OF_MOTORS 1
+#define NUMBER_OF_MOTORS_MOVING 1
 #define TIMEOUT 50000
 #define IGNORE_INPUT_TIME 150
+
 
 // function declarations
 void RecvWithStartEndMarkers();
@@ -27,24 +29,24 @@ const byte num_chars = 100;
 char received_chars[num_chars];
 bool new_data = false;
 // create servo objects
-Servo my_servo[NUMBER_MOTORS];
+Servo my_servo[NUMBER_OF_MOTORS];
 // create a array of ports with the order: motor, counter, reset
-int ports[NUMBER_MOTORS][3] = { { 8, 9, 10 } };
+int ports[NUMBER_OF_MOTORS][3] = { { 8, 9, 10 } };
 // integer array that contains the direction and number of rotations a motor, and a flag that determines if it's moving, and another number that determines if we are ignoreing
 // inputs from the switches or not
-int motor_commands[NUMBER_MOTORS][4] = { 0 };
+int motor_commands[NUMBER_OF_MOTORS][4] = { 0 };
 // array of new switch values
-byte motor_sensor_counter1[NUMBER_MOTORS] = { 0 };
+byte motor_sensor_counter1[NUMBER_OF_MOTORS] = { 0 };
 // array of old switch values
-byte motor_sensor_counter2[NUMBER_MOTORS] = { 0 };
+byte motor_sensor_counter2[NUMBER_OF_MOTORS] = { 0 };
 // Previous return value (CheckSwitch function)
-int previous_value[NUMBER_MOTORS] = { 1 };
+int previous_value[NUMBER_OF_MOTORS] = { 1 };
 // 0 or 1 depending on the input signal
-byte input[NUMBER_MOTORS] = { 0 };
+byte input[NUMBER_OF_MOTORS] = { 0 };
 // will range from 0 to the specified MAXIMUM
-int integrator[NUMBER_MOTORS] = { 0 };
+int integrator[NUMBER_OF_MOTORS] = { 0 };
 // cleaned-up version of the input signal
-byte output[NUMBER_MOTORS] = { 0 };
+byte output[NUMBER_OF_MOTORS] = { 0 };
 // other variables needed for the ProcessData() function
 bool go = true;
 int total_turns = 0;
@@ -59,7 +61,7 @@ void setup()
     // initialize all motor ports
     Serial.println("Begining Initialization");
     Serial.print("Motor Ports: ");
-    for (int i = 0; i < NUMBER_MOTORS; i++) {
+    for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
         int x = ports[i][0];
         Serial.print(x);
         Serial.print(" ");
@@ -68,7 +70,7 @@ void setup()
     // initialize all counter ports
     Serial.println("");
     Serial.print("Counter Ports: ");
-    for (int i = 0; i < NUMBER_MOTORS; i++) {
+    for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
         int x = ports[i][1];
         Serial.print(x);
         Serial.print(" ");
@@ -77,14 +79,14 @@ void setup()
     // initialize all reset ports
     Serial.println("");
     Serial.print("Reset Ports: ");
-    for (int i = 0; i < NUMBER_MOTORS; i++) {
+    for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
         int x = ports[i][2];
         Serial.print(x);
         Serial.print(" ");
         pinMode(x, INPUT_PULLUP);
     }
     // zero all motors and initialize reset variables
-    for (int i = 0; i < NUMBER_MOTORS; i++) {
+    for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
         my_servo[i].write(90);
         motor_sensor_counter1[i] = 1;
         motor_sensor_counter2[i] = 1;
@@ -94,6 +96,10 @@ void setup()
     }
     Serial.print("<");
     Serial.print("Arduino is ready");
+    Serial.print("Array Number: ");
+    Serial.print(ARRAY_NUMBER);
+    Serial.print(" Number of Motors: ");
+    Serial.print(NUMBER_OF_MOTORS);
     Serial.print(">");
 }
 
