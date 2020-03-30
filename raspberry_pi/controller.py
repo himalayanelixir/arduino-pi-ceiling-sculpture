@@ -101,6 +101,7 @@ def run_execute(parce_string, port):
 
 def check_csv_files():
     # lint desired_state csv values and make sure that they are in range
+    # also make sure that csv is the right size and the values are valid
     desired_state_list = []
     desired_state_list_linted = [["0" for x in range(MAX_NUMBER_OF_ARRAYS)] for y in range(MAX_NUMBER_OF_MOTORS)] 
     with open("desired_state.csv", "r") as desired_state_file:
@@ -119,6 +120,8 @@ def check_csv_files():
        desired_state_writer = csv.writer(desired_state_file, quoting=csv.QUOTE_ALL)
        desired_state_writer.writerows(desired_state_list_linted)
 
+    # lint current_state csv values and make sure that they are in range
+    # also make sure that csv is the right size and the values are valid
     current_state_list = []
     current_state_list_linted = [["0" for x in range(MAX_NUMBER_OF_ARRAYS)] for y in range(MAX_NUMBER_OF_MOTORS)] 
     with open("current_state.csv", "r") as current_state_file:
@@ -137,42 +140,69 @@ def check_csv_files():
        current_state_writer = csv.writer(current_state_file, quoting=csv.QUOTE_ALL)
        current_state_writer.writerows(current_state_list_linted)
 
+# TODO currently not used or tested need to add during refactor
+def check_serial_port_values():
+    global SERIAL_PORT
+    list_array_numbers = []
+    list_motor_numbers = []
+    for count_row, _ in enumerate(SERIAL_PORT):
+        list_array_numbers.append(SERIAL_PORT[count_row][1])
+        list_motor_numbers.append(SERIAL_PORT[count_row][2])
+    # check if there are any dupplicates
+    if len(list_array_numbers) == len(set(list_array_numbers)):
+        return False
+    else:
+        return True
+    # check and see if any of the arrays are out of the correct range
+    for value in list_array_numbers:
+        if int(value) > MAX_NUMBER_OF_ARRAYS or int(value) < 0:
+            return True
+        else:
+            return False
+    # check and see if any of the motor numbers are out of the correct range
+    for value in list_motor_numbers:
+        if int(value) > MAX_NUMBER_OF_MOTORS or int(value) < 1:
+            return True
+        else:
+            return False
+
 def csv_commands():
     """Reads data from desiered_state.csv, lints it, and then executes the
     commands"""
     check_csv_files()
-    # # fill command string
-    # command_string = ""
-    # desired_state_list = []
-    # current_state_list = []
-    # with open("desired_state.csv", "r") as desired_state_file:
-    #     desired_state_reader = csv.reader(desired_state_file, delimiter=",")
-    #     desired_state_list = list(desired_state_reader)
-    # with open("current_state.csv", "r", newline="") as current_state_file:
-    #     current_state_reader = csv.reader(current_state_file, delimiter=",")
-    #     current_state_list = list(current_state_reader)
-    # # assumption here is that both csvs are the size
-    # for count_row, row in enumerate(desired_state_list):
-    #     command_string += "<"
-    #     for count_column, column in enumerate(row):
-    #         difference = int(current_state_list[count_row][count_column]) - int(
-    #             desired_state_list[count_row][count_column]
-    #         )
-    #         if difference < 0:
-    #             command_string += "Down,"
-    #         elif difference > 0:
-    #             command_string += "Up,"
-    #         else:
-    #             command_string += "None,"
-    #         command_string += str(abs(difference)) + ","
-    #     command_string = command_string[:-1]
-    #     command_string += ">;"
-    # # remove final semicolon
-    # command_string = command_string[:-1]
-    # # call execute commands
-    # execute_commands(command_string)
-    # # update current_state.csv with the values of desired_state.csv
-    # shutil.copy2("desired_state.csv", "current_state.csv")
+    
+    # fill command string
+    command_string = ""
+    desired_state_list = []
+    current_state_list = []
+    with open("desired_state.csv", "r") as desired_state_file:
+        desired_state_reader = csv.reader(desired_state_file, delimiter=",")
+        desired_state_list = list(desired_state_reader)
+    with open("current_state.csv", "r", newline="") as current_state_file:
+        current_state_reader = csv.reader(current_state_file, delimiter=",")
+        current_state_list = list(current_state_reader)
+    # assumption here is that both csvs are the size
+    for count_row, row in enumerate(desired_state_list):
+        command_string += "<"
+        for count_column, column in enumerate(row):
+            difference = int(current_state_list[count_row][count_column]) - int(
+                desired_state_list[count_row][count_column]
+            )
+            if difference < 0:
+                command_string += "Down,"
+            elif difference > 0:
+                command_string += "Up,"
+            else:
+                command_string += "None,"
+            command_string += str(abs(difference)) + ","
+        command_string = command_string[:-1]
+        command_string += ">;"
+    # remove final semicolon
+    command_string = command_string[:-1]
+    # call execute commands
+    execute_commands(command_string)
+    # update current_state.csv with the values of desired_state.csv
+    shutil.copy2("desired_state.csv", "current_state.csv")
 
 
 def reset_commands():
