@@ -1,6 +1,7 @@
 #!/home/pi/controller_env/bin/python3
 """This script runs on the Raspberry Pi and sends commands to Arduinos.
-Once a command is sent it then waits a reply"""
+Once a command is sent it then waits a reply
+"""
 
 import csv
 import shutil
@@ -108,13 +109,33 @@ def check_csv_files():
         for count_row in range(0,MAX_NUMBER_OF_ARRAYS):
             for count_column in range(0,MAX_NUMBER_OF_MOTORS):
                 try:
-                    if int(desired_state_list[count_row][count_column]) <= MAX_TURNS and int(desired_state_list[count_row][count_column]) >= 0 and desired_state_list[count_row][count_column] != "":
+                    if int(desired_state_list[count_row][count_column]) <= MAX_TURNS and int(desired_state_list[count_row][count_column]) >= 0 and desired_state_list[count_row][count_column] != "" and isinstance(int(desired_state_list[count_row][count_column]),int):
                         desired_state_list_linted[count_row][count_column] = desired_state_list[count_row][count_column]
+                    else:
+                        desired_state_list_linted[count_row][count_column] = "0"
                 except (IndexError, ValueError):
                     desired_state_list_linted[count_row][count_column] = "0"
     with open("desired_state.csv", "w", newline="") as desired_state_file:
        desired_state_writer = csv.writer(desired_state_file, quoting=csv.QUOTE_ALL)
        desired_state_writer.writerows(desired_state_list_linted)
+
+    current_state_list = []
+    current_state_list_linted = [["0" for x in range(MAX_NUMBER_OF_ARRAYS)] for y in range(MAX_NUMBER_OF_MOTORS)] 
+    with open("current_state.csv", "r") as current_state_file:
+        current_state_reader = csv.reader(current_state_file, delimiter=",")
+        current_state_list = list(current_state_reader)
+        for count_row in range(0,MAX_NUMBER_OF_ARRAYS):
+            for count_column in range(0,MAX_NUMBER_OF_MOTORS):
+                try:
+                    if int(current_state_list[count_row][count_column]) <= MAX_TURNS and int(current_state_list[count_row][count_column]) >= 0 and current_state_list[count_row][count_column] != "" and isinstance(int(current_state_list[count_row][count_column]),int):
+                        current_state_list_linted[count_row][count_column] = current_state_list[count_row][count_column]
+                    else:
+                        current_state_list_linted[count_row][count_column] = "0"
+                except (IndexError, ValueError):
+                    current_state_list_linted[count_row][count_column] = "0"
+    with open("current_state.csv", "w", newline="") as current_state_file:
+       current_state_writer = csv.writer(current_state_file, quoting=csv.QUOTE_ALL)
+       current_state_writer.writerows(current_state_list_linted)
 
 def csv_commands():
     """Reads data from desiered_state.csv, lints it, and then executes the
