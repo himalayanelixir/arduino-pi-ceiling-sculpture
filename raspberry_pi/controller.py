@@ -167,10 +167,14 @@ def find_arduinos():
     """Run ls command and find all USB devices connected to USB hub
      assume that all of them are arduinos"""
     error = False
+    # run ls in subprocess shell and save results
     serial_shell_capture = subprocess.run(
         ["ls /dev/ttyU*"], shell=True, capture_output=True, check=True
     )
+    # take results and convert byte string into utf-8 and create list based on newlines
     serial_shell_capture_list = serial_shell_capture.stdout.decode("utf-8").splitlines()
+    # if there is at least one array found then print out number found
+    # other wise print zero and error
     if len(serial_shell_capture_list) != 0:
         print(f"\nFound \033[32m{len(serial_shell_capture_list)}\033[0m Array(s)")
     else:
@@ -184,7 +188,8 @@ def open_ports(serial_ports):
     print("\nOpening Port(s)")
     error = False
     SPINNER.start()
-    # for count in range(len(serial_ports)):
+    # go through serial_ports list and try to connect to usb devices
+    # otherwise error
     for count, _ in enumerate(serial_ports):
         try:
             serial_ports[count] = [
@@ -237,6 +242,9 @@ def lint_csv_files():
     """Lint desired_state csv values and make sure that they are in range also make
     sure that csv is the right size and the values are valid"""
     desired_state_list = []
+    # we initialize this list to a particular size becuase we then iterate over it and
+    # copy values from desired_state_list. When copying we also make sure that the
+    # values are allowed (filters out non ints and values that are too high or low)
     desired_state_list_linted = [
         ["0" for x in range(MAX_NUMBER_OF_ARRAYS)] for y in range(MAX_NUMBER_OF_MOTORS)
     ]
@@ -262,12 +270,14 @@ def lint_csv_files():
                         desired_state_list_linted[count_row][count_column] = "0"
                 except (IndexError, ValueError):
                     desired_state_list_linted[count_row][count_column] = "0"
+    # write values to file overwriting previous file
     with open("desired_state.csv", "w", newline="") as desired_state_file:
         desired_state_writer = csv.writer(desired_state_file, quoting=csv.QUOTE_ALL)
         desired_state_writer.writerows(desired_state_list_linted)
 
     # lint current_state csv values and make sure that they are in range
     # also make sure that csv is the right size and the values are valid
+    # uses the same method as desired_state.csv
     current_state_list = []
     current_state_list_linted = [
         ["0" for x in range(MAX_NUMBER_OF_ARRAYS)] for y in range(MAX_NUMBER_OF_MOTORS)
@@ -294,6 +304,7 @@ def lint_csv_files():
                         current_state_list_linted[count_row][count_column] = "0"
                 except (IndexError, ValueError):
                     current_state_list_linted[count_row][count_column] = "0"
+    # write values to file overwriting previous file
     with open("current_state.csv", "w", newline="") as current_state_file:
         current_state_writer = csv.writer(current_state_file, quoting=csv.QUOTE_ALL)
         current_state_writer.writerows(current_state_list_linted)
@@ -326,9 +337,11 @@ def lint_serial_port_values(serial_ports):
 def connect_to_arrays(serial_ports):
     """Connect to arrays and retrieve connection message"""
     print("\nConnecing to Arrays")
-    connecting_threads = [None] * len(serial_ports)
-    results = [None] * len(serial_ports)
     error = False
+    # used for thread objects
+    connecting_threads = [None] * len(serial_ports)
+    # used to store returned values from threads
+    results = [None] * len(serial_ports)
     SPINNER.start()
     # create threads
     for count, _ in enumerate(serial_ports):
@@ -344,11 +357,12 @@ def connect_to_arrays(serial_ports):
     for count, _ in enumerate(serial_ports):
         connecting_threads[count].join()
     SPINNER.stop()
-
+    # get returned values from threads and assign to serialport
     for count_row, row in enumerate(results):
         if row[0]:
             error = True
         serial_ports[count_row] = row[1]
+    print(serial_ports)
     return error, serial_ports
 
 
@@ -356,6 +370,9 @@ def wait_for_arduino(port, serial_ports, results):
     """Wait until the Arduino sends "Arduino Ready" - allows time for Arduino
     reset it also ensures that any bytes left over from a previous message are
     discarded """
+    # we had to create seperate functions wait_for_arduino and
+    # wait_for_arduino_execute because I wanted to add a timer to the execution
+    # this way we can timeout connections
     error = False
     try:
         array_info = wait_for_arduino_execute(port, serial_ports)
@@ -364,7 +381,7 @@ def wait_for_arduino(port, serial_ports, results):
     except timeout_decorator.TimeoutError:
         SPINNER.write("Serial Port " + str(port) + " \033[31m" + "FAILED" + "\033[0m")
         error = True
-
+    # works as a return functon for the thread
     results[port] = [error, serial_ports[port]]
 
 
@@ -461,7 +478,6 @@ def main():
         if not did_error_occur:
             # open ports at address /dev/ttyU* that we found earlier
             did_error_occur, serial_ports = open_ports(serial_ports)
-            print(serial_ports)
         if not did_error_occur:
             # check if the csvs for desired and current state exist
             did_error_occur = check_if_csvs_exist()
@@ -473,8 +489,10 @@ def main():
         if not did_error_occur:
             # lint the data we recieved from the arrays
             lint_serial_port_values(serial_ports)
+        # if error didn't occour exit this loop and move on to the next one
         if not did_error_occur:
             break
+        # if we got to connecting to ports then close ports otherwise loop
         if len(serial_ports) != 0:
             close_connections(serial_ports)
 
