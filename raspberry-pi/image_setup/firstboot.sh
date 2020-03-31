@@ -50,8 +50,8 @@ rm script.exp
 # create virtual environment for controller 
 python3 -m venv /home/pi/controller_env
 # download the controller program from github with it's requirements.txt
-wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-ceiling-sculpture/master/raspberry_pi/controller.py
-wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-ceiling-sculpture/master/raspberry_pi/requirements.txt
+wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-ceiling-sculpture/master/raspberry-pi/controller.py
+wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-ceiling-sculpture/master/raspberry-pi/requirements.txt
 # install pip dependencies from requirements.txt in the virtual environment
 source /home/pi/controller_env/bin/activate
 pip3 install -r /home/pi/requirements.txt
@@ -63,12 +63,12 @@ echo "export PATH=\"/home/pi:$PATH\"" >>/home/pi/.zshrc
 # set so that the controller starts up when a user logs in a virtual environment
 echo "controller.py" >>/home/pi/.zshrc
 # download state csvs
-wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-ceiling-sculpture/master/raspberry_pi/current_state.csv
-wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-ceiling-sculpture/master/raspberry_pi/desired_state.csv
+wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-ceiling-sculpture/master/raspberry-pi/current-state.csv
+wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-ceiling-sculpture/master/raspberry-pi/desired-state.csv
 # make pi user owner of all the files we downloaded
 chown pi /home/pi/controller.py
-chown pi /home/pi/current_state.csv
-chown pi /home/pi/desired_state.csv
+chown pi /home/pi/current-state.csv
+chown pi /home/pi/desired-state.csv
 # remove requirements.txt
 rm /home/pi/requirements.txt
 
@@ -76,7 +76,7 @@ rm /home/pi/requirements.txt
 # create virtual environment for gui
 python3 -m venv /root/gui_env
 # download gui program from github
-wget -P /root https://raw.githubusercontent.com/himalayanelixir/arduino-ceiling-sculpture/master/raspberry_pi/gui.py
+wget -P /root https://raw.githubusercontent.com/himalayanelixir/arduino-ceiling-sculpture/master/raspberry-pi/gui.py
 # make gui program executable
 sudo chmod +x /root/gui.py
 # add controller program to PATH

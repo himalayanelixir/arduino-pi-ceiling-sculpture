@@ -503,8 +503,8 @@ SPINNER = yaspin(Spinners.weather)
 MAX_TURNS = 10
 MAX_NUMBER_OF_ARRAYS = 3
 MAX_NUMBER_OF_MOTORS = 3
-DESIRED_STATE_FILENAME = "desired_state.csv"
-CURRENT_STATE_FILENAME = "current_state.csv"
+DESIRED_STATE_FILENAME = "desired-state.csv"
+CURRENT_STATE_FILENAME = "current-state.csv"
 
 if __name__ == "__main__":
     main()
