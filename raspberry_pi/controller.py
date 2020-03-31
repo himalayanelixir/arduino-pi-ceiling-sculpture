@@ -81,7 +81,9 @@ def lint_csv_files(csv_filename):
                         csv_filename_list_linted[count_row][count_column] = "0"
     except EnvironmentError:
         error = True
-        SPINNER.write(csv_filename + " \033[31m" + "LINTING FAILED: READ CSV" + "\033[0m")
+        SPINNER.write(
+            csv_filename + " \033[31m" + "LINTING FAILED: READ CSV" + "\033[0m"
+        )
     # write values to file overwriting previous file
     try:
         with open(csv_filename, "w", newline="") as csv_filename_file:
@@ -90,7 +92,9 @@ def lint_csv_files(csv_filename):
             SPINNER.write(csv_filename + " \033[32m" + "LINTED" + "\033[0m")
     except EnvironmentError:
         error = True
-        SPINNER.write(csv_filename + " \033[31m" + "LINTING FAILED: WRITE CSV" + "\033[0m")
+        SPINNER.write(
+            csv_filename + " \033[31m" + "LINTING FAILED: WRITE CSV" + "\033[0m"
+        )
 
     return error
 
