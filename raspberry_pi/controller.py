@@ -55,10 +55,10 @@ import timeout_decorator
 #     command_string = ""
 #     desired_state_list = []
 #     current_state_list = []
-#     with open("desired_state.csv", "r") as desired_state_file:
+#     with open(desired_state_filename, "r") as desired_state_file:
 #         desired_state_reader = csv.reader(desired_state_file, delimiter=",")
 #         desired_state_list = list(desired_state_reader)
-#     with open("current_state.csv", "r", newline="") as current_state_file:
+#     with open(current_state_filename, "r", newline="") as current_state_file:
 #         current_state_reader = csv.reader(current_state_file, delimiter=",")
 #         current_state_list = list(current_state_reader)
 
@@ -85,14 +85,14 @@ import timeout_decorator
 #     command_string = command_string[:-1]
 #     # call execute commands
 #     execute_commands(command_string)
-#     # shutil.copy2("desired_state.csv", "current_state.csv")
+#     # shutil.copy2(desired_state_filename, current_state_filename)
 
 
 # def reset_commands():
 #     """Preforms a reset on the ceiling """
 #     current_state_list = []
 #     command_string = ""
-#     with open("current_state.csv", "r") as current_state_file:
+#     with open(current_state_filename, "r") as current_state_file:
 #         current_state_reader = csv.reader(current_state_file, delimiter=",")
 #         current_state_list = list(current_state_reader)
 #     for count_row, row in enumerate(current_state_list):
@@ -103,7 +103,7 @@ import timeout_decorator
 #         command_string = command_string[:-1]
 #         command_string += ">;"
 #     command_string = command_string[:-1]
-#     with open("current_state.csv", "w", newline="") as current_state_file:
+#     with open(current_state_filename, "w", newline="") as current_state_file:
 #         current_state_writer = csv.writer(current_state_file, quoting=csv.QUOTE_ALL)
 #         current_state_writer.writerows(current_state_list)
 #     # call execute commands
@@ -225,12 +225,12 @@ def check_if_csvs_exist():
     """Check if csvs for desired state and current state exist"""
     error = False
     print("\nChecking for CSV Files")
-    if path.exists("current_state.csv"):
+    if path.exists(current_state_filename):
         print("current_state CSV\033[32m FOUND\033[0m")
     else:
         print("current_state CSV\033[31m NOT FOUND\033[0m")
         error = True
-    if path.exists("desired_state.csv"):
+    if path.exists(desired_state_filename):
         print("desired_state CSV\033[32m FOUND\033[0m")
     else:
         print("desired_state CSV\033[31m NOT FOUND\033[0m")
@@ -250,7 +250,7 @@ def lint_csv_files():
         ["0" for x in range(MAX_NUMBER_OF_ARRAYS)] for y in range(MAX_NUMBER_OF_MOTORS)
     ]
     try:
-        with open("desired_state.csv", "r") as desired_state_file:
+        with open(desired_state_filename, "r") as desired_state_file:
             desired_state_reader = csv.reader(desired_state_file, delimiter=",")
             desired_state_list = list(desired_state_reader)
             for count_row in range(0, MAX_NUMBER_OF_ARRAYS):
@@ -282,7 +282,7 @@ def lint_csv_files():
         )
     # write values to file overwriting previous file
     try:
-        with open("desired_state.csv", "w", newline="") as desired_state_file:
+        with open(desired_state_filename, "w", newline="") as desired_state_file:
             desired_state_writer = csv.writer(desired_state_file, quoting=csv.QUOTE_ALL)
             desired_state_writer.writerows(desired_state_list_linted)
             SPINNER.write("current_state CSV \033[32m" + "LINTED" + "\033[0m")
@@ -301,7 +301,7 @@ def lint_csv_files():
         ["0" for x in range(MAX_NUMBER_OF_ARRAYS)] for y in range(MAX_NUMBER_OF_MOTORS)
     ]
     try:
-        with open("current_state.csv", "r") as current_state_file:
+        with open(current_state_filename, "r") as current_state_file:
             current_state_reader = csv.reader(current_state_file, delimiter=",")
             current_state_list = list(current_state_reader)
             for count_row in range(0, MAX_NUMBER_OF_ARRAYS):
@@ -333,7 +333,7 @@ def lint_csv_files():
         )
     # write values to file overwriting previous file
     try:
-        with open("current_state.csv", "w", newline="") as current_state_file:
+        with open(current_state_filename, "w", newline="") as current_state_file:
             current_state_writer = csv.writer(current_state_file, quoting=csv.QUOTE_ALL)
             current_state_writer.writerows(current_state_list_linted)
             SPINNER.write("current_state CSV \033[32m" + "LINTED" + "\033[0m")
@@ -556,6 +556,8 @@ SPINNER = yaspin(Spinners.weather)
 MAX_TURNS = 10
 MAX_NUMBER_OF_ARRAYS = 3
 MAX_NUMBER_OF_MOTORS = 3
+desired_state_filename = "desired_state.csv"
+current_state_filename = "current_state.csv"
 
 if __name__ == "__main__":
     main()
