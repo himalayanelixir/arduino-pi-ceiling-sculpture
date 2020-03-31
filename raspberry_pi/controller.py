@@ -14,155 +14,6 @@ from yaspin.spinners import Spinners
 import timeout_decorator
 
 
-# def run(parce_string, port):
-#     """Wait until the Arduino sends "Arduino Ready" - allows time for Arduino
-#     reset it also ensures that any bytes left over from a previous message are
-#     discarded"""
-#     try:
-#         run_execute(parce_string, port)
-#     except timeout_decorator.TimeoutError:
-#         SPINNER.write(
-#             "== == Array: "
-#             + str(port)
-#             + " \033[31m"
-#             + "EXECUTION FAILED TIMEOUT"
-#             + "\033[0m"
-#         )
-
-
-# @timeout_decorator.timeout(100, use_signals=False)
-# def run_execute(parce_string, port):
-#     """Sends commands Arduino and then waits for a reply. Created off run() so
-#     we can have both a timeout and a try catch block"""
-#     waiting_for_reply = False
-#     if not waiting_for_reply:
-#         serial_ports[port][1].write(parce_string.encode())
-#         SPINNER.write("-> -> Array: " + str(port) + " \033[32m" + "SENT" + "\033[0m")
-#         waiting_for_reply = True
-
-#     if waiting_for_reply:
-#         while serial_ports[port][1].inWaiting() == 0:
-#             pass
-#         data_recieved = recieve_from_arduino(port)
-#         SPINNER.write("<- <- Array: " + str(port) + " " + data_recieved)
-#         waiting_for_reply = False
-
-
-# def csv_commands():
-#     """Reads data from desiered_state.csv, lints it, and then executes the
-#     commands"""
-#     # fill command string
-#     command_string = ""
-#     desired_state_list = []
-#     current_state_list = []
-#     with open(DESIRED_STATE_FILENAME, "r") as desired_state_file:
-#         desired_state_reader = csv.reader(desired_state_file, delimiter=",")
-#         desired_state_list = list(desired_state_reader)
-#     with open(CURRENT_STATE_FILENAME, "r", newline="") as current_state_file:
-#         current_state_reader = csv.reader(current_state_file, delimiter=",")
-#         current_state_list = list(current_state_reader)
-
-#     for count_row, _ in enumerate(serial_ports):
-#         command_string += "<"
-#         array_number = serial_ports[count_row][1]
-#         desired_row = desired_state_list[array_number]
-
-#         for count_column, _ in enumerate(desired_row):
-#             if count_column >= MAX_NUMBER_OF_MOTORS:
-#                 difference = int(current_state_list[count_row][count_column]) - int(
-#                     desired_state_list[count_row][count_column]
-#                 )
-#                 if difference < 0:
-#                     command_string += "Down,"
-#                 elif difference > 0:
-#                     command_string += "Up,"
-#                 else:
-#                     command_string += "None,"
-#                 command_string += str(abs(difference)) + ","
-#         command_string = command_string[:-1]
-#         command_string += ">;"
-#     # remove final semicolon
-#     command_string = command_string[:-1]
-#     # call execute commands
-#     execute_commands(command_string)
-#     # shutil.copy2(DESIRED_STATE_FILENAME, CURRENT_STATE_FILENAME)
-
-
-# def reset_commands():
-#     """Preforms a reset on the ceiling """
-#     current_state_list = []
-#     command_string = ""
-#     with open(CURRENT_STATE_FILENAME, "r") as current_state_file:
-#         current_state_reader = csv.reader(current_state_file, delimiter=",")
-#         current_state_list = list(current_state_reader)
-#     for count_row, row in enumerate(current_state_list):
-#         command_string += "<"
-#         for count_column, _ in enumerate(row):
-#             current_state_list[count_row][count_column] = "0"
-#             command_string += "Up,100,"
-#         command_string = command_string[:-1]
-#         command_string += ">;"
-#     command_string = command_string[:-1]
-#     with open(CURRENT_STATE_FILENAME, "w", newline="") as current_state_file:
-#         current_state_writer = csv.writer(current_state_file, quoting=csv.QUOTE_ALL)
-#         current_state_writer.writerows(current_state_list)
-#     # call execute commands
-#     execute_commands(command_string)
-
-
-# def execute_commands(command_string_execute):
-#     """ Creates threads that send commands to the Arduinos and wait for replies.
-#     there is one thread for each Arduino"""
-#     parse_text = command_string_execute.split(";")
-#     threads = [None] * len(serial_ports)
-#     SPINNER.start()
-#     # create threads
-#     for count, _ in enumerate(parse_text):
-#         threads[count] = Thread(target=run, args=(parse_text[count], count))
-#     # start threads
-#     for count, _ in enumerate(parse_text):
-#         threads[count].start()
-#     # wait for threads to finish
-#     for count, _ in enumerate(parse_text):
-#         threads[count].join()
-#     SPINNER.stop()
-
-
-def close_connections(serial_ports):
-    """ Closes serial port(s)"""
-    print("\nClosing Port(s)")
-    SPINNER.start()
-    for count, _ in enumerate(serial_ports):
-        try:
-            serial_ports[count][1] = serial_ports[count][1].close
-            SPINNER.write(
-                "Serial port "
-                + str(count)
-                + " "
-                + serial_ports[count][0]
-                + " \033[32m"
-                + "CLOSED"
-                + "\033[0m"
-            )
-        except AttributeError:
-            SPINNER.write(
-                "Serial port "
-                + str(count)
-                + " "
-                + serial_ports[count][0]
-                + " \033[31m"
-                + "FAILED"
-                + "\033[0m"
-            )
-            SPINNER.stop()
-    SPINNER.stop()
-
-
-##############################################################################
-##############################################################################
-##############################################################################
-
-
 def find_arduinos():
     """Run ls command and find all USB devices connected to USB hub
      assume that all of them are arduinos"""
@@ -181,44 +32,6 @@ def find_arduinos():
         print(f"\nFound \033[31m{len(serial_shell_capture_list)}\033[0m Arrays")
         error = True
     return error, serial_shell_capture_list
-
-
-def open_ports(serial_ports):
-    """Open ports and create pyserial objects saving them to serial_ports"""
-    print("\nOpening Port(s)")
-    error = False
-    SPINNER.start()
-    # go through serial_ports list and try to connect to usb devices
-    # otherwise error
-    for count, _ in enumerate(serial_ports):
-        try:
-            serial_ports[count] = [
-                serial_ports[count],
-                serial.Serial(serial_ports[count], BAUD_RATE),
-            ]
-            SPINNER.write(
-                "Serial Port "
-                + str(count)
-                + " "
-                + serial_ports[count][0]
-                + " \033[32m"
-                + "READY"
-                + "\033[0m"
-            )
-        except serial.serialutil.SerialException:
-            SPINNER.write(
-                "Serial Port "
-                + str(count)
-                + " "
-                + serial_ports[count][0]
-                + " \033[31m"
-                + "FAILED"
-                + "\033[0m"
-            )
-            SPINNER.stop()
-            error = True
-    SPINNER.stop()
-    return error, serial_ports
 
 
 def check_if_csvs_exist(csv_file):
@@ -312,6 +125,139 @@ def lint_serial_port_values(serial_ports):
     return error
 
 
+def csv_commands(serial_ports):
+    """Reads data from desiered_state.csv, lints it, and then executes the
+    commands"""
+    # fill command string
+    command_string = ""
+    desired_state_list = []
+    current_state_list = []
+    # not putting try except blocks around with statements because they have
+    # already been read and written to before and are accessable
+    with open(DESIRED_STATE_FILENAME, "r") as desired_state_file:
+        desired_state_reader = csv.reader(desired_state_file, delimiter=",")
+        desired_state_list = list(desired_state_reader)
+    with open(CURRENT_STATE_FILENAME, "r", newline="") as current_state_file:
+        current_state_reader = csv.reader(current_state_file, delimiter=",")
+        current_state_list = list(current_state_reader)
+    for count_row, _ in enumerate(serial_ports):
+        # beginning of every command for an array
+        command_string += "<"
+        # get desired state row correspnding to the array number
+        desired_row = desired_state_list[serial_ports[count_row][2]]
+        # get current state row correspnding to the array number
+        current_row = current_state_list[serial_ports[count_row][2]]
+        for count_column, _ in enumerate(desired_row):
+            # < because motor number isn't counting from zero
+            if count_column < serial_ports[count_row][3]:
+                difference = int(current_row[count_column]) - int(
+                    desired_row[count_column]
+                )
+                if difference < 0:
+                    command_string += "Down,"
+                elif difference > 0:
+                    command_string += "Up,"
+                else:
+                    command_string += "None,"
+                # make sure that the number of turns is positive
+                command_string += str(abs(difference)) + ","
+        # remove extra comma
+        command_string = command_string[:-1]
+        command_string += ">;"
+    # remove final semicolon
+    command_string = command_string[:-1]
+    # call execute commands
+    print(command_string)
+    execute_commands(serial_ports, command_string)
+    # shutil.copy2(DESIRED_STATE_FILENAME, CURRENT_STATE_FILENAME)
+
+
+def reset_commands(serial_ports):
+    """Preforms a reset on the ceiling """
+    command_string = ""
+    # first we zero the current state file
+    current_state_list_zero = [
+        ["0" for x in range(MAX_NUMBER_OF_ARRAYS)] for y in range(MAX_NUMBER_OF_MOTORS)
+    ]
+    with open(CURRENT_STATE_FILENAME, "w", newline="") as current_state_file:
+        current_state_writer = csv.writer(current_state_file, quoting=csv.QUOTE_ALL)
+        current_state_writer.writerows(current_state_list_zero)
+
+    for count_row, _ in enumerate(serial_ports):
+        # beginning of every command for an array
+        command_string += "<"
+        for _ in range(serial_ports[count_row][3]):
+            command_string += "Up,100,"
+        # remove extra comma
+        command_string = command_string[:-1]
+        command_string += ">;"
+    # remove final semicolon
+    command_string = command_string[:-1]
+    # call execute commands
+    print(command_string)
+    execute_commands(serial_ports, command_string)
+
+
+def execute_commands(serial_ports, command_string_execute):
+    """ Creates threads that send commands to the Arduinos and wait for replies.
+    there is one thread for each Arduino"""
+    parse_text = command_string_execute.split(";")
+    threads = [None] * len(serial_ports)
+    SPINNER.start()
+    # create threads
+    for count, _ in enumerate(parse_text):
+        threads[count] = Thread(
+            target=run, args=(serial_ports, parse_text[count], count)
+        )
+        # start threads
+        threads[count].start()
+    # wait for threads to finish
+    for count, _ in enumerate(parse_text):
+        threads[count].join()
+    SPINNER.stop()
+
+
+##############################################################################
+##############################################################################
+##############################################################################
+def open_ports(serial_ports):
+    """Open ports and create pyserial objects saving them to serial_ports"""
+    print("\nOpening Port(s)")
+    error = False
+    SPINNER.start()
+    # go through serial_ports list and try to connect to usb devices
+    # otherwise error
+    for count, _ in enumerate(serial_ports):
+        try:
+            serial_ports[count] = [
+                serial_ports[count],
+                serial.Serial(serial_ports[count], BAUD_RATE),
+            ]
+            SPINNER.write(
+                "Serial Port "
+                + str(count)
+                + " "
+                + serial_ports[count][0]
+                + " \033[32m"
+                + "READY"
+                + "\033[0m"
+            )
+        except serial.serialutil.SerialException:
+            SPINNER.write(
+                "Serial Port "
+                + str(count)
+                + " "
+                + serial_ports[count][0]
+                + " \033[31m"
+                + "FAILED"
+                + "\033[0m"
+            )
+            SPINNER.stop()
+            error = True
+    SPINNER.stop()
+    return error, serial_ports
+
+
 def connect_to_arrays(serial_ports):
     """Connect to arrays and retrieve connection message"""
     print("\nConnecing to Arrays")
@@ -324,7 +270,7 @@ def connect_to_arrays(serial_ports):
     # create threads
     for count, _ in enumerate(serial_ports):
         connection_threads[count] = Thread(
-            target=wait_for_arduino, args=(count, serial_ports, results)
+            target=wait_for_arduino, args=(serial_ports, count, results)
         )
         # start threads
         connection_threads[count].start()
@@ -333,7 +279,7 @@ def connect_to_arrays(serial_ports):
     for count, _ in enumerate(serial_ports):
         connection_threads[count].join()
     SPINNER.stop()
-    # get returned values from threads and assign to serialport
+    # get returned values from threads and assign to serial_port
     for count_row, row in enumerate(results):
         if row[0]:
             error = True
@@ -341,7 +287,7 @@ def connect_to_arrays(serial_ports):
     return error, serial_ports
 
 
-def wait_for_arduino(port, serial_ports, results):
+def wait_for_arduino(serial_ports, port, results):
     """Wait until the Arduino sends "Arduino Ready" - allows time for Arduino
     reset it also ensures that any bytes left over from a previous message are
     discarded """
@@ -350,7 +296,7 @@ def wait_for_arduino(port, serial_ports, results):
     # this way we can timeout connections
     error = False
     try:
-        array_info = wait_for_arduino_execute(port, serial_ports)
+        array_info = wait_for_arduino_execute(serial_ports, port)
         serial_ports[port] = [
             serial_ports[port][0],
             serial_ports[port][1],
@@ -366,7 +312,7 @@ def wait_for_arduino(port, serial_ports, results):
 
 
 @timeout_decorator.timeout(10, use_signals=False)
-def wait_for_arduino_execute(port, serial_ports):
+def wait_for_arduino_execute(serial_ports, port):
     """ Waits for Arduino to send ready message. Created so we can have a
     timeout and a try catch block"""
 
@@ -374,13 +320,13 @@ def wait_for_arduino_execute(port, serial_ports):
     while msg.find("Arduino is ready") == -1:
         while serial_ports[port][1].inWaiting() == 0:
             pass
-        msg = recieve_from_arduino(port, serial_ports)
+        msg = recieve_from_arduino(serial_ports, port)
     # gets the array number and the number of motors in the array
     array_info = [int(i) for i in msg.split() if i.isdigit()]
     return array_info
 
 
-def recieve_from_arduino(port, serial_ports):
+def recieve_from_arduino(serial_ports, port):
     """ Gets message from Arduino"""
     recieve_string = ""
     # any value that is not an end- or START_MARKER
@@ -400,38 +346,73 @@ def recieve_from_arduino(port, serial_ports):
     return recieve_string
 
 
-##############################################################################
-##############################################################################
-##############################################################################
+def run(serial_ports, parce_string, port):
+    """Wait until the Arduino sends "Arduino Ready" - allows time for Arduino
+    reset it also ensures that any bytes left over from a previous message are
+    discarded"""
+    try:
+        run_execute(serial_ports, parce_string, port)
+    except timeout_decorator.TimeoutError:
+        SPINNER.write(
+            "== == Array: "
+            + str(port)
+            + " \033[31m"
+            + "EXECUTION FAILED TIMEOUT"
+            + "\033[0m"
+        )
 
 
-def old_main():
-    """ Main function of the program. Also provides tui in terminal to interact with
-    """
-    # while input_text_1 not in ("Exit", "exit"):
-    #     print("===========\n")
-    #     input_text_2 = input(
-    #         "Enter '1' to set ceiling from csv, '2' to reset, and 'Exit' to close program)\n : "
-    #     )
-    #     # csv mode
-    #     if input_text_2 == "1":
-    #         print("CSV Mode\n")
-    #         csv_commands()
-    #     # csv reset
-    #     elif input_text_2 == "2":
-    #         print("CSV Reset Mode\n")
-    #         reset_commands()
-    #     # manual mode
-    #     elif input_text_2 == "3":
-    #         print("Manual Mode\n")
-    #         execute_commands(input("Enter Commands (format '<Up,1>;<Up,1>'):\n : "))
-    #     # exit
-    #     elif input_text_2 in ("Exit", "exit"):
-    #         # close all serial connections
-    #         close_connections()
-    #         break
-    #     else:
-    #         print("Invalid Input\n")
+@timeout_decorator.timeout(100, use_signals=False)
+def run_execute(serial_ports, parce_string, port):
+    """Sends commands Arduino and then waits for a reply. Created off run() so
+    we can have both a timeout and a try catch block"""
+    waiting_for_reply = False
+    if not waiting_for_reply:
+        serial_ports[port][1].write(parce_string.encode())
+        SPINNER.write("-> -> Array: " + str(port) + " \033[32m" + "SENT" + "\033[0m")
+        waiting_for_reply = True
+
+    if waiting_for_reply:
+        while serial_ports[port][1].inWaiting() == 0:
+            pass
+        data_recieved = recieve_from_arduino(serial_ports, port)
+        SPINNER.write("<- <- Array: " + str(port) + " " + data_recieved)
+        waiting_for_reply = False
+
+
+def close_connections(serial_ports):
+    """ Closes serial port(s)"""
+    print("\nClosing Port(s)")
+    SPINNER.start()
+    for count, _ in enumerate(serial_ports):
+        try:
+            serial_ports[count][1] = serial_ports[count][1].close
+            SPINNER.write(
+                "Serial port "
+                + str(count)
+                + " "
+                + serial_ports[count][0]
+                + " \033[32m"
+                + "CLOSED"
+                + "\033[0m"
+            )
+        except AttributeError:
+            SPINNER.write(
+                "Serial port "
+                + str(count)
+                + " "
+                + serial_ports[count][0]
+                + " \033[31m"
+                + "FAILED"
+                + "\033[0m"
+            )
+            SPINNER.stop()
+    SPINNER.stop()
+
+
+##############################################################################
+##############################################################################
+##############################################################################
 
 
 def main():
@@ -479,6 +460,33 @@ def main():
         # if we got to connecting to ports then close ports otherwise loop
         if len(serial_ports) != 0:
             close_connections(serial_ports)
+    ###########
+    while input_text_1 not in ("Exit", "exit"):
+        print("===========\n")
+        input_text_2 = input(
+            "Enter '1' to set ceiling from csv, '2' to reset, and 'Exit' to close program)\n : "
+        )
+        # csv mode
+        if input_text_2 == "1":
+            print("CSV Mode\n")
+            csv_commands(serial_ports)
+        # csv reset
+        elif input_text_2 == "2":
+            print("CSV Reset Mode\n")
+            reset_commands(serial_ports)
+        # manual mode
+        elif input_text_2 == "3":
+            print("Manual Mode\n")
+            execute_commands(
+                serial_ports, input("Enter Commands (format '<Up,1>;<Up,1>'):\n : ")
+            )
+        # exit
+        elif input_text_2 in ("Exit", "exit"):
+            # close all serial connections
+            close_connections(serial_ports)
+            break
+        else:
+            print("Invalid Input\n")
 
 
 # global variables
