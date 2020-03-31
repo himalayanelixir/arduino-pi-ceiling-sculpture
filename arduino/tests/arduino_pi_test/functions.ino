@@ -12,26 +12,27 @@ void ProcessData()
 {
     while (go == true)
     {
-        // delay(5000);
-        // go = false;
+        
+        go = false;
         digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-        delay(50);                       // wait for a second
+        delay(5000);                     // wait for a second
         digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-        delay(50);
-
-
-        timeout_counter = timeout_counter + 1;
-
-        // time out loop if stall
-        if (timeout_counter >= TIMEOUT)
-        {
-            go = false;
-            did_timeout = true;
-            for (int i = 0; i < NUMBER_OF_MOTORS; i++)
-            {
-            my_servo[i].write(90);
-            }
-        }
+        
+        // digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+        // delay(50);                       // wait for a second
+        // digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
+        // delay(50);
+        // timeout_counter = timeout_counter + 1;
+        // // time out loop if stall
+        // if (timeout_counter >= TIMEOUT)
+        // {
+        //     go = false;
+        //     did_timeout = true;
+        //     for (int i = 0; i < NUMBER_OF_MOTORS; i++)
+        //     {
+        //     my_servo[i].write(90);
+        //     }
+        // }
     }
 }
 
