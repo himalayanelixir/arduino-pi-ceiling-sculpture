@@ -34,63 +34,63 @@ def find_arduinos():
     return error, serial_shell_capture_list
 
 
-def check_if_csvs_exist(csv_file):
+def check_if_csvs_exist(csv_filename):
     """Check if csvs for desired state and current state exist"""
     error = False
-    if path.exists(csv_file):
-        print(csv_file + "\033[32m FOUND\033[0m")
+    if path.exists(csv_filename):
+        print(csv_filename + "\033[32m FOUND\033[0m")
     else:
-        print(csv_file + "current_state CSV\033[31m NOT FOUND\033[0m")
+        print(csv_filename + "current_state CSV\033[31m NOT FOUND\033[0m")
         error = True
     return error
 
 
-def lint_csv_files(csv_file):
-    """Lint csv_file csv values and make sure that they are in range also make
+def lint_csv_files(csv_filename):
+    """Lint csv_filename csv values and make sure that they are in range also make
     sure that csv is the right size and the values are valid"""
     error = False
-    csv_file_list = []
+    csv_filename_list = []
     # we initialize this list to a particular size becuase we then iterate over it and
-    # copy values from csv_file_list. When copying we also make sure that the
+    # copy values from csv_filename_list. When copying we also make sure that the
     # values are allowed (filters out non ints and values that are too high or low)
-    csv_file_list_linted = [
+    csv_filename_list_linted = [
         ["0" for x in range(MAX_NUMBER_OF_ARRAYS)] for y in range(MAX_NUMBER_OF_MOTORS)
     ]
     try:
-        with open(csv_file, "r") as csv_file_file:
-            csv_file_reader = csv.reader(csv_file_file, delimiter=",")
-            csv_file_list = list(csv_file_reader)
+        with open(csv_filename, "r") as csv_filename_file:
+            csv_filename_reader = csv.reader(csv_filename_file, delimiter=",")
+            csv_filename_list = list(csv_filename_reader)
             for count_row in range(0, MAX_NUMBER_OF_ARRAYS):
                 for count_column in range(0, MAX_NUMBER_OF_MOTORS):
                     try:
                         # pylint: disable=C0330
                         if (
-                            int(csv_file_list[count_row][count_column]) <= MAX_TURNS
-                            and int(csv_file_list[count_row][count_column]) >= 0
-                            and csv_file_list[count_row][count_column] != ""
+                            int(csv_filename_list[count_row][count_column]) <= MAX_TURNS
+                            and int(csv_filename_list[count_row][count_column]) >= 0
+                            and csv_filename_list[count_row][count_column] != ""
                             and isinstance(
-                                int(csv_file_list[count_row][count_column]), int
+                                int(csv_filename_list[count_row][count_column]), int
                             )
                         ):
-                            csv_file_list_linted[count_row][
+                            csv_filename_list_linted[count_row][
                                 count_column
-                            ] = csv_file_list[count_row][count_column]
+                            ] = csv_filename_list[count_row][count_column]
                         else:
-                            csv_file_list_linted[count_row][count_column] = "0"
+                            csv_filename_list_linted[count_row][count_column] = "0"
                     except (IndexError, ValueError):
-                        csv_file_list_linted[count_row][count_column] = "0"
+                        csv_filename_list_linted[count_row][count_column] = "0"
     except EnvironmentError:
         error = True
-        SPINNER.write(csv_file + " \033[31m" + "LINTING FAILED: READ CSV" + "\033[0m")
+        SPINNER.write(csv_filename + " \033[31m" + "LINTING FAILED: READ CSV" + "\033[0m")
     # write values to file overwriting previous file
     try:
-        with open(csv_file, "w", newline="") as csv_file_file:
-            csv_file_writer = csv.writer(csv_file_file, quoting=csv.QUOTE_ALL)
-            csv_file_writer.writerows(csv_file_list_linted)
-            SPINNER.write(csv_file + " \033[32m" + "LINTED" + "\033[0m")
+        with open(csv_filename, "w", newline="") as csv_filename_file:
+            csv_filename_writer = csv.writer(csv_filename_file, quoting=csv.QUOTE_ALL)
+            csv_filename_writer.writerows(csv_filename_list_linted)
+            SPINNER.write(csv_filename + " \033[32m" + "LINTED" + "\033[0m")
     except EnvironmentError:
         error = True
-        SPINNER.write(csv_file + " \033[31m" + "LINTING FAILED: WRITE CSV" + "\033[0m")
+        SPINNER.write(csv_filename + " \033[31m" + "LINTING FAILED: WRITE CSV" + "\033[0m")
 
     return error
 
@@ -125,7 +125,7 @@ def lint_serial_port_values(serial_ports):
     return error
 
 
-def csv_commands(serial_ports):
+def commands_from_csv(serial_ports):
     """Reads data from desiered_state.csv, lints it, and then executes the
     commands"""
     # fill command string
@@ -172,7 +172,7 @@ def csv_commands(serial_ports):
     # shutil.copy2(DESIRED_STATE_FILENAME, CURRENT_STATE_FILENAME)
 
 
-def reset_commands(serial_ports):
+def commands_from_reset(serial_ports):
     """Preforms a reset on the ceiling """
     command_string = ""
     # first we zero the current state file
@@ -207,7 +207,7 @@ def execute_commands(serial_ports, command_string_execute):
     # create threads
     for count, _ in enumerate(parse_text):
         threads[count] = Thread(
-            target=run, args=(serial_ports, parse_text[count], count)
+            target=move_arrays, args=(serial_ports, parse_text[count], count)
         )
         # start threads
         threads[count].start()
@@ -270,7 +270,7 @@ def connect_to_arrays(serial_ports):
     # create threads
     for count, _ in enumerate(serial_ports):
         connection_threads[count] = Thread(
-            target=wait_for_arduino, args=(serial_ports, count, results)
+            target=wait_for_arduino_connection, args=(serial_ports, count, results)
         )
         # start threads
         connection_threads[count].start()
@@ -287,16 +287,16 @@ def connect_to_arrays(serial_ports):
     return error, serial_ports
 
 
-def wait_for_arduino(serial_ports, port, results):
+def wait_for_arduino_connection(serial_ports, port, results):
     """Wait until the Arduino sends "Arduino Ready" - allows time for Arduino
     reset it also ensures that any bytes left over from a previous message are
     discarded """
-    # we had to create seperate functions wait_for_arduino and
-    # wait_for_arduino_execute because I wanted to add a timer to the execution
+    # we had to create seperate functions wait_for_arduino_connection and
+    # wait_for_arduino_connection_execute because I wanted to add a timer to the execution
     # this way we can timeout connections
     error = False
     try:
-        array_info = wait_for_arduino_execute(serial_ports, port)
+        array_info = wait_for_arduino_connection_execute(serial_ports, port)
         serial_ports[port] = [
             serial_ports[port][0],
             serial_ports[port][1],
@@ -312,7 +312,7 @@ def wait_for_arduino(serial_ports, port, results):
 
 
 @timeout_decorator.timeout(10, use_signals=False)
-def wait_for_arduino_execute(serial_ports, port):
+def wait_for_arduino_connection_execute(serial_ports, port):
     """ Waits for Arduino to send ready message. Created so we can have a
     timeout and a try catch block"""
 
@@ -346,12 +346,12 @@ def recieve_from_arduino(serial_ports, port):
     return recieve_string
 
 
-def run(serial_ports, parce_string, port):
+def move_arrays(serial_ports, parce_string, port):
     """Wait until the Arduino sends "Arduino Ready" - allows time for Arduino
     reset it also ensures that any bytes left over from a previous message are
     discarded"""
     try:
-        run_execute(serial_ports, parce_string, port)
+        move_arrays_execute(serial_ports, parce_string, port)
     except timeout_decorator.TimeoutError:
         SPINNER.write(
             "== == Array: "
@@ -363,8 +363,8 @@ def run(serial_ports, parce_string, port):
 
 
 @timeout_decorator.timeout(100, use_signals=False)
-def run_execute(serial_ports, parce_string, port):
-    """Sends commands Arduino and then waits for a reply. Created off run() so
+def move_arrays_execute(serial_ports, parce_string, port):
+    """Sends commands Arduino and then waits for a reply. Created off move_arrays() so
     we can have both a timeout and a try catch block"""
     waiting_for_reply = False
     if not waiting_for_reply:
@@ -469,11 +469,11 @@ def main():
         # csv mode
         if input_text_2 == "1":
             print("CSV Mode\n")
-            csv_commands(serial_ports)
+            commands_from_csv(serial_ports)
         # csv reset
         elif input_text_2 == "2":
             print("CSV Reset Mode\n")
-            reset_commands(serial_ports)
+            commands_from_reset(serial_ports)
         # manual mode
         elif input_text_2 == "3":
             print("Manual Mode\n")
