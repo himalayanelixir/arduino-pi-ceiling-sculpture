@@ -226,14 +226,14 @@ def check_if_csvs_exist():
     error = False
     print("\nChecking for CSV Files")
     if path.exists("current_state.csv"):
-        print("current_state CSV: \033[32m FOUND\033[0m")
+        print("current_state CSV\033[32m FOUND\033[0m")
     else:
-        print("current_state CSV: \033[31m NOT FOUND\033[0m")
+        print("current_state CSV\033[31m NOT FOUND\033[0m")
         error = True
     if path.exists("desired_state.csv"):
-        print("desired_state CSV: \033[32m FOUND\033[0m")
+        print("desired_state CSV\033[32m FOUND\033[0m")
     else:
-        print("desired_state CSV: \033[31m NOT FOUND\033[0m")
+        print("desired_state CSV\033[31m NOT FOUND\033[0m")
         error = True
     return error
 
@@ -241,6 +241,7 @@ def check_if_csvs_exist():
 def lint_csv_files():
     """Lint desired_state csv values and make sure that they are in range also make
     sure that csv is the right size and the values are valid"""
+    error = False
     desired_state_list = []
     # we initialize this list to a particular size becuase we then iterate over it and
     # copy values from desired_state_list. When copying we also make sure that the
@@ -248,33 +249,50 @@ def lint_csv_files():
     desired_state_list_linted = [
         ["0" for x in range(MAX_NUMBER_OF_ARRAYS)] for y in range(MAX_NUMBER_OF_MOTORS)
     ]
-    with open("desired_state.csv", "r") as desired_state_file:
-        desired_state_reader = csv.reader(desired_state_file, delimiter=",")
-        desired_state_list = list(desired_state_reader)
-        for count_row in range(0, MAX_NUMBER_OF_ARRAYS):
-            for count_column in range(0, MAX_NUMBER_OF_MOTORS):
-                try:
-                    # pylint: disable=C0330
-                    if (
-                        int(desired_state_list[count_row][count_column]) <= MAX_TURNS
-                        and int(desired_state_list[count_row][count_column]) >= 0
-                        and desired_state_list[count_row][count_column] != ""
-                        and isinstance(
-                            int(desired_state_list[count_row][count_column]), int
-                        )
-                    ):
-                        desired_state_list_linted[count_row][
-                            count_column
-                        ] = desired_state_list[count_row][count_column]
-                    else:
+    try:
+        with open("desired_state.csv", "r") as desired_state_file:
+            desired_state_reader = csv.reader(desired_state_file, delimiter=",")
+            desired_state_list = list(desired_state_reader)
+            for count_row in range(0, MAX_NUMBER_OF_ARRAYS):
+                for count_column in range(0, MAX_NUMBER_OF_MOTORS):
+                    try:
+                        # pylint: disable=C0330
+                        if (
+                            int(desired_state_list[count_row][count_column])
+                            <= MAX_TURNS
+                            and int(desired_state_list[count_row][count_column]) >= 0
+                            and desired_state_list[count_row][count_column] != ""
+                            and isinstance(
+                                int(desired_state_list[count_row][count_column]), int
+                            )
+                        ):
+                            desired_state_list_linted[count_row][
+                                count_column
+                            ] = desired_state_list[count_row][count_column]
+                        else:
+                            desired_state_list_linted[count_row][count_column] = "0"
+                    except (IndexError, ValueError):
                         desired_state_list_linted[count_row][count_column] = "0"
-                except (IndexError, ValueError):
-                    desired_state_list_linted[count_row][count_column] = "0"
+    except EnvironmentError:
+        error = True
+        SPINNER.write(
+            "current_state CSV \033[31m"
+            + "LINTING FAILED: READ DESIRED STATE CSV"
+            + "\033[0m"
+        )
     # write values to file overwriting previous file
-    with open("desired_state.csv", "w", newline="") as desired_state_file:
-        desired_state_writer = csv.writer(desired_state_file, quoting=csv.QUOTE_ALL)
-        desired_state_writer.writerows(desired_state_list_linted)
-
+    try:
+        with open("desired_state.csv", "w", newline="") as desired_state_file:
+            desired_state_writer = csv.writer(desired_state_file, quoting=csv.QUOTE_ALL)
+            desired_state_writer.writerows(desired_state_list_linted)
+            SPINNER.write("current_state CSV \033[32m" + "LINTED" + "\033[0m")
+    except EnvironmentError:
+        error = True
+        SPINNER.write(
+            "current_state CSV \033[31m"
+            + "LINTING FAILED: WRITE DESIRED STATE CSV"
+            + "\033[0m"
+        )
     # lint current_state csv values and make sure that they are in range
     # also make sure that csv is the right size and the values are valid
     # uses the same method as desired_state.csv
@@ -282,56 +300,82 @@ def lint_csv_files():
     current_state_list_linted = [
         ["0" for x in range(MAX_NUMBER_OF_ARRAYS)] for y in range(MAX_NUMBER_OF_MOTORS)
     ]
-    with open("current_state.csv", "r") as current_state_file:
-        current_state_reader = csv.reader(current_state_file, delimiter=",")
-        current_state_list = list(current_state_reader)
-        for count_row in range(0, MAX_NUMBER_OF_ARRAYS):
-            for count_column in range(0, MAX_NUMBER_OF_MOTORS):
-                try:
-                    # pylint: disable=C0330
-                    if (
-                        int(current_state_list[count_row][count_column]) <= MAX_TURNS
-                        and int(current_state_list[count_row][count_column]) >= 0
-                        and current_state_list[count_row][count_column] != ""
-                        and isinstance(
-                            int(current_state_list[count_row][count_column]), int
-                        )
-                    ):
-                        current_state_list_linted[count_row][
-                            count_column
-                        ] = current_state_list[count_row][count_column]
-                    else:
+    try:
+        with open("current_state.csv", "r") as current_state_file:
+            current_state_reader = csv.reader(current_state_file, delimiter=",")
+            current_state_list = list(current_state_reader)
+            for count_row in range(0, MAX_NUMBER_OF_ARRAYS):
+                for count_column in range(0, MAX_NUMBER_OF_MOTORS):
+                    try:
+                        # pylint: disable=C0330
+                        if (
+                            int(current_state_list[count_row][count_column])
+                            <= MAX_TURNS
+                            and int(current_state_list[count_row][count_column]) >= 0
+                            and current_state_list[count_row][count_column] != ""
+                            and isinstance(
+                                int(current_state_list[count_row][count_column]), int
+                            )
+                        ):
+                            current_state_list_linted[count_row][
+                                count_column
+                            ] = current_state_list[count_row][count_column]
+                        else:
+                            current_state_list_linted[count_row][count_column] = "0"
+                    except (IndexError, ValueError):
                         current_state_list_linted[count_row][count_column] = "0"
-                except (IndexError, ValueError):
-                    current_state_list_linted[count_row][count_column] = "0"
+    except EnvironmentError:
+        error = True
+        SPINNER.write(
+            "current_state CSV \033[31m"
+            + "LINTING FAILED: READ CURRENT STATE CSV"
+            + "\033[0m"
+        )
     # write values to file overwriting previous file
-    with open("current_state.csv", "w", newline="") as current_state_file:
-        current_state_writer = csv.writer(current_state_file, quoting=csv.QUOTE_ALL)
-        current_state_writer.writerows(current_state_list_linted)
+    try:
+        with open("current_state.csv", "w", newline="") as current_state_file:
+            current_state_writer = csv.writer(current_state_file, quoting=csv.QUOTE_ALL)
+            current_state_writer.writerows(current_state_list_linted)
+            SPINNER.write("current_state CSV \033[32m" + "LINTED" + "\033[0m")
+    except EnvironmentError:
+        error = True
+        SPINNER.write(
+            "current_state CSV \033[31m"
+            + "LINTING FAILED: WRITE CURRENT STATE CSV"
+            + "\033[0m"
+        )
+
+    return error
 
 
-# TODO this doesn't make sense atm
 def lint_serial_port_values(serial_ports):
     """Makes sure that the values for array number and number of motors is valid"""
+    error = False
     list_array_numbers = []
     list_motor_numbers = []
-    for count_row, _ in enumerate(serial_ports):
-        list_array_numbers.append(serial_ports[count_row][1])
-        list_motor_numbers.append(serial_ports[count_row][2])
-    # check if there are any dupplicates
-    if len(list_array_numbers) == len(set(list_array_numbers)):
-        # return False
-        pass
+    print("\nChecking Array and Motor Values")
+    for row in serial_ports:
+        list_array_numbers.append(row[2])
+        list_motor_numbers.append(row[3])
+    # check if there are any duplicates
+    if len(list_array_numbers) != len(set(list_array_numbers)):
+        error = True
+        print("Array Values \033[31mLINTING FAILED: DUPLICATES\033[0m")
     # check and see if any of the arrays are out of the correct range
     for value in list_array_numbers:
         if int(value) > MAX_NUMBER_OF_ARRAYS or int(value) < 0:
-            # return True
-            pass
+            error = True
+            print("Array Values \033[31mLINTING FAILED: OUT OF RANGE\033[0m")
     # check and see if any of the motor numbers are out of the correct range
     for value in list_motor_numbers:
         if int(value) > MAX_NUMBER_OF_MOTORS or int(value) < 1:
-            # return True
-            pass
+            error = True
+            print("Motor Values \033[31mLINTING FAILED: OUT OF RANGE\033[0m")
+
+    if not error:
+        print("Array Values \033[32mLINTED\033[0m")
+        print("Motor Values \033[32mLINTED\033[0m")
+    return error
 
 
 def connect_to_arrays(serial_ports):
@@ -362,7 +406,6 @@ def connect_to_arrays(serial_ports):
         if row[0]:
             error = True
         serial_ports[count_row] = row[1]
-    print(serial_ports)
     return error, serial_ports
 
 
@@ -376,7 +419,12 @@ def wait_for_arduino(port, serial_ports, results):
     error = False
     try:
         array_info = wait_for_arduino_execute(port, serial_ports)
-        serial_ports[port] = [serial_ports[port], array_info[0], array_info[1]]
+        serial_ports[port] = [
+            serial_ports[port][0],
+            serial_ports[port][1],
+            array_info[0],
+            array_info[1],
+        ]
         SPINNER.write("Serial Port " + str(port) + " \033[32m" + "READY" + "\033[0m")
     except timeout_decorator.TimeoutError:
         SPINNER.write("Serial Port " + str(port) + " \033[31m" + "FAILED" + "\033[0m")
@@ -483,12 +531,13 @@ def main():
             did_error_occur = check_if_csvs_exist()
         if not did_error_occur:
             # lint csvs so that the contain valid data and are the coorect size
-            lint_csv_files()
+            did_error_occur = lint_csv_files()
+        if not did_error_occur:
             # connect to the arrays and then save the array number and number of motors
             did_error_occur, serial_ports = connect_to_arrays(serial_ports)
         if not did_error_occur:
             # lint the data we recieved from the arrays
-            lint_serial_port_values(serial_ports)
+            did_error_occur = lint_serial_port_values(serial_ports)
         # if error didn't occour exit this loop and move on to the next one
         if not did_error_occur:
             break
