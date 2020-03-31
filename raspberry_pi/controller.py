@@ -383,23 +383,21 @@ def connect_to_arrays(serial_ports):
     print("\nConnecing to Arrays")
     error = False
     # used for thread objects
-    connecting_threads = [None] * len(serial_ports)
+    connection_threads = [None] * len(serial_ports)
     # used to store returned values from threads
     results = [None] * len(serial_ports)
     SPINNER.start()
     # create threads
     for count, _ in enumerate(serial_ports):
-        connecting_threads[count] = Thread(
+        connection_threads[count] = Thread(
             target=wait_for_arduino, args=(count, serial_ports, results)
         )
-
-    # start threads
-    for count, _ in enumerate(serial_ports):
-        connecting_threads[count].start()
+        # start threads
+        connection_threads[count].start()
 
     # wait for threads to finish
     for count, _ in enumerate(serial_ports):
-        connecting_threads[count].join()
+        connection_threads[count].join()
     SPINNER.stop()
     # get returned values from threads and assign to serialport
     for count_row, row in enumerate(results):
