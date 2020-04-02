@@ -14,8 +14,10 @@ from yaspin.spinners import Spinners
 import timeout_decorator
 
 
-class error(Exception):
-    pass
+class Error(Exception):
+    """Exception that is raised when an error occurs in the program
+    causes the program to print out a message and then loop"""
+
 
 def find_arduinos():
     """Run ls command and find all USB devices connected to USB hub
@@ -40,12 +42,12 @@ def find_arduinos():
             print(
                 "\033[31mERROR: NUMBER OF ARRAYS FOUND GREATER THAN MAX NUMBER OF ARRAYS\033[0m"
             )
-            raise error
+            raise Error
     except subprocess.CalledProcessError:
         # need to still have a valie
         serial_shell_capture_list = []
         print(f"\nFound \033[31m0\033[0m Array(s) of Max of {MAX_NUMBER_OF_ARRAYS}")
-        raise error
+        raise Error
     return serial_shell_capture_list
 
 
@@ -55,7 +57,7 @@ def check_if_csv_exists(csv_filename):
         print(csv_filename + "\033[32m FOUND\033[0m")
     else:
         print(csv_filename + "\033[31m FAILED: FILE NOT FOUND\033[0m")
-        raise error
+        raise Error
 
 
 def lint_csv_file(csv_filename):
@@ -93,7 +95,7 @@ def lint_csv_file(csv_filename):
                         csv_filename_list_linted[count_row][count_column] = "0"
     except EnvironmentError:
         SPINNER.write(csv_filename + " \033[31m" + "FAILED: CAN'T READ CSV" + "\033[0m")
-        raise error
+        raise Error
     # write values to file overwriting previous file
     try:
         with open(csv_filename, "w", newline="") as csv_filename_file:
@@ -104,7 +106,7 @@ def lint_csv_file(csv_filename):
         SPINNER.write(
             csv_filename + " \033[31m" + "FAILED: CAN'T WRITE CSV" + "\033[0m"
         )
-        raise error
+        raise Error
 
 
 def lint_serial_port_values(serial_ports):
@@ -118,7 +120,7 @@ def lint_serial_port_values(serial_ports):
     # check if there are any duplicates
     if len(list_array_numbers) != len(set(list_array_numbers)):
         print("Array Numbers \033[31mFAILED: DUPLICATES\033[0m")
-        raise error
+        raise Error
     # check and see if any of the arrays are out of the correct range
     for value in list_array_numbers:
         # >= because array numbers from the arduino start at 0
@@ -126,15 +128,15 @@ def lint_serial_port_values(serial_ports):
             print(
                 "Array Numbers \033[31mFAILED: OUT OF RANGE OR TOO MANY ARRAYS CONNECTED\033[0m"
             )
-            raise error
+            raise Error
     # check and see if any of the motor numbers are out of the correct range
     for value in list_motor_numbers:
         # > because motor numbers start at 1 when counted aka 0 motors means no motors
         # while 1 motor means #1. When sending commands motor one is considered as #0
         if int(value) > MAX_NUMBER_OF_MOTORS or int(value) < 1:
             print("Motor Numbers \033[31mFAILED: OUT OF RANGE\033[0m")
-            raise error
-    
+            raise Error
+
     print("Array Numbers \033[32mLINTED\033[0m")
     print("Motor Numbers \033[32mLINTED\033[0m")
 
@@ -266,7 +268,7 @@ def open_ports(serial_ports):
                 + "\033[0m"
             )
             SPINNER.stop()
-            raise error
+            raise Error
     SPINNER.stop()
     return serial_ports
 
@@ -294,7 +296,7 @@ def connect_to_arrays(serial_ports):
     # get returned values from threads and assign to serial_port
     for count_row, row in enumerate(results):
         if row[0]:
-            raise error
+            raise Error
         serial_ports[count_row] = row[1]
     return serial_ports
 
@@ -466,7 +468,7 @@ def main():
             lint_serial_port_values(serial_ports)
             # if error didn't occour exit this loop and move on to the next one
             break
-        except:
+        except Error:
             # if we got to connecting to ports then close ports otherwise loop
             if len(serial_ports) != 0:
                 close_connections(serial_ports)
@@ -505,8 +507,9 @@ def main():
                 break
             else:
                 print("Invalid Input\n")
-        except:
+        except Error:
             pass
+
 
 # global variables
 # never change
