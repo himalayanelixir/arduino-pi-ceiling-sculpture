@@ -474,17 +474,6 @@ def main():
             # open ports at address /dev/ttyU* that we found earlier
             did_error_occur, serial_ports = open_ports(serial_ports)
         if not did_error_occur:
-            # check if the csvs for desired and current state exist
-            print("\nChecking for CSV Files")
-            did_error_occur = check_if_csv_exists(DESIRED_STATE_FILENAME)
-        if not did_error_occur:
-            did_error_occur = check_if_csv_exists(CURRENT_STATE_FILENAME)
-        if not did_error_occur:
-            # lint csvs so that the contain valid data and are the coorect size
-            did_error_occur = lint_csv_file(DESIRED_STATE_FILENAME)
-        if not did_error_occur:
-            did_error_occur = lint_csv_file(CURRENT_STATE_FILENAME)
-        if not did_error_occur:
             # connect to the arrays and then save the array number and number of motors
             did_error_occur, serial_ports = connect_to_arrays(serial_ports)
         if not did_error_occur:
@@ -498,31 +487,45 @@ def main():
             close_connections(serial_ports)
     ###########
     while input_text_1 not in ("Exit", "exit"):
+        did_error_occur = False
+
         print("===========\n")
         input_text_2 = input(
             "Enter '1' to set ceiling from csv, '2' to reset, and 'Exit' to close program)\n : "
         )
-        # csv mode
-        if input_text_2 == "1":
-            print("CSV Mode\n")
-            commands_from_csv(serial_ports)
-        # csv reset
-        elif input_text_2 == "2":
-            print("CSV Reset Mode\n")
-            commands_from_reset(serial_ports)
-        # manual mode
-        elif input_text_2 == "3":
-            print("Manual Mode (Commands aren't linted so be careful)\n")
-            execute_commands(
-                serial_ports, input("Enter Commands (format '<Up,1>;<Up,1>'):\n : ")
-            )
-        # exit
-        elif input_text_2 in ("Exit", "exit"):
-            # close all serial connections
-            close_connections(serial_ports)
-            break
-        else:
-            print("Invalid Input\n")
+        if not did_error_occur:
+            # check if the csvs for desired and current state exist
+            print("\nChecking for CSV Files")
+            did_error_occur = check_if_csv_exists(DESIRED_STATE_FILENAME)
+        if not did_error_occur:
+            did_error_occur = check_if_csv_exists(CURRENT_STATE_FILENAME)
+        if not did_error_occur:
+            # lint csvs so that the contain valid data and are the coorect size
+            did_error_occur = lint_csv_file(DESIRED_STATE_FILENAME)
+        if not did_error_occur:
+            did_error_occur = lint_csv_file(CURRENT_STATE_FILENAME)
+        if not did_error_occur:
+            # csv mode
+            if input_text_2 == "1":
+                print("CSV Mode\n")
+                commands_from_csv(serial_ports)
+            # csv reset
+            elif input_text_2 == "2":
+                print("CSV Reset Mode\n")
+                commands_from_reset(serial_ports)
+            # manual mode
+            elif input_text_2 == "3":
+                print("Manual Mode (Commands aren't linted so be careful)\n")
+                execute_commands(
+                    serial_ports, input("Enter Commands (format '<Up,1>;<Up,1>'):\n : ")
+                )
+            # exit
+            elif input_text_2 in ("Exit", "exit"):
+                # close all serial connections
+                close_connections(serial_ports)
+                break
+            else:
+                print("Invalid Input\n")
 
 
 # global variables
