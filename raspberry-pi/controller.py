@@ -14,10 +14,12 @@ from yaspin.spinners import Spinners
 import timeout_decorator
 
 
+class error(Exception):
+    pass
+
 def find_arduinos():
     """Run ls command and find all USB devices connected to USB hub
      assume that all of them are arduinos"""
-    error = False
     # run ls in subprocess shell and save results
     try:
         serial_shell_capture = subprocess.run(
@@ -33,36 +35,32 @@ def find_arduinos():
         print(f"of Max of {MAX_NUMBER_OF_ARRAYS}")
         # make sure that the # arrays found is less than or equal to MAX_NUMBER_OF_ARRAYS
         if len(serial_shell_capture_list) > MAX_NUMBER_OF_ARRAYS:
-            error = True
             # make list empty so we don't try to close ports when this error occurs
             serial_shell_capture_list = []
             print(
                 "\033[31mERROR: NUMBER OF ARRAYS FOUND GREATER THAN MAX NUMBER OF ARRAYS\033[0m"
             )
+            raise error
     except subprocess.CalledProcessError:
         # need to still have a valie
-        error = True
         serial_shell_capture_list = []
         print(f"\nFound \033[31m0\033[0m Array(s) of Max of {MAX_NUMBER_OF_ARRAYS}")
-
-    return error, serial_shell_capture_list
+        raise error
+    return serial_shell_capture_list
 
 
 def check_if_csv_exists(csv_filename):
     """Check if csvs for desired state and current state exist"""
-    error = False
     if path.exists(csv_filename):
         print(csv_filename + "\033[32m FOUND\033[0m")
     else:
-        error = True
         print(csv_filename + "\033[31m FAILED: FILE NOT FOUND\033[0m")
-    return error
+        raise error
 
 
 def lint_csv_file(csv_filename):
     """Lint csv_filename csv values and make sure that they are in range also make
     sure that csv is the right size and the values are valid"""
-    error = False
     csv_filename_list = []
     # we initialize this list to a particular size becuase we then iterate over it and
     # copy values from csv_filename_list. When copying we also make sure that the
@@ -94,8 +92,8 @@ def lint_csv_file(csv_filename):
                     except (IndexError, ValueError):
                         csv_filename_list_linted[count_row][count_column] = "0"
     except EnvironmentError:
-        error = True
         SPINNER.write(csv_filename + " \033[31m" + "FAILED: CAN'T READ CSV" + "\033[0m")
+        raise error
     # write values to file overwriting previous file
     try:
         with open(csv_filename, "w", newline="") as csv_filename_file:
@@ -103,17 +101,14 @@ def lint_csv_file(csv_filename):
             csv_filename_writer.writerows(csv_filename_list_linted)
             SPINNER.write(csv_filename + " \033[32m" + "LINTED" + "\033[0m")
     except EnvironmentError:
-        error = True
         SPINNER.write(
             csv_filename + " \033[31m" + "FAILED: CAN'T WRITE CSV" + "\033[0m"
         )
-
-    return error
+        raise error
 
 
 def lint_serial_port_values(serial_ports):
     """Makes sure that the numbers for array number and number of motors is valid"""
-    error = False
     list_array_numbers = []
     list_motor_numbers = []
     print("\nChecking Array and Motor Numbers")
@@ -122,27 +117,26 @@ def lint_serial_port_values(serial_ports):
         list_motor_numbers.append(row[3])
     # check if there are any duplicates
     if len(list_array_numbers) != len(set(list_array_numbers)):
-        error = True
         print("Array Numbers \033[31mFAILED: DUPLICATES\033[0m")
+        raise error
     # check and see if any of the arrays are out of the correct range
     for value in list_array_numbers:
         # >= because array numbers from the arduino start at 0
         if int(value) >= MAX_NUMBER_OF_ARRAYS or int(value) < 0:
-            error = True
             print(
                 "Array Numbers \033[31mFAILED: OUT OF RANGE OR TOO MANY ARRAYS CONNECTED\033[0m"
             )
+            raise error
     # check and see if any of the motor numbers are out of the correct range
     for value in list_motor_numbers:
         # > because motor numbers start at 1 when counted aka 0 motors means no motors
         # while 1 motor means #1. When sending commands motor one is considered as #0
         if int(value) > MAX_NUMBER_OF_MOTORS or int(value) < 1:
-            error = True
             print("Motor Numbers \033[31mFAILED: OUT OF RANGE\033[0m")
-    if not error:
-        print("Array Numbers \033[32mLINTED\033[0m")
-        print("Motor Numbers \033[32mLINTED\033[0m")
-    return error
+            raise error
+    
+    print("Array Numbers \033[32mLINTED\033[0m")
+    print("Motor Numbers \033[32mLINTED\033[0m")
 
 
 def commands_from_csv(serial_ports):
@@ -243,7 +237,6 @@ def execute_commands(serial_ports, command_string_execute):
 def open_ports(serial_ports):
     """Open ports and create pyserial objects saving them to serial_ports"""
     print("\nOpening Port(s)")
-    error = False
     SPINNER.start()
     # go through serial_ports list and try to connect to usb devices
     # otherwise error
@@ -263,7 +256,6 @@ def open_ports(serial_ports):
                 + "\033[0m"
             )
         except serial.serialutil.SerialException:
-            error = True
             SPINNER.write(
                 "Serial Port "
                 + str(count)
@@ -274,14 +266,14 @@ def open_ports(serial_ports):
                 + "\033[0m"
             )
             SPINNER.stop()
+            raise error
     SPINNER.stop()
-    return error, serial_ports
+    return serial_ports
 
 
 def connect_to_arrays(serial_ports):
     """Connect to arrays and retrieve connection message"""
     print("\nConnecing to Arrays")
-    error = False
     # used for thread objects
     connection_threads = [None] * len(serial_ports)
     # used to store returned values from threads
@@ -302,9 +294,9 @@ def connect_to_arrays(serial_ports):
     # get returned values from threads and assign to serial_port
     for count_row, row in enumerate(results):
         if row[0]:
-            error = True
+            raise error
         serial_ports[count_row] = row[1]
-    return error, serial_ports
+    return serial_ports
 
 
 def wait_for_arduino_connection(serial_ports, port, results):
@@ -454,57 +446,44 @@ def main():
     """
     # address of USB port,pyserial object, array number, and number of motors
     serial_ports = []
-    # need this for error checking in threads
-    did_error_occur = False
-
     while True:
-        # set to false on every loop
-        did_error_occur = False
-        # wait for user to want to run program
-        input_text_1 = input(
-            "\n\nPress Enter to Start the Program or type 'Exit' to Close:"
-        )
-        if input_text_1 in ("Exit", "exit"):
-            break
-        # find all usb devices connected at /dev/ttyU*
-        # we are assuming that all usb devices at this address are arduinos
-        did_error_occur, serial_ports = find_arduinos()
-        # initialize serial_objecs size based on the number of arduinos
-        if not did_error_occur:
+        try:
+            # wait for user to want to run program
+            input_text_1 = input(
+                "\n\nPress Enter to Start the Program or type 'Exit' to Close:"
+            )
+            if input_text_1 in ("Exit", "exit"):
+                break
+            # find all usb devices connected at /dev/ttyU*
+            # we are assuming that all usb devices at this address are arduinos
+            serial_ports = find_arduinos()
+            # initialize serial_objecs size based on the number of arduinos
             # open ports at address /dev/ttyU* that we found earlier
-            did_error_occur, serial_ports = open_ports(serial_ports)
-        if not did_error_occur:
+            serial_ports = open_ports(serial_ports)
             # connect to the arrays and then save the array number and number of motors
-            did_error_occur, serial_ports = connect_to_arrays(serial_ports)
-        if not did_error_occur:
+            serial_ports = connect_to_arrays(serial_ports)
             # lint the data we recieved from the arrays
-            did_error_occur = lint_serial_port_values(serial_ports)
-        # if error didn't occour exit this loop and move on to the next one
-        if not did_error_occur:
+            lint_serial_port_values(serial_ports)
+            # if error didn't occour exit this loop and move on to the next one
             break
-        # if we got to connecting to ports then close ports otherwise loop
-        if len(serial_ports) != 0:
-            close_connections(serial_ports)
+        except:
+            # if we got to connecting to ports then close ports otherwise loop
+            if len(serial_ports) != 0:
+                close_connections(serial_ports)
     ###########
     while input_text_1 not in ("Exit", "exit"):
-        did_error_occur = False
-
-        print("===========\n")
-        input_text_2 = input(
-            "Enter '1' to set ceiling from csv, '2' to reset, and 'Exit' to close program)\n : "
-        )
-        if not did_error_occur:
+        try:
+            print("===========\n")
+            input_text_2 = input(
+                "Enter '1' to set ceiling from csv, '2' to reset, and 'Exit' to close program)\n : "
+            )
             # check if the csvs for desired and current state exist
             print("\nChecking for CSV Files")
-            did_error_occur = check_if_csv_exists(DESIRED_STATE_FILENAME)
-        if not did_error_occur:
-            did_error_occur = check_if_csv_exists(CURRENT_STATE_FILENAME)
-        if not did_error_occur:
+            check_if_csv_exists(DESIRED_STATE_FILENAME)
+            check_if_csv_exists(CURRENT_STATE_FILENAME)
             # lint csvs so that the contain valid data and are the coorect size
-            did_error_occur = lint_csv_file(DESIRED_STATE_FILENAME)
-        if not did_error_occur:
-            did_error_occur = lint_csv_file(CURRENT_STATE_FILENAME)
-        if not did_error_occur:
+            lint_csv_file(DESIRED_STATE_FILENAME)
+            lint_csv_file(CURRENT_STATE_FILENAME)
             # csv mode
             if input_text_2 == "1":
                 print("CSV Mode\n")
@@ -526,7 +505,8 @@ def main():
                 break
             else:
                 print("Invalid Input\n")
-
+        except:
+            pass
 
 # global variables
 # never change
