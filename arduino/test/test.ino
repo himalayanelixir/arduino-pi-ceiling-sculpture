@@ -127,8 +127,8 @@ void loop() {
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-// handles the receiving of data over the serial port
 void RecvWithStartEndMarkers() {
+  // handles the receiving of data over the serial port
   static boolean recvInProgress = false;
   static byte ndx = 0;
   char startMarker = '<';
@@ -157,8 +157,8 @@ void RecvWithStartEndMarkers() {
   }
 }
 
-// sends message back to raspberry pi saying the command has been executed
 void Finished() {
+  // sends message back to raspberry pi saying the command has been executed
   if (did_timeout == true) {
     Serial.print("\033[31m");
     Serial.print("RECIEVED: TIMEOUT");
@@ -186,8 +186,8 @@ void Finished() {
   }
 }
 
-// fills array with instructions from the raspberry pi
 void PopulateArray() {
+  // fills array with instructions from the raspberry pi
   // temp string used to store the char array
   // easier to do opperations on string than chars
   String received_string = "";
@@ -220,8 +220,8 @@ void PopulateArray() {
   }
 }
 
-// helps get a particular value from the incoming data string
 String GetValue(String data, char separator, int index) {
+  // helps get a particular value from the incoming data string
   int found = 0;
   int strIndex[] = { 0, -1 };
   int maxIndex = data.length() - 1;
@@ -239,9 +239,9 @@ String GetValue(String data, char separator, int index) {
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-// function that moves the motors and executes till they are done moving or
-// timeout
 void ProcessData() {
+  // function that moves the motors and executes till they are done moving or
+  // timeout
   while (go == true) {
     go = false;
     // turn the LED on (HIGH is the voltage level)
@@ -271,16 +271,16 @@ void ProcessData() {
   }
 }
 
-// count the number of moving motors
 int CountMoving() {
+  // count the number of moving motors
   moving_motors = 0;
   for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
     moving_motors += motor_commands[i][2];
   }
 }
 
-// check to see if we are on a rising edge
 void CheckCounter(int i) {
+  // check to see if we are on a rising edge
   motor_sensor_counter2[i] = motor_sensor_counter1[i];
   motor_sensor_counter1[i] = CheckSwitch(i, ports[i][1]);
   if (motor_commands[i][0] == 1) {
@@ -301,8 +301,8 @@ void CheckCounter(int i) {
   }
 }
 
-// check to see if the encoder switch is pressed or not
 int CheckSwitch(int motor_number, int switchPort) {
+  // check to see if the encoder switch is pressed or not
   /*Step 1: Update the integrator based on the input signal.  Note that the
   integrator follows the input, decreasing or increasing towards the limits
   as determined by the input state (0 or 1). */
@@ -331,8 +331,8 @@ int CheckSwitch(int motor_number, int switchPort) {
   }
 }
 
-// move motors
 void StartMotors(int i) {
+  // move motors
   if (motor_commands[i][0] == 1) {
     // Move up
     my_servo[i].write(80);
