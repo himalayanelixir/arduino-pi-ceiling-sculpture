@@ -1,4 +1,6 @@
 #!/home/pi/controller_env/bin/python3
+# Copyright 2020 Harlen Bains
+# linted using pylint
 """This script runs on the Raspberry Pi and sends commands to Arduinos.
 Once a command is sent it then waits a reply
 """
