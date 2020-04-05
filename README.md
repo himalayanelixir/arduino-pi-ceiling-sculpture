@@ -2,7 +2,7 @@
 
 The function of this code is to run a ceiling sculpture using a Raspberry Pi as a master and multiple Arduinos as slaves. Due to the nature of the code you could adapt this for any project that uses a text ui and cvs to send commands to an Arduino.  
 
-![Diagram](https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/resources/%20arduino-pi-ceiling-sculpture-diagram.png)
+![Diagram](https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/resources/arduino-pi-ceiling-sculpture-diagram.png)
 
 # Setup
 
@@ -12,7 +12,7 @@ In the repo you will find the Arduino code under ```/arduino/arduino.ino```. Ope
 
 If using the Arduino cli it should look like this: 
 
-**Insert gif**
+![Diagram](https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/resources/arduino-upload.gif)
 
 There are only a few variables that need to be modified to get this working. Note that in this project and array refers to the combination of an Arduino and the motors that are connected to it. Each motor consists of a servo motor, and encoder switch, and a reset switch. 
 
