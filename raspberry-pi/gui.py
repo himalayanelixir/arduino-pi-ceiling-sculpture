@@ -1,7 +1,7 @@
 #!/root/gui_env/bin/python3
 # Copyright 2020 Harlen Bains
 # linted using pylint
-"""This program creates a dashboard for the Raspbery Pi'pi_socket status. Displays time,
+"""This program creates a dashboard displaying the Pi's status. Displays time,
 local IP address, and internet connectivity"""
 
 from datetime import datetime
