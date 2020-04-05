@@ -2,7 +2,7 @@
 
 The function of this code is to run a ceiling sculpture using a Raspberry Pi as a master and multiple Arduinos as slaves. Due to the nature of the code you could adapt this for any project that uses a text ui and cvs to send commands to an Arduino.  
 
-![Diagram](https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/resources/%20Arduino_Ceiling_Sculpture_Platform.png)
+![Diagram](https://raw.githubusercontent.com/himalayanelixir/Arduino_Ceiling_Sculpture_Platform/master/resources/%20arduino-pi-ceiling-sculpture-diagram.png)
 
 # Setup
 
