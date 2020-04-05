@@ -7,12 +7,14 @@
 // constants
 #define DEBOUNCE_TIME .4
 #define SAMPLE_FREQUENCY 20
-#define MAXIMUM (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
+#define MAXIMUM_DEBOUNCE (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
+#define MAXIMUM_NUMBER_OF_MOTORS 22
 #define ARRAY_NUMBER 0
 #define NUMBER_OF_MOTORS 1
 #define NUMBER_OF_MOTORS_MOVING 1
 #define TIMEOUT 50000
 #define IGNORE_INPUT_TIME 150
+#define MESSAGE_CHAR_LENGTH 300
 
 // function declarations
 void RecvWithStartEndMarkers();
@@ -27,15 +29,17 @@ int CheckSwitch();
 void StartMotors();
 
 // variables for communication
-// const byte num_chars = 100;
-// char received_chars[num_chars];
-char received_chars[300];
+char received_chars[MESSAGE_CHAR_LENGTH];
 bool new_data = false;
 // create servo objects
 Servo my_servo[NUMBER_OF_MOTORS];
 // create a array of ports with the order: motor, counter, reset
-int ports[NUMBER_OF_MOTORS][3] = {
-    { 8, 9, 10 }
+int ports[MAXIMUM_NUMBER_OF_MOTORS][3] = {
+    {11, 12, 13}, {8, 9, 10}, {5, 6, 7}, {2, 3, 4}, {14, 15, 16}, {17, 18, 19},
+    {20, 21, 22}, {23, 24, 25}, {29, 30, 31}, {35, 36, 37}, {41, 42, 43},
+    {47, 48, 49}, {26, 27, 28}, {32, 33, 34}, {38, 39, 40}, {44, 45, 46},
+    {50, 51, 52}, {53, 54, 55}, {56, 57, 58}, {59, 60, 61}, {63, 64, 65},
+    {62, 66, 67}
 };
 // integer array that contains the direction and number of rotations a motor,
 // and a flag that determines if it's moving, and another number that determines
@@ -49,7 +53,7 @@ byte motor_sensor_counter2[NUMBER_OF_MOTORS] = { 0 };
 int previous_value[NUMBER_OF_MOTORS] = { 1 };
 // 0 or 1 depending on the input signal
 byte input[NUMBER_OF_MOTORS] = { 0 };
-// will range from 0 to the specified MAXIMUM
+// will range from 0 to the specified MAXIMUM_DEBOUNCE
 int integrator[NUMBER_OF_MOTORS] = { 0 };
 // cleaned-up version of the input signal
 byte output[NUMBER_OF_MOTORS] = { 0 };
@@ -96,7 +100,7 @@ void setup() {
     motor_sensor_counter1[i] = 1;
     motor_sensor_counter2[i] = 1;
     output[i] = 1;
-    integrator[i] = MAXIMUM;
+    integrator[i] = MAXIMUM_DEBOUNCE;
     motor_commands[i][3] = IGNORE_INPUT_TIME;
   }
   Serial.print("<");
@@ -129,30 +133,30 @@ void loop() {
 
 void RecvWithStartEndMarkers() {
   // handles the receiving of data over the serial port
-  static boolean recvInProgress = false;
-  static byte ndx = 0;
-  char startMarker = '<';
-  char endMarker = '>';
-  char rc;
+  bool receive_in_progress = false;
+  int char_count = 0;
+  char start_marker = '<';
+  char end_marker = '>';
+  char receive_from_usb;
 
   while (Serial.available() > 0 && new_data == false) {
-    rc = Serial.read();
+    receive_from_usb = Serial.read();
 
-    if (recvInProgress == true) {
-      if (rc != endMarker) {
-        received_chars[ndx] = rc;
-        ndx++;
-        if (ndx >= num_chars) {
-          ndx = num_chars - 1;
+    if (receive_in_progress == true) {
+      if (receive_from_usb != end_marker) {
+        received_chars[char_count] = receive_from_usb;
+        char_count++;
+        if (char_count >= MESSAGE_CHAR_LENGTH) {
+          char_count = MESSAGE_CHAR_LENGTH - 1;
         }
       } else {
-        received_chars[ndx] = '\0';  // terminate the string
-        recvInProgress = false;
-        ndx = 0;
+        received_chars[char_count] = '\0';  // terminate the string
+        receive_in_progress = false;
+        char_count = 0;
         new_data = true;
       }
-    } else if (rc == startMarker) {
-      recvInProgress = true;
+    } else if (receive_from_usb == start_marker) {
+      receive_from_usb = true;
     }
   }
 }
@@ -198,42 +202,42 @@ void PopulateArray() {
   // string
   for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
     // we break everything in to pairs of values
-    int search1 = (i *2);
-    int search2 = ((i *2) + 1);
+    int search_1 = (i *2);
+    int search_2 = ((i *2) + 1);
 
-    String value1 = GetValue(received_string, ',', search1);
-    String value2 = GetValue(received_string, ',', search2);
+    String value_1 = GetValue(received_string, ',', search_1);
+    String value_2 = GetValue(received_string, ',', search_2);
 
-    if (value1 == "Up") {
+    if (value_1 == "Up") {
       motor_commands[i][0] = 1;
-    } else if (value1 == "Down") {
+    } else if (value_1 == "Down") {
       motor_commands[i][0] = 2;
-    } else if (value1 == "None") {
+    } else if (value_1 == "None") {
       motor_commands[i][0] = 0;
-    } else if (value1 == "Reset") {
+    } else if (value_1 == "Reset") {
       motor_commands[i][0] = 3;
     } else {
       // Sends Error Message
     }
 
-    motor_commands[i][1] = value2.toInt();
+    motor_commands[i][1] = value_2.toInt();
   }
 }
 
 String GetValue(String data, char separator, int index) {
   // helps get a particular value from the incoming data string
   int found = 0;
-  int strIndex[] = { 0, -1 };
-  int maxIndex = data.length() - 1;
+  int string_index[] = { 0, -1 };
+  int maximum_index = data.length() - 1;
 
-  for (int i = 0; i <= maxIndex && found <= index; i++) {
-    if (data.charAt(i) == separator || i == maxIndex) {
+  for (int i = 0; i <= maximum_index && found <= index; i++) {
+    if (data.charAt(i) == separator || i == maximum_index) {
       found++;
-      strIndex[0] = strIndex[1] + 1;
-      strIndex[1] = (i == maxIndex) ? i + 1 : i;
+      string_index[0] = string_index[1] + 1;
+      string_index[1] = (i == maximum_index) ? i + 1 : i;
     }
   }
-  return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
+  return found > index ? data.substring(string_index[0], string_index[1]) : "";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -312,18 +316,18 @@ int CheckSwitch(int motor_number, int switchPort) {
     if (integrator[motor_number] > 0)
       integrator[motor_number]--;
   } else {
-    if (integrator[motor_number] < MAXIMUM)
+    if (integrator[motor_number] < MAXIMUM_DEBOUNCE)
       integrator[motor_number]++;
   }
 
   /*Step 2: Update the output state based on the integrator.  Note that the
   output will only change states if the integrator has reached a limit,
-  either 0 or MAXIMUM. */
+  either 0 or MAXIMUM_DEBOUNCE. */
 
   if (integrator[motor_number] == 0) {
     previous_value[motor_number] = 0;
     return (0);
-  } else if (integrator[motor_number] >= MAXIMUM) {
+  } else if (integrator[motor_number] >= MAXIMUM_DEBOUNCE) {
     previous_value[motor_number] = 1;
     return (1);
   } else {
