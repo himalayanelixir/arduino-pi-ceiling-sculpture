@@ -26,8 +26,9 @@ def find_arduinos():
      assume that all of them are arduinos"""
     # run ls in subprocess shell and save results
     try:
+        path_command = "ls " + USB_PATH
         serial_shell_capture = subprocess.run(
-            ["ls /dev/ttyU*"], shell=True, capture_output=True, check=True
+            [path_command], shell=True, capture_output=True, check=True
         )
         # take results and convert byte string into utf-8 and create list based on newlines
         serial_shell_capture_list = serial_shell_capture.stdout.decode(
@@ -523,6 +524,7 @@ SPINNER = yaspin(Spinners.weather)
 MAX_TURNS = 10
 MAX_NUMBER_OF_ARRAYS = 4
 MAX_NUMBER_OF_MOTORS = 10
+USB_PATH = "/dev/ttyU*"
 DESIRED_STATE_FILENAME = "desired-state.csv"
 CURRENT_STATE_FILENAME = "current-state.csv"
 
