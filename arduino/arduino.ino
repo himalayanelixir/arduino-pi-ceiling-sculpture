@@ -133,15 +133,13 @@ void loop() {
 
 void RecvWithStartEndMarkers() {
   // handles the receiving of data over the serial port
-  bool receive_in_progress = false;
-  int char_count = 0;
+  static bool receive_in_progress = false;
+  static int char_count = 0;
   char start_marker = '<';
   char end_marker = '>';
   char receive_from_usb;
-
   while (Serial.available() > 0 && new_data == false) {
     receive_from_usb = Serial.read();
-
     if (receive_in_progress == true) {
       if (receive_from_usb != end_marker) {
         received_chars[char_count] = receive_from_usb;
@@ -156,7 +154,7 @@ void RecvWithStartEndMarkers() {
         new_data = true;
       }
     } else if (receive_from_usb == start_marker) {
-      receive_from_usb = true;
+      receive_in_progress = true;
     }
   }
 }
