@@ -5,21 +5,19 @@ Run a ceiling sculpture using a Raspberry Pi as a master and multiple Arduinos a
 Because the code is heavily commented, the focus of this README will be to get the code installed and then how to use the text ui to send commands to the Arduinos.
 
 ![Diagram](https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/resources/arduino-pi-ceiling-sculpture-diagram.png)
-
-Entire system
+<p align="center">Entire system</p>
 
 ![Diagram](https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/resources/arduino-pi-ceiling-sculpture-diagram-close-up.png)
-
-Close up of an motor array
+<p align="center">Close up of an motor array</p>
 
 # Setup
 
 ## Arduino
 
-In the repo you will find the Arduino code under ```arduino/arduino.ino```. Open this in the Arduino IDE or CLI and flash to the devices you are using. Steps using the Arduino CLI:
-<p align="center">
-<img src="https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/resources/arduino-upload.gif">
-</p>
+In the repo you will find the Arduino code under ```arduino/arduino.ino```. Open this in the Arduino IDE or CLI and flash to the devices you are using.
+
+<p align="center"><img src="https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/resources/arduino-upload.gif"></p>
+<p align="center">Steps using the Arduino CLI</p>
 
 There are only a few variables that can to be modified. Note that in this project and array refers to the combination of an Arduino and the motors that are connected to it. Each motor consists of a servo motor, and encoder switch, and a reset switch.
 
