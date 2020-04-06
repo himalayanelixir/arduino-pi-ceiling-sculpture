@@ -9,8 +9,8 @@
 #define SAMPLE_FREQUENCY 20
 #define MAXIMUM_DEBOUNCE (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
 #define MAXIMUM_NUMBER_OF_MOTORS 22
-#define ARRAY_NUMBER 0
-#define NUMBER_OF_MOTORS 1
+#define ARRAY_NUMBER 1
+#define NUMBER_OF_MOTORS 2
 #define NUMBER_OF_MOTORS_MOVING 1
 #define TIMEOUT 50000
 #define IGNORE_INPUT_TIME 150
@@ -105,7 +105,7 @@ void setup() {
   }
   Serial.print("<");
   Serial.print("Arduino is ready");
-  Serial.print("Array Number: ");
+  Serial.print(" Array Number: ");
   Serial.print(ARRAY_NUMBER);
   Serial.print(" Number of Motors: ");
   Serial.print(NUMBER_OF_MOTORS);
