@@ -9,10 +9,10 @@
 #define SAMPLE_FREQUENCY 20
 #define MAXIMUM_DEBOUNCE (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
 #define MAXIMUM_NUMBER_OF_MOTORS 22
-#define ARRAY_NUMBER 0
-#define NUMBER_OF_MOTORS 1
+#define ARRAY_NUMBER 1
+#define NUMBER_OF_MOTORS 2
 #define NUMBER_OF_MOTORS_MOVING 1
-#define TIMEOUT 50000
+#define TIMEOUT 500
 #define IGNORE_INPUT_TIME 150
 #define MESSAGE_CHAR_LENGTH 300
 
@@ -105,7 +105,7 @@ void setup() {
   }
   Serial.print("<");
   Serial.print("Arduino is ready");
-  Serial.print("Array Number: ");
+  Serial.print(" Array Number: ");
   Serial.print(ARRAY_NUMBER);
   Serial.print(" Number of Motors: ");
   Serial.print(NUMBER_OF_MOTORS);
@@ -133,15 +133,13 @@ void loop() {
 
 void RecvWithStartEndMarkers() {
   // handles the receiving of data over the serial port
-  bool receive_in_progress = false;
-  int char_count = 0;
+  static bool receive_in_progress = false;
+  static int char_count = 0;
   char start_marker = '<';
   char end_marker = '>';
   char receive_from_usb;
-
   while (Serial.available() > 0 && new_data == false) {
     receive_from_usb = Serial.read();
-
     if (receive_in_progress == true) {
       if (receive_from_usb != end_marker) {
         received_chars[char_count] = receive_from_usb;
@@ -156,7 +154,7 @@ void RecvWithStartEndMarkers() {
         new_data = true;
       }
     } else if (receive_from_usb == start_marker) {
-      receive_from_usb = true;
+      receive_in_progress = true;
     }
   }
 }
