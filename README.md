@@ -1,8 +1,16 @@
 # Arduino Raspberry Pi Ceiling Sculpture
 
-The function of this code is to run a ceiling sculpture using a Raspberry Pi as a master and multiple Arduinos as slaves. Due to the nature of the code you could adapt this for any project that uses a text ui and cvs to send commands to an Arduino.  
+Run a ceiling sculpture using a Raspberry Pi as a master and multiple Arduinos as slaves. Thanks to the way the code is written it's trivial to adapt code for any project that uses a text ui and cvs to send commands to an Arduino.
+
+Because the code is heavily commented, the focus of this README will be to get the code installed and then how to use the text ui to send commands to the Arduinos.
 
 ![Diagram](https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/resources/arduino-pi-ceiling-sculpture-diagram.png)
+
+Entire system
+
+![Diagram](https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/Issue-%2321-update-README.md/resources/arduino-pi-ceiling-sculpture-diagram-closeup.png)
+
+Close-up of an motor array
 
 # Setup
 
@@ -11,9 +19,11 @@ The function of this code is to run a ceiling sculpture using a Raspberry Pi as 
 In the repo you will find the Arduino code under ```/arduino/arduino.ino```. Open this in the Arduino IDE and flash to the devices you are using. 
 
 If using the Arduino cli it should look like this: 
+<p align="center">
 
 ![Diagram](https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/resources/arduino-upload.gif)
 
+</p>
 There are only a few variables that need to be modified to get this working. Note that in this project and array refers to the combination of an Arduino and the motors that are connected to it. Each motor consists of a servo motor, and encoder switch, and a reset switch. 
 
 | Variable                       | Default          | Description                                                                                                                                                                          |
