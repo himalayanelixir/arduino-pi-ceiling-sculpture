@@ -5,10 +5,10 @@ Run a ceiling sculpture using a Raspberry Pi as a master and multiple Arduinos a
 Because the code is heavily commented, the focus of this README will be to get the code installed and then how to use the text ui to send commands to the Arduinos.
 
 ![Diagram](https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/resources/arduino-pi-ceiling-sculpture-diagram.png)
-<p align="center">Entire system</p>
+<p align="center"><i>Entire system</i></p>
 
 ![Diagram](https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/resources/arduino-pi-ceiling-sculpture-diagram-close-up.png)
-<p align="center">Close up of an motor array</p>
+<p align="center"><i>Close up of an motor array</i></p>
 
 # Setup
 
@@ -17,7 +17,7 @@ Because the code is heavily commented, the focus of this README will be to get t
 In the repo you will find the Arduino code under ```arduino/arduino.ino```. Open this in the Arduino IDE or CLI and flash to the devices you are using.
 
 <p align="center"><img src="https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/resources/arduino-upload.gif"></p>
-<p align="center">Steps using the Arduino CLI</p>
+<p align="center"><i>Steps using the Arduino CLI</i></p>
 
 There are only a few variables that can to be modified. Note that in this project and array refers to the combination of an Arduino and the motors that are connected to it. Each motor consists of a servo motor, and encoder switch, and a reset switch.
 
@@ -69,4 +69,4 @@ The messages between the Raspberry Pi and the Arduinos are formatted in strings.
 ```current-state.csv``` contains the data on where each motor is currently. Both files are linted for size and contents before they are diffed and instructions are created. Any values that are out of the range of ```MAX_NUMBER_OF_MOTORS``` and ```MAX_NUMBER_OF_ARRAYS``` will be dropped. Any values that are blank, not integers, or don't exist will be filled with zeros. Values that are to large and too small will be replaced with ```MAX_TURNS``` or zero accordingly.
 
 <p align="center"><img src="https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/resources/pi-controller.gif"></p>
-<p align="center">Running controller.py</p>
+<p align="center"><i>Running controller.py</i></p>
