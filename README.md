@@ -1,6 +1,17 @@
-# Arduino Raspberry Pi Ceiling Sculpture
+Table of Contents
+=================
 
-Run a ceiling sculpture using a Raspberry Pi as a master and multiple Arduinos as slaves. Thanks to the way the code is written it's trivial to adapt code for any project that uses a text ui and cvs to send commands to an Arduino.
+   * [Summary](#summary)
+   * [Setup](#setup)
+      * [Arduino](#arduino)
+      * [Raspberry Pi](#raspberry-pi)
+   * [Use](#use)
+      * [Format of the messages](#format-of-the-messages)
+      * [Using the CVSs](#using-the-cvss)
+
+# Summary
+
+Run a ceiling sculpture using a Raspberry Pi as a master and multiple Arduinos as slaves. Thanks to the way the code is written it's trivial to adapt code for any project that uses a text ui and cvs to send commands to as many Arduinos as you want!
 
 Because the code is heavily commented, the focus of this README will be to get the code installed and then how to use the text ui to send commands to the Arduinos.
 
