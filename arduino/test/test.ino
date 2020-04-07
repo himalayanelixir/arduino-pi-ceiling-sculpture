@@ -253,24 +253,24 @@ void ProcessData() {
      // turn the LED off by making the voltage LOW
     digitalWrite(LED_BUILTIN, LOW);
 
-    // turn the LED on (HIGH is the voltage level)
-    digitalWrite(LED_BUILTIN, HIGH);
-    // wait for half a seconds
-    delay(50);
-    // turn the LED off by making the voltage LOW
-    digitalWrite(LED_BUILTIN, LOW);
-    // wait for half a seconds
-    delay(50);
-    timeout_counter = timeout_counter + 1;
-    // time out loop if stall
-    if (timeout_counter >= TIMEOUT) {
-      go = false;
-      did_timeout = true;
-      for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
-      my_servo[i].write(90);
-      }
-    }
-  }
+  //   // turn the LED on (HIGH is the voltage level)
+  //   digitalWrite(LED_BUILTIN, HIGH);
+  //   // wait for half a seconds
+  //   delay(50);
+  //   // turn the LED off by making the voltage LOW
+  //   digitalWrite(LED_BUILTIN, LOW);
+  //   // wait for half a seconds
+  //   delay(50);
+  //   timeout_counter = timeout_counter + 1;
+  //   // time out loop if stall
+  //   if (timeout_counter >= TIMEOUT) {
+  //     go = false;
+  //     did_timeout = true;
+  //     for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
+  //     my_servo[i].write(90);
+  //     }
+  //   }
+   }
 }
 
 int CountMoving() {

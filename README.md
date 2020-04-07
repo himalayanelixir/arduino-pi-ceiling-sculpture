@@ -64,6 +64,9 @@ The messages between the Raspberry Pi and the Arduinos are formatted in strings.
 
 ## Using the CVSs
 
-```controller.py``` uses two CSVs to figure out what messages to send to the Arduinos. ```desired-state.csv``` contains a CVS which is used by the user to specify how many turns from 0 they want each motor to be at. ```current-state.csv``` contains the data on where each motor is currently. Both files are linted for size and contents before they are diffed and instructions are created. Any values that are out of the range of ```MAX_NUMBER_OF_MOTORS``` and ```MAX_NUMBER_OF_ARRAYS``` will be dropped. Any values that are blank, not integers, or don't exist will be filled with zeros. Values that are to large and too small will be replaced with ```MAX_TURNS``` or zero accordingly.
+```controller.py``` uses two CSVs to figure out what messages to send to the Arduinos. ```desired-state.csv``` contains a CVS which is used by the user to specify how many turns from 0 they want each motor to be at.
 
-TODO: Insert gif
+```current-state.csv``` contains the data on where each motor is currently. Both files are linted for size and contents before they are diffed and instructions are created. Any values that are out of the range of ```MAX_NUMBER_OF_MOTORS``` and ```MAX_NUMBER_OF_ARRAYS``` will be dropped. Any values that are blank, not integers, or don't exist will be filled with zeros. Values that are to large and too small will be replaced with ```MAX_TURNS``` or zero accordingly.
+
+<p align="center"><img src="https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/resources/pi-controller.gif"></p>
+<p align="center">Running controller.py</p>
