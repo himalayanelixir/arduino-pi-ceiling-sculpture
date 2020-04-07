@@ -482,13 +482,14 @@ def main():
             input_text_2 = input(
                 "Enter '1' to set ceiling from csv, '2' to reset, and 'Exit' to close program)\n : "
             )
-            # check if the csvs for desired and current state exist
-            print("\nChecking for CSV Files")
-            check_if_csv_exists(DESIRED_STATE_FILENAME)
-            check_if_csv_exists(CURRENT_STATE_FILENAME)
-            # lint csvs so that the contain valid data and are the coorect size
-            lint_csv_file(DESIRED_STATE_FILENAME)
-            lint_csv_file(CURRENT_STATE_FILENAME)
+            if input_text_2 in ("1", "2"):
+                # check if the csvs for desired and current state exist
+                print("\nChecking for CSV Files")
+                check_if_csv_exists(DESIRED_STATE_FILENAME)
+                check_if_csv_exists(CURRENT_STATE_FILENAME)
+                # lint csvs so that the contain valid data and are the coorect size
+                lint_csv_file(DESIRED_STATE_FILENAME)
+                lint_csv_file(CURRENT_STATE_FILENAME)
             # csv mode
             if input_text_2 == "1":
                 print("CSV Mode\n")
