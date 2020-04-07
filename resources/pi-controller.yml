@@ -1,0 +1,345 @@
+# The configurations that used for the recording, feel free to edit them
+config:
+
+  # Specify a command to be executed
+  # like `/bin/bash -l`, `ls`, or any other commands
+  # the default is bash for Linux
+  # or powershell.exe for Windows
+  command: zsh
+  
+  # Export additional ENV variables
+  env:
+    recording: true
+  
+  # Explicitly set the number of columns
+  # or use `auto` to take the current
+  # number of columns of your shell
+  cols: 80
+  
+  # Explicitly set the number of rows
+  # or use `auto` to take the current
+  # number of rows of your shell
+  rows: 24
+  
+  # Amount of times to repeat GIF
+  # If value is -1, play once
+  # If value is 0, loop indefinitely
+  # If value is a positive number, loop n times
+  repeat: 0
+  
+  # Quality
+  # 1 - 100
+  quality: 100
+  
+  # Delay between frames in ms
+  # If the value is `auto` use the actual recording delays
+  frameDelay: auto
+  
+  # Maximum delay between frames in ms
+  # Ignored if the `frameDelay` isn't set to `auto`
+  # Set to `auto` to prevent limiting the max idle time
+  maxIdleTime: 2000
+  
+  # The surrounding frame box
+  # The `type` can be null, window, floating, or solid`
+  # To hide the title use the value null
+  # Don't forget to add a backgroundColor style with a null as type
+  frameBox:
+    type: solid
+    title: null
+    style: []
+  
+
+  # Add a watermark image to the rendered gif
+  # You need to specify an absolute path for
+  # the image on your machine or a URL, and you can also
+  # add your own CSS styles
+  watermark:
+    imagePath: null
+    style:
+      position: absolute
+      right: 15px
+      bottom: 15px
+      width: 100px
+      opacity: 0.9
+  
+  # Cursor style can be one of
+  # `block`, `underline`, or `bar`
+  cursorStyle: block
+  
+  # Font family
+  # You can use any font that is installed on your machine
+  # in CSS-like syntax
+  fontFamily: "Monaco, Lucida Console, Ubuntu Mono, Monospace"
+  
+  # The size of the font
+  fontSize: 12
+  
+  # The height of lines
+  lineHeight: 1
+  
+  # The spacing between letters
+  letterSpacing: 0
+  
+  # Theme
+  theme:
+    background: "transparent"
+    foreground: "#afafaf"
+    cursor: "#c7c7c7"
+    black: "#232628"
+    red: "#fc4384"
+    green: "#b3e33b"
+    yellow: "#ffa727"
+    blue: "#75dff2"
+    magenta: "#ae89fe"
+    cyan: "#708387"
+    white: "#d5d5d0"
+    brightBlack: "#626566"
+    brightRed: "#ff7fac"
+    brightGreen: "#c8ed71"
+    brightYellow: "#ebdf86"
+    brightBlue: "#75dff2"
+    brightMagenta: "#ae89fe"
+    brightCyan: "#b1c6ca"
+    brightWhite: "#f9f9f4"
+  
+# Records, feel free to edit them
+records:
+  - delay: 100
+    content: "\r\e[0m\e[27m\e[24m\e[J\e[01;32m🍪  \e[34marduino-pi-ceiling-sculpture\e[00m \e[01;35mgit:(\e[31mmaster\e[35m) \e[00m \e[K\e[?1h\e=\e[?2004h"
+  - delay: 100
+    content: s
+  - delay: 100
+    content: s
+  - delay: 100
+    content: h
+  - delay: 100
+    content: ' '
+  - delay: 100
+    content: p
+  - delay: 100
+    content: i
+  - delay: 100
+    content: '@'
+  - delay: 100
+    content: '1'
+  - delay: 100
+    content: '9'
+  - delay: 100
+    content: '2'
+  - delay: 100
+    content: '.'
+  - delay: 100
+    content: '1'
+  - delay: 100
+    content: '6'
+  - delay: 100
+    content: '8'
+  - delay: 100
+    content: '.'
+  - delay: 100
+    content: '1'
+  - delay: 100
+    content: '.'
+  - delay: 100
+    content: '1'
+  - delay: 100
+    content: '5'
+  - delay: 100
+    content: '5'
+  - delay: 500
+    content: "\e[?1l\e>\e[?2004l\r\r\n\e]2;ssh pi@192.168.1.155\a\e]1;pi@192.168.1.155\a"
+  - delay: 200
+    content: "\rpi@192.168.1.155's password: "
+  - delay: 1000
+    content: "\r\n"
+  - delay: 500
+    content: "Linux raspberrypi 4.19.97-v7+ #1294 SMP Thu Jan 30 13:15:58 GMT 2020 armv7l\r\n\r\nThe programs included with the Debian GNU/Linux system are free software;\r\nthe exact distribution terms for each program are described in the\r\nindividual files in /usr/share/doc/*/copyright.\r\n\r\nDebian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent\r\npermitted by applicable law.\r\nLast login: Tue Apr  7 01:09:27 2020 from 192.168.1.182\r\r\n"
+  - delay: 500
+    content: "\r\n\r\nPress Enter to Start the Program or type 'Exit' to Close:"
+  - delay: 7500
+    content: "\r\n"
+  - delay: 100
+    content: "\r\nFound \e[32m2\e[0m Array(s)\r\nof Max of 4\r\n\r\nOpening Port(s)\r\n\e[?25l\r☀️ \e[0m \e[K\r\e[KSerial Port 0 /dev/ttyUSB0 \e[32mREADY\e[0m\r\n"
+  - delay: 10
+    content: "\r\e[KSerial Port 1 /dev/ttyUSB1 \e[32mREADY\e[0m\r\n"
+  - delay: 100
+    content: "\r\e[K\e[?25h\r\nConnecing to Arrays\r\n\e[?25l\r☀️ \e[0m \e[K"
+  - delay: 100
+    content: "\r☀️ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F324 \e[0m \e[K"
+  - delay: 100
+    content: "\r⛅️ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F325 \e[0m \e[K"
+  - delay: 100
+    content: "\r☁️ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F327 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F328 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F327 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F328 \e[0m \e[K\r\U0001F327 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F328 \e[0m \e[K"
+  - delay: 100
+    content: "\r⛈ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F328 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F327 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F328 \e[0m \e[K"
+  - delay: 100
+    content: "\r☁️ \e[0m \e[K"
+  - delay: 50
+    content: "\r\e[KSerial Port 0 \e[32mREADY\e[0m\r\n"
+  - delay: 25
+    content: "\r\e[KSerial Port 1 \e[32mREADY\e[0m\r\n"
+  - delay: 100
+    content: "\r\e[K\e[?25h\r\nChecking Array and Motor Numbers\r\nArray Numbers \e[32mLINTED\e[0m\r\nMotor Numbers \e[32mLINTED\e[0m\r\n===========\r\n\r\nEnter '1' to set ceiling from csv, '2' to reset, and 'Exit' to close program)\r\n : "
+  - delay: 7500
+    content: '1'
+  - delay: 500
+    content: "\r\n\r\nChecking for CSV Files\r\ndesired-state.csv\e[32m FOUND\e[0m\r\ncurrent-state.csv\e[32m FOUND\e[0m\r\n"
+  - delay: 10
+    content: "\r\e[Kdesired-state.csv \e[32mLINTED\e[0m\r\n\r\e[Kcurrent-state.csv \e[32mLINTED\e[0m\r\nCSV Mode\r\n\r\n<None,0,None,0>;<None,0,None,0>\r\n\e[?25l\r\U0001F325 \e[0m \e[K"
+  - delay: 25
+    content: "\r\r\e[K-> -> Array: 1 \e[32mSENT\e[0m\r\n\e[K-> -> Array: 0 \e[32mSENT\e[0m\r\n"
+  - delay: 100
+    content: "\r⛅️ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F324 \e[0m \e[K"
+  - delay: 100
+    content: "\r☀️ \e[0m \e[K"
+  - delay: 100
+    content: "\r☀️ \e[0m \e[K"
+  - delay: 100
+    content: "\r☀️ \e[0m \e[K"
+  - delay: 100
+    content: "\r☀️ \e[0m \e[K"
+  - delay: 100
+    content: "\r☀️ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F324 \e[0m \e[K"
+  - delay: 100
+    content: "\r⛅️ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F325 \e[0m \e[K"
+  - delay: 100
+    content: "\r☁️ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F327 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F328 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F327 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F328 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F327 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F328 \e[0m \e[K"
+  - delay: 100
+    content: "\r⛈ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F328 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F327 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F328 \e[0m \e[K"
+  - delay: 100
+    content: "\r☁️ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F325 \e[0m \e[K"
+  - delay: 100
+    content: "\r⛅️ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F324 \e[0m \e[K"
+  - delay: 100
+    content: "\r☀️ \e[0m \e[K"
+  - delay: 100
+    content: "\r☀️ \e[0m \e[K"
+  - delay: 100
+    content: "\r☀️ \e[0m \e[K"
+  - delay: 100
+    content: "\r☀️ \e[0m \e[K"
+  - delay: 100
+    content: "\r☀️ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F324 \e[0m \e[K"
+  - delay: 100
+    content: "\r⛅️ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F325 \e[0m \e[K"
+  - delay: 100
+    content: "\r☁️ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F327 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F328 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F327 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F328 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F327 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F328 \e[0m \e[K"
+  - delay: 100
+    content: "\r⛈ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F328 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F327 \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F328 \e[0m \e[K"
+  - delay: 100
+    content: "\r☁️ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F325 \e[0m \e[K"
+  - delay: 100
+    content: "\r⛅️ \e[0m \e[K"
+  - delay: 100
+    content: "\r\U0001F324 \e[0m \e[K"
+  - delay: 100
+    content: "\r☀️ \e[0m \e[K"
+  - delay: 100
+    content: "\r☀️ \e[0m \e[K"
+  - delay: 100
+    content: "\r\e[K<- <- Array: 1 \e[32mRECIEVED: DONE\e[0m\r\n\r\e[K<- <- Array: 0 \e[32mRECIEVED: DONE\e[0m\r\n"
+  - delay: 100
+    content: "\r\e[K\e[?25h===========\r\n\r\nEnter '1' to set ceiling from csv, '2' to reset, and 'Exit' to close program)\r\n : "
+  - delay: 7500
+    content: e
+  - delay: 100
+    content: x
+  - delay: 100
+    content: i
+  - delay: 100
+    content: t
+  - delay: 100
+    content: "\e[K\r\e[KSerial port 0 /dev/ttyUSB0 \e[32mCLOSED\e[0m\r\n\r\e[KSerial port 1 /dev/ttyUSB1 \e[32mCLOSED\e[0m\r\n\r\e[K\e[?25h"
+  - delay: 100
+    content: "\e[1m\e[7m%\e[27m\e[1m\e[0m                                                                               \r \r\e]2;pi@raspberrypi: ~\a\e]1;~\a"
+  - delay: 25
+    content: "\r\e[0m\e[27m\e[24m\e[J\e[01;32m➜  \e[36m~\e[00m \e[K\e[?1h\e=\e[?2004h"
+  - delay: 1000
+    content: e
+  - delay: 100
+    content: x
+  - delay: 100
+    content: i
+  - delay: 100
+    content: t
+  - delay: 100
+    content: "\e[?1l\e>\e[?2004l"
+  - delay: 25
+    content: "\r\r\n\e]2;exit\a\e]1;exit\aConnection to 192.168.1.155 closed.\r\r\n\e[1m\e[7m%\e[27m\e[1m\e[0m                                                                               \r \r\e]7;file://Harlens-MBP/Users/harlen/Documents/GitHub/arduino-pi-ceiling-sculpture\a\e]2;harlen@Harlens-MBP\a\e]1;..ing-sculpture\a"
+  - delay: 100
+    content: "\r\e[0m\e[27m\e[24m\e[J\e[01;32m🍪  \e[34marduino-pi-ceiling-sculpture\e[00m \e[01;35mgit:(\e[31mmaster\e[35m) \e[00m \e[K\e[?1h\e=\e[?2004h"
+  - delay: 7500
+    content: "\e[?2004l\r\r\n"
