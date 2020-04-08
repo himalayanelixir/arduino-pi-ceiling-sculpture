@@ -8,6 +8,7 @@ Once a command is sent it then waits a reply
 import csv
 import shutil
 import subprocess
+import time
 from os import path
 from threading import Thread
 import serial
@@ -52,6 +53,17 @@ def find_arduinos():
         print(f"\nFound \033[31m0\033[0m Array(s) of Max of {MAX_NUMBER_OF_ARRAYS}")
         raise Error
     return serial_shell_capture_list
+
+
+def check_csvs():
+    """runs functions that check for and lint csv files"""
+    # check if the csvs for desired and current state exist
+    print("\nChecking for CSV Files")
+    check_if_csv_exists(DESIRED_STATE_FILENAME)
+    check_if_csv_exists(CURRENT_STATE_FILENAME)
+    # lint csvs so that the contain valid data and are the coorect size
+    lint_csv_file(DESIRED_STATE_FILENAME)
+    lint_csv_file(CURRENT_STATE_FILENAME)
 
 
 def check_if_csv_exists(csv_filename):
@@ -191,7 +203,7 @@ def commands_from_csv(serial_ports):
     shutil.copy2(DESIRED_STATE_FILENAME, CURRENT_STATE_FILENAME)
 
 
-def commands_from_reset(serial_ports):
+def commands_from_variable(serial_ports, variable_string):
     """Preforms a reset on the ceiling """
     command_string = ""
     # first we zero the current state file
@@ -206,7 +218,7 @@ def commands_from_reset(serial_ports):
         # beginning of every command for an array
         command_string += "<"
         for _ in range(serial_ports[count_row][3]):
-            command_string += "Up,100,"
+            command_string += variable_string
         # remove extra comma
         command_string = command_string[:-1]
         command_string += ">;"
@@ -482,28 +494,28 @@ def main():
             input_text_2 = input(
                 "Enter '1' to set ceiling from csv, '2' to reset, and 'Exit' to close program)\n : "
             )
-            if input_text_2 in ("1", "2"):
-                # check if the csvs for desired and current state exist
-                print("\nChecking for CSV Files")
-                check_if_csv_exists(DESIRED_STATE_FILENAME)
-                check_if_csv_exists(CURRENT_STATE_FILENAME)
-                # lint csvs so that the contain valid data and are the coorect size
-                lint_csv_file(DESIRED_STATE_FILENAME)
-                lint_csv_file(CURRENT_STATE_FILENAME)
             # csv mode
             if input_text_2 == "1":
                 print("CSV Mode\n")
+                check_csvs()
                 commands_from_csv(serial_ports)
             # csv reset
             elif input_text_2 == "2":
                 print("CSV Reset Mode\n")
-                commands_from_reset(serial_ports)
-            # manual mode
+                check_csvs()
+                commands_from_variable(serial_ports, "Up,100,")
+            # array test
             elif input_text_2 == "3":
-                print("Manual Mode (Commands aren't linted so be careful)\n")
-                execute_commands(
-                    serial_ports, input("Enter Commands (format '<Up,1>;<Up,1>'):\n : ")
-                )
+                print("Test Mode (Only way to stop is to 'ctrl + c')\n")
+                while True:
+                    print("Resetting\n")
+                    commands_from_variable(serial_ports, "Up,100,")
+                    print("Wait 10 seconds\n")
+                    time.sleep(10)
+                    print("Moving Down 5 Turns\n")
+                    commands_from_variable(serial_ports, "Down,5,")
+                    print("Wait 10 seconds\n")
+                    time.sleep(10)
             # exit
             elif input_text_2 in ("Exit", "exit"):
                 # close all serial connections
