@@ -204,9 +204,9 @@ records:
   - delay: 7500
     content: '1'
   - delay: 500
-    content: "\r\n\r\nChecking for CSV Files\r\ndesired-state.csv\e[32m FOUND\e[0m\r\ncurrent-state.csv\e[32m FOUND\e[0m\r\n"
+    content: "\r\n\r\nCSV Mode\r\nChecking for CSV Files\r\ndesired-state.csv\e[32m FOUND\e[0m\r\ncurrent-state.csv\e[32m FOUND\e[0m\r\n"
   - delay: 10
-    content: "\r\e[Kdesired-state.csv \e[32mLINTED\e[0m\r\n\r\e[Kcurrent-state.csv \e[32mLINTED\e[0m\r\nCSV Mode\r\n\r\n<None,0,None,0>;<None,0,None,0>\r\n\e[?25l\r\U0001F325 \e[0m \e[K"
+    content: "\r\e[Kdesired-state.csv \e[32mLINTED\e[0m\r\n\r\e[Kcurrent-state.csv \e[32mLINTED\e[0m\r\n\r\n<None,0,None,0>;<None,0,None,0>\r\n\e[?25l\r\U0001F325 \e[0m \e[K"
   - delay: 25
     content: "\r\r\e[K-> -> Array: 1 \e[32mSENT\e[0m\r\n\e[K-> -> Array: 0 \e[32mSENT\e[0m\r\n"
   - delay: 100
