@@ -38,7 +38,7 @@ send -- "N\r"
 expect eof
 EOT
 # make script executable 
-chmod 755 script.exp
+chmod +x script.exp
 # run automation script which installs the adafruit screen drivers
 ./script.exp
 # remove the screen installation script
