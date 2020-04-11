@@ -1,6 +1,7 @@
 #!/root/gui_env/bin/python3
 # Copyright 2020 Harlen Bains
 # linted using pylint
+# formatted using black
 """This program creates a dashboard displaying the Pi's status. Displays time,
 local IP address, and internet connectivity"""
 
@@ -12,7 +13,7 @@ import curses
 
 
 def get_date_time():
-    """ Returns the date and time in UTC"""
+    """Returns the date and time in UTC"""
     now = datetime.now()
     date_time = now.strftime("%d/%m/%Y %H:%M:%S")
     date_time = "Current Time: " + date_time + " UTC"

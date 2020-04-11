@@ -1,6 +1,7 @@
 #!/home/pi/controller_env/bin/python3
 # Copyright 2020 Harlen Bains
 # linted using pylint
+# formatted using black
 """This script runs on the Raspberry Pi and sends commands to Arduinos.
 Once a command is sent it then waits a reply
 """
@@ -230,7 +231,7 @@ def commands_from_variable(serial_ports, variable_string):
 
 
 def execute_commands(serial_ports, command_string_execute):
-    """ Creates threads that send commands to the Arduinos and wait for replies.
+    """Creates threads that send commands to the Arduinos and wait for replies.
     there is one thread for each Arduino"""
     parse_text = command_string_execute.split(";")
     threads = [None] * len(serial_ports)
@@ -357,7 +358,7 @@ def wait_for_arduino_connection(serial_ports, port, results):
 
 @timeout_decorator.timeout(10, use_signals=False)
 def wait_for_arduino_connection_execute(serial_ports, port):
-    """ Waits for Arduino to send ready message. Created so we can have a
+    """Waits for Arduino to send ready message. Created so we can have a
     timeout and a try catch block"""
     msg = ""
     while msg.find("Arduino is ready") == -1:
@@ -370,7 +371,7 @@ def wait_for_arduino_connection_execute(serial_ports, port):
 
 
 def recieve_from_arduino(serial_ports, port):
-    """ Gets message from Arduino"""
+    """Gets message from Arduino"""
     recieve_string = ""
     # any value that is not an end- or START_MARKER
     recieve_char = "z"
@@ -424,7 +425,7 @@ def move_arrays_execute(serial_ports, parce_string, port):
 
 
 def close_connections(serial_ports):
-    """ Closes serial port(s)"""
+    """Closes serial port(s)"""
     print("\nClosing Port(s)")
     SPINNER.start()
     for count, _ in enumerate(serial_ports):
@@ -459,7 +460,7 @@ def close_connections(serial_ports):
 
 
 def main():
-    """ Main function of the program. Also provides tui in terminal to interact with
+    """Main function of the program. Also provides tui in terminal to interact with
     """
     # address of USB port,pyserial object, array number, and number of motors
     serial_ports = []
