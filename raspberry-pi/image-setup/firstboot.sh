@@ -66,9 +66,7 @@ echo "controller.py" >>/home/pi/.zshrc
 wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/current-state.csv
 wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/desired-state.csv
 # make pi user owner of all the files we downloaded
-chown pi /home/pi/controller.py
-chown pi /home/pi/current-state.csv
-chown pi /home/pi/desired-state.csv
+chown pi /home/pi
 # remove requirements.txt
 rm /home/pi/requirements.txt
 
@@ -83,5 +81,7 @@ sudo chmod +x /root/gui.py
 echo "export PATH=\"/root:$PATH\"" >>/root/.zshrc
 # set so that the gui starts up on the adafruit screen when booted in a virtual environment
 echo "gui.py" >>/root/.zshrc
+
+
 # tell pi to restart after one minute. This is needed for the ssh changes to work and for the adafruit screen drivers
 sudo shutdown -r 1
