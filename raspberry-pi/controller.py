@@ -12,10 +12,10 @@ import subprocess
 import time
 from os import path
 from threading import Thread
-import serial
-from yaspin import yaspin
-from yaspin.spinners import Spinners
-import timeout_decorator
+import serial  # pylint: disable=import-error
+from yaspin import yaspin  # pylint: disable=import-error
+from yaspin.spinners import Spinners  # pylint: disable=import-error
+import timeout_decorator  # pylint: disable=import-error
 
 
 class Error(Exception):
