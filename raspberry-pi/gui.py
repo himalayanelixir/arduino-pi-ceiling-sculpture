@@ -3,7 +3,8 @@
 # linted using pylint
 # formatted using black
 """This program creates a dashboard displaying the Pi's status. Displays time,
-local IP address, and internet connectivity"""
+local IP address, and internet connectivity
+"""
 
 from datetime import datetime
 import time
@@ -13,7 +14,11 @@ import curses
 
 
 def get_date_time():
-    """Returns the date and time in UTC"""
+    """Get the date and time in UTC.
+
+    Returns:
+      Date and time in UTC.
+    """
     now = datetime.now()
     date_time = now.strftime("%d/%m/%Y %H:%M:%S")
     date_time = "Current Time: " + date_time + " UTC"
@@ -21,7 +26,11 @@ def get_date_time():
 
 
 def get_ip():
-    """gets current local ip address of raspberry pi"""
+    """Gets current local ip address of Raspberry Pi.
+
+    Returns:
+      Local IP address of the Raspberry Pi.
+    """
     pi_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
         # doesn't even have to be reachable
@@ -36,7 +45,11 @@ def get_ip():
 
 
 def get_internet_status():
-    """get internet status by pinging 8.8.8.8 (google dns)"""
+    """Get internet status by pinging 8.8.8.8 (Google DNS).
+
+    Returns:
+      String saying whether or not the Raspberry Pi is connected to the internet.
+    """
     response = os.system("ping -c 1 -w2 " + "8.8.8.8" + " > /dev/null 2>&1")
     if response == 0:
         internet_connection = "Internet: Connected"
@@ -46,7 +59,7 @@ def get_internet_status():
 
 
 def main():
-    """ Main function of the program. Displays status on to screen"""
+    """Displays Raspberry Pi's status on to a screen"""
     # initialize curses
     scr = curses.initscr()
     # remove cursor
