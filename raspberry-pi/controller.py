@@ -3,7 +3,7 @@
 # linted using pylint
 # formatted using black
 """This script runs on the Raspberry Pi and sends commands to Arduinos.
-Once a command is sent it then waits a reply
+Once a command is sent it then waits a reply and then loops.
 """
 
 import csv
@@ -20,12 +20,21 @@ import timeout_decorator  # pylint: disable=import-error
 
 class Error(Exception):
     """Exception that is raised when an error occurs in the program
-    causes the program to print out a message and then loop"""
+    causes the program to print out a message and then loop.
+    """
 
 
 def find_arduinos():
     """Run ls command and find all USB devices connected to USB hub
-     assume that all of them are arduinos"""
+     assume that all of them are Arduinos.
+
+    Returns:
+      A list of all the ports that are active on the USB hub.
+
+    Raises:
+      Error: if no arrays are found or if more than MAX_NUMBER_OF_ARRAYS is
+    found.
+    """
     # run ls in subprocess shell and save results
     try:
         path_command = "ls " + USB_PATH
@@ -57,7 +66,8 @@ def find_arduinos():
 
 
 def check_csvs():
-    """runs functions that check for and lint csv files"""
+    """Runs functions that check for and lint csv files.
+    """
     # check if the csvs for desired and current state exist
     print("\nChecking for CSV Files")
     check_if_csv_exists(DESIRED_STATE_FILENAME)
@@ -68,7 +78,14 @@ def check_csvs():
 
 
 def check_if_csv_exists(csv_filename):
-    """Check if csvs for desired state and current state exist"""
+    """Check if file exists.
+
+    Args:
+      csv_filename: The name of the file we are checking for.
+
+    Raises:
+      Error: If file is not found.
+    """
     if path.exists(csv_filename):
         print(csv_filename + "\033[32m FOUND\033[0m")
     else:
@@ -77,8 +94,15 @@ def check_if_csv_exists(csv_filename):
 
 
 def lint_csv_file(csv_filename):
-    """Lint csv_filename csv values and make sure that they are in range also make
-    sure that csv is the right size and the values are valid"""
+    """Lint file table is the corret size and values are valid.
+
+    Args:
+      csv_filename: The name of the file we are linting.
+
+    Raises:
+      Error: If the program can not read the file.
+      Error: If the program can not write to the file.
+    """
     csv_filename_list = []
     # we initialize this list to a particular size becuase we then iterate over it and
     # copy values from csv_filename_list. When copying we also make sure that the
@@ -126,7 +150,17 @@ def lint_csv_file(csv_filename):
 
 
 def lint_serial_port_values(serial_ports):
-    """Makes sure that the numbers for array number and number of motors is valid"""
+    """Makes sure that the numbers for array number and number of motors is valid.
+
+    Args:
+      serial_ports: List containing address of USB ports, pySerial object, array number,
+        and number of motors.
+
+    Raises:
+      Error: Duplicate array numbers
+      Error: Number of arrys is out of range or too many are connected.
+      Error: Number of motors is out or range.
+    """
     list_array_numbers = []
     list_motor_numbers = []
     print("\nChecking Array and Motor Numbers")
@@ -139,7 +173,7 @@ def lint_serial_port_values(serial_ports):
         raise Error
     # check and see if any of the arrays are out of the correct range
     for value in list_array_numbers:
-        # >= because array numbers from the arduino start at 0
+        # >= because array numbers from the Arduino start at 0
         if int(value) >= MAX_NUMBER_OF_ARRAYS or int(value) < 0:
             print(
                 "Array Numbers \033[31mFAILED: OUT OF RANGE OR TOO MANY ARRAYS CONNECTED\033[0m"
@@ -158,8 +192,12 @@ def lint_serial_port_values(serial_ports):
 
 
 def commands_from_csv(serial_ports):
-    """Reads data from desiered_state.csv, lints it, and then executes the
-    commands"""
+    """Reads data from desiered_state.csv, lints it, and then executes the commands.
+
+    Args:
+      serial_ports: List containing address of USB ports, pySerial object, array number,
+        and number of motors.
+    """
     # fill command string
     command_string = ""
     desired_state_list = []
@@ -205,7 +243,13 @@ def commands_from_csv(serial_ports):
 
 
 def commands_from_variable(serial_ports, variable_string):
-    """Preforms a reset on the ceiling """
+    """Sends the same command to every motor in the ceiling. Used for reset and testing.
+
+    Args:
+      serial_ports: List containing address of USB ports, pySerial object, array number,
+        and number of motors.
+      variable_string: Command that we want every motor to execute. Example: "Up,100,".
+    """
     command_string = ""
     # first we zero the current state file
     current_state_list_zero = [
@@ -232,7 +276,13 @@ def commands_from_variable(serial_ports, variable_string):
 
 def execute_commands(serial_ports, command_string_execute):
     """Creates threads that send commands to the Arduinos and wait for replies.
-    there is one thread for each Arduino"""
+    there is one thread for each Arduino.
+
+    Args:
+      serial_ports: List containing address of USB ports, pySerial object, array number,
+        and number of motors.
+      command_string_execute: String of commands that are to be sent to all the arrays.
+    """
     parse_text = command_string_execute.split(";")
     threads = [None] * len(serial_ports)
     SPINNER.start()
@@ -253,7 +303,18 @@ def execute_commands(serial_ports, command_string_execute):
 ##############################################################################
 ##############################################################################
 def open_ports(serial_ports):
-    """Open ports and create pyserial objects saving them to serial_ports"""
+    """Open ports and create pySerial objects saving them to serial_ports.
+
+    Args:
+      serial_ports: List containing address of USB ports, pySerial object, array number,
+        and number of motors.
+
+    Returns:
+      Returns a list with serial_ports data but with the pySerial object added for each array.
+
+    Raises:
+      Error: If pySerial object cannot be created.
+    """
     print("\nOpening Port(s)")
     SPINNER.start()
     # go through serial_ports list and try to connect to usb devices
@@ -290,7 +351,19 @@ def open_ports(serial_ports):
 
 
 def connect_to_arrays(serial_ports):
-    """Connect to arrays and retrieve connection message"""
+    """Connect to arrays and retrieve connection message.
+
+    Args:
+      serial_ports: List containing address of USB ports, pySerial object, array number,
+        and number of motors.
+
+    Returns:
+      Returns a list with serial_ports data but with array number and number of motors
+        filled in for each array.
+
+    Raises:
+      Error: If the correct message is not recived within timeout.
+    """
     print("\nConnecing to Arrays")
     # used for thread objects
     connection_threads = [None] * len(serial_ports)
@@ -320,10 +393,14 @@ def connect_to_arrays(serial_ports):
 def wait_for_arduino_connection(serial_ports, port, results):
     """Wait until the Arduino sends "Arduino Ready" - allows time for Arduino
     reset it also ensures that any bytes left over from a previous message are
-    discarded """
-    # we had to create seperate functions wait_for_arduino_connection and
-    # wait_for_arduino_connection_execute because I wanted to add a timer to the execution
-    # this way we can timeout connections
+    discarded.
+
+    Args:
+      serial_ports: List containing address of USB ports, pySerial object, array number,
+        and number of motors.
+      port: Thread number created from enumerating through serial_ports.
+      results: Used to find if errors occoured in the thread and pass back to connect_to_arrays().
+    """
     error = False
     try:
         array_info = wait_for_arduino_connection_execute(serial_ports, port)
@@ -359,7 +436,16 @@ def wait_for_arduino_connection(serial_ports, port, results):
 @timeout_decorator.timeout(10, use_signals=False)
 def wait_for_arduino_connection_execute(serial_ports, port):
     """Waits for Arduino to send ready message. Created so we can have a
-    timeout and a try catch block"""
+    timeout and a try catch block.
+
+    Args:
+      serial_ports: List containing address of USB ports, pySerial object, array number,
+        and number of motors.
+      port: Thread number created from enumerating through serial_ports.
+
+    Returns:
+      Array number and the number of motors conntected to it.
+    """
     msg = ""
     while msg.find("Arduino is ready") == -1:
         while serial_ports[port][1].inWaiting() == 0:
@@ -371,7 +457,16 @@ def wait_for_arduino_connection_execute(serial_ports, port):
 
 
 def recieve_from_arduino(serial_ports, port):
-    """Gets message from Arduino"""
+    """Gets message from Arduino.
+
+    Args:
+      serial_ports: List containing address of USB ports, pySerial object, array number,
+        and number of motors.
+      port: Thread number created from enumerating through serial_ports.
+
+    Returns:
+      The string that was returned from the Arduino.
+    """
     recieve_string = ""
     # any value that is not an end- or START_MARKER
     recieve_char = "z"
@@ -393,7 +488,14 @@ def recieve_from_arduino(serial_ports, port):
 def move_arrays(serial_ports, parce_string, port):
     """Wait until the Arduino sends "Arduino Ready" - allows time for Arduino
     reset it also ensures that any bytes left over from a previous message are
-    discarded"""
+    discarded.
+
+    Args:
+      serial_ports: List containing address of USB ports, pySerial object, array number,
+        and number of motors.
+      parce_string: String of commands sent to an array
+      port: Thread number created from enumerating through serial_ports.
+    """
     try:
         move_arrays_execute(serial_ports, parce_string, port)
     except timeout_decorator.TimeoutError:
@@ -409,7 +511,14 @@ def move_arrays(serial_ports, parce_string, port):
 @timeout_decorator.timeout(100, use_signals=False)
 def move_arrays_execute(serial_ports, parce_string, port):
     """Sends commands Arduino and then waits for a reply. Created off move_arrays() so
-    we can have both a timeout and a try catch block"""
+    we can have both a timeout and a try catch block.
+
+    Args:
+      serial_ports: List containing address of USB ports, pySerial object, array number,
+        and number of motors.
+      parce_string: String of commands sent to an array
+      port: Thread number created from enumerating through serial_ports.
+    """
     waiting_for_reply = False
     if not waiting_for_reply:
         serial_ports[port][1].write(parce_string.encode())
@@ -425,7 +534,12 @@ def move_arrays_execute(serial_ports, parce_string, port):
 
 
 def close_connections(serial_ports):
-    """Closes serial port(s)"""
+    """Closes serial port(s)
+
+    Args:
+      serial_ports: List containing address of USB ports, pySerial object, array number,
+        and number of motors.
+    """
     print("\nClosing Port(s)")
     SPINNER.start()
     for count, _ in enumerate(serial_ports):
@@ -460,9 +574,9 @@ def close_connections(serial_ports):
 
 
 def main():
-    """Main function of the program. Also provides tui in terminal to interact with
+    """Loop of the program. Provides tui to interact with the ceiling sculpture
     """
-    # address of USB port,pyserial object, array number, and number of motors
+    # address of USB port,pySerial object, array number, and number of motors
     serial_ports = []
     while True:
         try:
@@ -473,9 +587,9 @@ def main():
             if input_text_1 in ("Exit", "exit"):
                 break
             # find all usb devices connected at /dev/ttyU*
-            # we are assuming that all usb devices at this address are arduinos
+            # we are assuming that all usb devices at this address are Arduinos
             serial_ports = find_arduinos()
-            # initialize serial_objecs size based on the number of arduinos
+            # initialize serial_objecs size based on the number of Arduinos
             # open ports at address /dev/ttyU* that we found earlier
             serial_ports = open_ports(serial_ports)
             # connect to the arrays and then save the array number and number of motors
@@ -529,7 +643,7 @@ def main():
 
 
 # global variables
-# never change
+# don't change
 BAUD_RATE = 9600
 START_MARKER = 60
 END_MARKER = 62
