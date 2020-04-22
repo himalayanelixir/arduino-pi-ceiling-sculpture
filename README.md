@@ -46,11 +46,11 @@ ports | {array}| array that contains the maping of port number, function, and mo
 
 The Raspberry Pi setup is mostly automated using the script found at ```raspberry-pi/image-setup/firstboot.sh```. In the current setup I have an Raspberry connected to an Adafruit PiTFT Plus screen (<https://www.adafruit.com/product/2298>). If you aren't using the screen you can comment out those parts of the ```firstboot.sh``` script.  Also you can comment out the parts where it sets up the ```/raspberry-pi/gui.py``` file for the screen.
 
-Note: The ```firstboot.sh``` pulls files from Github when running. The default is to pull from ```https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/``` change this if you want to pull from your own repo. 
+Note: The ```firstboot.sh``` pulls files from Github when running. The default is to pull from ```https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/``` change this if you want to pull from your own repo.
 
 The best way to get everything working properly is to follow these steps:
 1. Download the latest image from <https://github.com/nmcclain/raspberian-firstboot/releases>
-2. Use etcher to write to SD card (<https://www.balena.io/etcher/>)
+2. Use etcher to write to the SD card (<https://www.balena.io/etcher/>)
 3. Copy over ```raspberry-pi/image-setup/firstboot.sh``` and ```raspberry-pi/image-setup/wpa_supplicant.conf``` to boot partition of SD card. Remember to edit the `wpa_supplicant.conf` file with the details for your wifi network
 4. Put the SD card into Raspberry Pi and boot. This will take a while but but shouldn't take more than 30 mins. If it does something probably went wrong.
 
