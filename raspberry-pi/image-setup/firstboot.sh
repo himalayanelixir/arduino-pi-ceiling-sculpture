@@ -8,7 +8,7 @@ sudo systemctl enable ssh
 sudo apt-get update -y
 sudo apt-get upgrade -y
 # install programs
-sudo apt-get install expect git zsh python3-pip python3-venv -y
+sudo apt-get install expect git zsh ufw python3-pip python3-venv -y
 # change default shell for root and pi users
 sudo chsh -s /bin/zsh pi
 sudo chsh -s /bin/zsh
@@ -27,7 +27,7 @@ cat <<EOT >script.exp
 set timeout -1
 spawn sudo ./adafruit-pitft.sh
 match_max 100000
-expect -exact "SELECT 1-7: "
+expect -exact "SELECT 1-8: "
 send -- "1\r"
 expect -exact "SELECT 1-4: "
 send -- "1\r"
@@ -82,6 +82,14 @@ echo "export PATH=\"/root:$PATH\"" >>/root/.zshrc
 # set so that the gui starts up on the adafruit screen when booted in a virtual environment
 echo "gui.py" >>/root/.zshrc
 
+
+# block all internet access other than incomming ssh from local network
+# outgoing isn't blocked by default, we don't want updates unless we explicitly disable the firewall 
+ufw default deny outgoing
+# allow local ssh
+ufw allow from 192.168.1.0/24 to any port 22
+# enable ufw, will auto start on boot
+echo "y" | sudo ufw enable
 
 # tell pi to restart after one minute. This is needed for the ssh changes to work and for the adafruit screen drivers
 sudo shutdown -r 1
