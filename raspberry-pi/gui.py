@@ -40,7 +40,7 @@ def get_ip():
         ip_address = "Not Connected"
     finally:
         pi_socket.close()
-    ip_address = "Local IP: " + ip_address
+    ip_address = "Local Internet: " + ip_address
     return ip_address
 
 
@@ -52,9 +52,9 @@ def get_internet_status():
     """
     response = os.system("ping -c 1 -w2 " + "8.8.8.8" + " > /dev/null 2>&1")
     if response == 0:
-        internet_connection = "Internet: Connected"
+        internet_connection = "Public Internet: Connected"
     else:
-        internet_connection = "Internet: Disconnected"
+        internet_connection = "Public Internet: Disconnected"
     return internet_connection
 
 
