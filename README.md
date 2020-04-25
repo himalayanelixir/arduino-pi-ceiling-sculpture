@@ -40,7 +40,7 @@ There are only a few variables that can to be modified. Note that in this projec
 | NUMBER_OF_MOTORS_MOVING        | 1                | the execution of the commands is staggered/ cascaded from motor number 0 to NUMBER_OF_MOTORS. This is done to limit the amount of power being drawn at any one time|
 | TIMEOUT                        | 50000            | this number counts the number of loops before the array returns a timeout error to the raspberry pi. The mount of time a loop takes is arbitrary and this number should be adjusted depending on what you need|
 | IGNORE_INPUT_TIME              | 150              | once the reset is hit we ignore inputs from the encoder switch for a certain number of loops. This is done so we skip an edge when moving down one turn from a reset event          |
-ports | {array}| array that contains the maping of port number, function, and motor number
+ports | {array}| array that contains the mapping of port number, function, and motor number
 
 ## Raspberry Pi
 
@@ -54,12 +54,14 @@ The best way to get everything working properly is to follow these steps:
 3. Copy over ```raspberry-pi/image-setup/firstboot.sh``` and ```raspberry-pi/image-setup/wpa_supplicant.conf``` to boot partition of SD card. Remember to edit the `wpa_supplicant.conf` file with the details for your wifi network
 4. Put the SD card into Raspberry Pi and boot. This will take a while but but shouldn't take more than 30 mins. If it does something probably went wrong.
 
+It is important to note that ```firstboot.sh``` configures UFW (Uncomplicated Firewall) to block all outgoing and incoming network connections other than port 22 (SSH) from 192.168.1.0/24 (local network). This is done since we don't want the Raspberry Pi being accessed outside the local network or to pull updates which might break the applications. To connect to disable UFW run ```sudo ufw disable``` and enable using ```sudo ufw enable```.
+
 There are a few variables that can be changed.
 
 | Variable               | Default             | Description                                                                                   |
 |------------------------|---------------------|-----------------------------------------------------------------------------------------------|
-| MAX_TURNS              | 10                  | maxium number of turns a motor can take from 0 position used when linting csv files           |
-| MAX_NUMBER_OF_ARRAYS   | 4                   | maxmum number of arrays allowed. Used then linting csv files                                  |
+| MAX_TURNS              | 10                  | maximum number of turns a motor can take from 0 position used when linting csv files          |
+| MAX_NUMBER_OF_ARRAYS   | 4                   | maximum number of arrays allowed. Used then linting csv files                                 |
 | MAX_NUMBER_OF_MOTORS   | 10                  | maximum number of motors allowed. Used when linting csv file                                  |
 | USB_PATH               | "/dev/ttyU*"        | path the code looks for Arduinos at. All USB devices found will be considered to be Arduinos. |
 | DESIRED_STATE_FILENAME | "desired-state.csv" | CSV file we are using to store our desired state for the ceiling                              |
