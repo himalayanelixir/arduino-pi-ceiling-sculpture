@@ -36,11 +36,12 @@ def get_ip():
         # doesn't even have to be reachable
         pi_socket.connect(("10.255.255.255", 1))
         ip_address = pi_socket.getsockname()[0]
+        ip_address = ip_address
     except socket.error:
         ip_address = "Not Connected"
     finally:
         pi_socket.close()
-    ip_address = "Local Internet: " + ip_address
+    ip_address = "Network Address: " + ip_address
     return ip_address
 
 
@@ -52,9 +53,10 @@ def get_internet_status():
     """
     response = os.system("ping -c 1 -w2 " + "8.8.8.8" + " > /dev/null 2>&1")
     if response == 0:
-        internet_connection = "Public Internet: Connected"
+        internet_connection = "Yes"
     else:
-        internet_connection = "Public Internet: Disconnected"
+        internet_connection = "No"
+    internet_connection = "Internet Access: " + internet_connection
     return internet_connection
 
 
