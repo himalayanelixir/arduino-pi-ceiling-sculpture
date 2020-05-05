@@ -16,7 +16,7 @@
 
 ## <a name='Summary'></a>Summary
 
-Run a ceiling sculpture using a Raspberry Pi as a master and multiple Arduinos as slaves. Thanks to the way the code is written it's trivial to adapt code for any project that uses a text ui and cvs to send commands to as many Arduinos as you want!
+Runs a ceiling sculpture using a Raspberry Pi as a master and multiple Arduinos as slaves. Thanks to the way the code is written, it's trivial to adapt code for any project that uses a text ui and cvs to send commands to as many Arduinos as you want!
 
 Because the code is heavily commented, the focus of this README will be to get the code installed and then how to use the text ui to send commands to the Arduinos.
 
@@ -57,7 +57,7 @@ The best way to get everything working properly is to follow these steps:
 1. Download the latest image from <https://github.com/nmcclain/raspberian-firstboot/releases>
 2. Use etcher to write to the SD card (<https://www.balena.io/etcher/>)
 3. Copy over ```raspberry-pi/image-setup/firstboot.sh``` and ```raspberry-pi/image-setup/wpa_supplicant.conf``` to boot partition of SD card. Remember to edit the `wpa_supplicant.conf` file with the details for your wifi network
-4. Put the SD card into Raspberry Pi and boot. This will take a while but but shouldn't take more than 30 mins. If it does something probably went wrong.
+4. Put the SD card into Raspberry Pi and boot. This will take a while but shouldn't take more than 30 mins. If it does, something probably went wrong.
 
 It is important to note that ```firstboot.sh``` configures UFW (Uncomplicated Firewall) to block all outgoing and incoming network connections other than port 22 (SSH) from 192.168.1.0/24 (local network). This is done since we don't want the Raspberry Pi being accessed outside the local network or to pull updates which might break the applications. To connect to disable UFW run ```sudo ufw disable``` and enable using ```sudo ufw enable```.
 
@@ -74,7 +74,7 @@ There are a few variables that can be changed.
 
 ## <a name='Use'></a>Use
 
-Once the Arduinos are flashed and the Raspberry Pi is setup you plug the Arduinos into the Raspberry Pi. When you SSH into the Raspberry Pi using the pi user ```controller.pi``` will automatically run. If you close the program running ```controller``` in the terminal will start the program up again.
+Once the Arduinos are flashed and the Raspberry Pi is setup you plug the Arduinos into the Raspberry Pi. When you SSH into the Raspberry Pi using the pi user ```controller.pi``` will automatically run.
 
 ### <a name='Formatofthemessages'></a>Format of the messages
 
