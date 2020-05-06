@@ -10,20 +10,7 @@ from datetime import datetime
 import time
 import socket
 import os
-import curses
-
-
-def get_date_time():
-    """Get the date and time in UTC.
-
-    Returns:
-      Date and time in UTC.
-    """
-    now = datetime.now()
-    date_time = now.strftime("%d/%m/%Y %H:%M:%S")
-    date_time = "Current Time: " + date_time + " UTC"
-    return date_time
-
+import RPi.GPIO as GPIO
 
 def get_ip():
     """Gets current local ip address of Raspberry Pi.
@@ -36,13 +23,12 @@ def get_ip():
         # doesn't even have to be reachable
         pi_socket.connect(("10.255.255.255", 1))
         ip_address = pi_socket.getsockname()[0]
-        ip_address = ip_address
+        is_connected = True
     except socket.error:
-        ip_address = "Not Connected"
+        is_connected = False
     finally:
         pi_socket.close()
-    ip_address = "Network Address: " + ip_address
-    return ip_address
+    return is_connected
 
 
 def get_internet_status():
@@ -53,26 +39,34 @@ def get_internet_status():
     """
     response = os.system("ping -c 1 -w2 " + "8.8.8.8" + " > /dev/null 2>&1")
     if response == 0:
-        internet_connection = "Yes"
+        internet_connection = True
     else:
-        internet_connection = "No"
-    internet_connection = "Internet Access: " + internet_connection
+        internet_connection = False
     return internet_connection
 
 
 def main():
     """Displays Raspberry Pi's status on to a screen"""
-    # initialize curses
-    scr = curses.initscr()
-    # remove cursor
-    curses.curs_set(0)
-    # loop forever updating the screen in 1 second increments
-    # displays time, ip address, and internet connectivity
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+    GPIO.setup(20,GPIO.OUT)
+    GPIO.setup(21,GPIO.OUT)
+    GPIO.setup(23,GPIO.OUT)
+    GPIO.setup(24,GPIO.OUT)
     while True:
-        scr.addstr(7, 5, get_date_time(), curses.A_BOLD)
-        scr.addstr(9, 5, get_ip(), curses.A_BOLD)
-        scr.addstr(11, 5, get_internet_status(), curses.A_BOLD)
-        scr.refresh()
+        if get_internet_status():
+            GPIO.output(23,GPIO.HIGH)
+        else:
+            GPIO.output(24,GPIO.HIGH)
+        if get_ip():
+            GPIO.output(21,GPIO.HIGH)
+        else:
+            GPIO.output(20,GPIO.HIGH)
+        time.sleep(2)
+        GPIO.output(20,GPIO.LOW)
+        GPIO.output(21,GPIO.LOW)
+        GPIO.output(23,GPIO.LOW)
+        GPIO.output(24,GPIO.LOW)
         time.sleep(1)
 
 

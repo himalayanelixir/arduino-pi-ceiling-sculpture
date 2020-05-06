@@ -1,3 +1,6 @@
+# controller.py
 pyserial==3.4
 timeout-decorator==0.4.1
 yaspin==0.16.0
+# gui.py
+RPi.GPIO==0.7.0
