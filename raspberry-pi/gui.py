@@ -44,29 +44,54 @@ def get_internet_status():
         internet_connection = False
     return internet_connection
 
+def status_good(pins, on_off):
+    if on_off:
+        GPIO.output(pins[0],GPIO.LOW)
+        GPIO.output(pins[1],GPIO.LOW)
+        GPIO.output(pins[2],GPIO.HIGH)
+    else:
+        GPIO.output(pins[0],GPIO.HIGH)
+        GPIO.output(pins[1],GPIO.LOW)
+        GPIO.output(pins[2],GPIO.HIGH)
+
+def status_error(pins, on_off):
+    if on_off:
+        GPIO.output(pins[0],GPIO.HIGH)
+        GPIO.output(pins[1],GPIO.LOW)
+        GPIO.output(pins[2],GPIO.LOW)
+    else:
+        GPIO.output(pins[0],GPIO.HIGH)
+        GPIO.output(pins[1],GPIO.HIGH)
+        GPIO.output(pins[2],GPIO.LOW)
 
 def main():
     """Displays Raspberry Pi's status on to a screen"""
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-    GPIO.setup(20,GPIO.OUT)
-    GPIO.setup(21,GPIO.OUT)
-    GPIO.setup(23,GPIO.OUT)
-    GPIO.setup(24,GPIO.OUT)
+    led_network_pins = (16,20,21)
+    led_firewall_pins = (18,23,24)
+    for pin in led_network_pins:
+        GPIO.setup(pin,GPIO.OUT)
+    for pin in led_firewall_pins:
+        GPIO.setup(pin,GPIO.OUT)
     while True:
         if get_internet_status():
-            GPIO.output(23,GPIO.HIGH)
+            status_error(led_firewall_pins,True)
         else:
-            GPIO.output(24,GPIO.HIGH)
+            status_good(led_firewall_pins,True)
         if get_ip():
-            GPIO.output(21,GPIO.HIGH)
+            status_good(led_network_pins, True)
         else:
-            GPIO.output(20,GPIO.HIGH)
-        time.sleep(2)
-        GPIO.output(20,GPIO.LOW)
-        GPIO.output(21,GPIO.LOW)
-        GPIO.output(23,GPIO.LOW)
-        GPIO.output(24,GPIO.LOW)
+            status_error(led_network_pins,True)
+        time.sleep(1)
+        if get_internet_status():
+            status_error(led_firewall_pins,False)
+        else:
+            status_good(led_firewall_pins,False)
+        if get_ip():
+            status_good(led_network_pins, False)
+        else:
+            status_error(led_network_pins,False)
         time.sleep(1)
 
 
