@@ -8,7 +8,7 @@ systemctl enable ssh
 apt-get update -y
 apt-get upgrade -y
 # install programs
-apt-get install expect git zsh ufw python3-pip python3-venv -y
+apt-get install git zsh ufw python3-pip python3-venv -y
 # change default shell for root and pi users
 chsh -s /bin/zsh pi
 chsh -s /bin/zsh
@@ -18,36 +18,6 @@ sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/maste
 # disable ohmyzsh auto update
 sed -i 's/# DISABLE_AUTO_UPDATE="true"/DISABLE_AUTO_UPDATE="true"/g' /home/pi/.zshrc
 sed -i 's/# DISABLE_AUTO_UPDATE="true"/DISABLE_AUTO_UPDATE="true"/g' /root/.zshrc
-
-# install drivers for adafruit screen
-wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/adafruit-pitft.sh
-# make downloaded script executable
-chmod +x adafruit-pitft.sh
-# create script that uses expect to automate adafruit installation prompts
-cat <<EOT >script.exp
-#!/usr/bin/expect -f
-set timeout -1
-spawn sudo ./adafruit-pitft.sh
-match_max 100000
-expect -exact "SELECT 1-8: "
-send -- "1\r"
-expect -exact "SELECT 1-4: "
-send -- "1\r"
-expect -exact "Would you like the console to appear on the PiTFT display? \[y/n\] "
-send -- "y\r"
-expect -exact "REBOOT NOW? \[y/N\] "
-send -- "N\r"
-expect eof
-EOT
-# make script executable 
-chmod +x script.exp
-# run automation script which installs the adafruit screen drivers
-./script.exp
-# remove the screen installation script
-rm adafruit-pitft.sh
-# remove expect automation script
-rm script.exp
-
 
 # create virtual environment for controller 
 python3 -m venv /home/pi/controller_env
