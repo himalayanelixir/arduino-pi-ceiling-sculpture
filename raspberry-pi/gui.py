@@ -2,27 +2,29 @@
 # Copyright 2020 Harlen Bains
 # linted using pylint
 # formatted using black
-"""This program creates a dashboard displaying the Pi's status. Displays time,
-local IP address, and internet connectivity
+"""This program activates leds that show the network and firewall status of the
+  Raspberry Pi. The LEDs blink to show that the Raspberry Pi isn't frozen.
 """
 
-from datetime import datetime
 import time
 import socket
 import os
-import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO  # pylint: disable=import-error
 
-def get_ip():
-    """Gets current local ip address of Raspberry Pi.
+
+def get_network_status():
+    """Gets local ip address to determine if Raspberry Pi is connected to a
+      network.
 
     Returns:
-      Local IP address of the Raspberry Pi.
+      Boolean saying whether or not the Raspberry Pi is connected to a network.
     """
     pi_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        # doesn't even have to be reachable
+        # doesn't have to be reachable
         pi_socket.connect(("10.255.255.255", 1))
-        ip_address = pi_socket.getsockname()[0]
+        # can get local ip from _
+        _ = pi_socket.getsockname()[0]
         is_connected = True
     except socket.error:
         is_connected = False
@@ -31,67 +33,73 @@ def get_ip():
     return is_connected
 
 
-def get_internet_status():
-    """Get internet status by pinging 8.8.8.8 (Google DNS).
+def get_firewall_status():
+    """Gets ufw status
 
     Returns:
-      String saying whether or not the Raspberry Pi is connected to the internet.
+      Boolean saying whether or not the ufw firewall is active.
     """
-    response = os.system("ping -c 1 -w2 " + "8.8.8.8" + " > /dev/null 2>&1")
-    if response == 0:
-        internet_connection = True
-    else:
-        internet_connection = False
-    return internet_connection
+    response = os.system("sudo ufw status | grep -qw active")
+    return not bool(response)
 
-def status_good(pins, on_off):
-    if on_off:
-        GPIO.output(pins[0],GPIO.LOW)
-        GPIO.output(pins[1],GPIO.LOW)
-        GPIO.output(pins[2],GPIO.HIGH)
-    else:
-        GPIO.output(pins[0],GPIO.HIGH)
-        GPIO.output(pins[1],GPIO.LOW)
-        GPIO.output(pins[2],GPIO.HIGH)
 
-def status_error(pins, on_off):
-    if on_off:
-        GPIO.output(pins[0],GPIO.HIGH)
-        GPIO.output(pins[1],GPIO.LOW)
-        GPIO.output(pins[2],GPIO.LOW)
+def status_good(pins, toggle):
+    """Sets GPIO pins for good status.
+
+    Args:
+      pins: Truple containing the pin values for the RGB LED we are updating.
+      toggle: Current toggle value.
+    """
+    if toggle:
+        GPIO.output(pins[0], GPIO.LOW)
+        GPIO.output(pins[1], GPIO.LOW)
+        GPIO.output(pins[2], GPIO.HIGH)
     else:
-        GPIO.output(pins[0],GPIO.HIGH)
-        GPIO.output(pins[1],GPIO.HIGH)
-        GPIO.output(pins[2],GPIO.LOW)
+        GPIO.output(pins[0], GPIO.HIGH)
+        GPIO.output(pins[1], GPIO.LOW)
+        GPIO.output(pins[2], GPIO.HIGH)
+
+
+def status_error(pins, toggle):
+    """Sets GPIO pins for error status.
+
+    Args:
+      pins: Truple containing the pin values for the RGB LED we are updating.
+      toggle: Current toggle value.
+    """
+    if toggle:
+        GPIO.output(pins[0], GPIO.HIGH)
+        GPIO.output(pins[1], GPIO.LOW)
+        GPIO.output(pins[2], GPIO.LOW)
+    else:
+        GPIO.output(pins[0], GPIO.HIGH)
+        GPIO.output(pins[1], GPIO.HIGH)
+        GPIO.output(pins[2], GPIO.LOW)
+
 
 def main():
-    """Displays Raspberry Pi's status on to a screen"""
+    """Displays Raspberry Pi's status on to a screen
+    """
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-    led_network_pins = (16,20,21)
-    led_firewall_pins = (18,23,24)
+    toggle = True
+    # pins are in RGB order
+    led_network_pins = (16, 20, 21)
+    led_firewall_pins = (18, 23, 24)
     for pin in led_network_pins:
-        GPIO.setup(pin,GPIO.OUT)
+        GPIO.setup(pin, GPIO.OUT)
     for pin in led_firewall_pins:
-        GPIO.setup(pin,GPIO.OUT)
+        GPIO.setup(pin, GPIO.OUT)
     while True:
-        if get_internet_status():
-            status_error(led_firewall_pins,True)
+        if get_firewall_status():
+            status_good(led_firewall_pins, toggle)
         else:
-            status_good(led_firewall_pins,True)
-        if get_ip():
-            status_good(led_network_pins, True)
+            status_error(led_firewall_pins, toggle)
+        if get_network_status():
+            status_good(led_network_pins, toggle)
         else:
-            status_error(led_network_pins,True)
-        time.sleep(1)
-        if get_internet_status():
-            status_error(led_firewall_pins,False)
-        else:
-            status_good(led_firewall_pins,False)
-        if get_ip():
-            status_good(led_network_pins, False)
-        else:
-            status_error(led_network_pins,False)
+            status_error(led_network_pins, toggle)
+        toggle = not toggle
         time.sleep(1)
 
 
