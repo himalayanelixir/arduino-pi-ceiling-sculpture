@@ -54,6 +54,23 @@ EOT
 chmod +x /home/pi/gui.py 
 sudo systemctl enable gui.service
 
+# download button program from github
+wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/button.py
+cat <<EOT >/etc/systemd/system/button.service
+[Unit]
+Description= Python3 script that runs the gui for the ceiling sculpture
+After=network.target
+
+[Service]
+User=pi
+ExecStart=/home/pi/button.py 
+
+[Install]
+WantedBy=multi-user.target
+EOT
+chmod +x /home/pi/button.py 
+sudo systemctl enable button.service
+
 # make pi user owner of all the files we downloaded
 chown -R pi /home/pi
 
