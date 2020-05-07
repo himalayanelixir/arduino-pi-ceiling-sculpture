@@ -85,7 +85,7 @@ def main():
     toggle = True
     # pins are in RGB order
     led_network_pins = (16, 20, 21)
-    led_firewall_pins = (18, 23, 24)
+    led_firewall_pins = (24, 25, 12)
     for pin in led_network_pins:
         GPIO.setup(pin, GPIO.OUT)
     for pin in led_firewall_pins:
