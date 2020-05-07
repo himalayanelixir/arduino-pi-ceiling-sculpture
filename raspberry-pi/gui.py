@@ -1,4 +1,4 @@
-#!/root/gui_env/bin/python3
+#!/home/pi/controller_env/bin/python3
 # Copyright 2020 Harlen Bains
 # linted using pylint
 # formatted using black

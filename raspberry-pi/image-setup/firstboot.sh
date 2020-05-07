@@ -9,15 +9,12 @@ apt-get update -y
 apt-get upgrade -y
 # install programs
 apt-get install git zsh ufw python3-pip python3-venv -y
-# change default shell for root and pi users
+# change default shell for pi user
 chsh -s /bin/zsh pi
-chsh -s /bin/zsh
-# install ohmyzsh for root and pi users
+# install ohmyzsh for pi user
 sudo -u pi sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 # disable ohmyzsh auto update
 sed -i 's/# DISABLE_AUTO_UPDATE="true"/DISABLE_AUTO_UPDATE="true"/g' /home/pi/.zshrc
-sed -i 's/# DISABLE_AUTO_UPDATE="true"/DISABLE_AUTO_UPDATE="true"/g' /root/.zshrc
 
 # create virtual environment for controller 
 python3 -m venv /home/pi/controller_env
@@ -37,23 +34,28 @@ echo "controller.py" >>/home/pi/.zshrc
 # download state csvs
 wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/current-state.csv
 wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/desired-state.csv
-# make pi user owner of all the files we downloaded
-chown pi /home/pi
 # remove requirements.txt
 rm /home/pi/requirements.txt
 
-
-# create virtual environment for gui
-python3 -m venv /root/gui_env
 # download gui program from github
-wget -P /root https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/gui.py
-# make gui program executable
-chmod +x /root/gui.py
-# add controller program to PATH
-echo "export PATH=\"/root:$PATH\"" >>/root/.zshrc
-# set so that the gui starts up on the adafruit screen when booted in a virtual environment
-echo "gui.py" >>/root/.zshrc
+wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/gui.py
+cat <<EOT >/etc/systemd/system/gui.service
+[Unit]
+Description= Python3 script that runs the gui for the ceiling sculpture
+After=network.target
 
+[Service]
+User=pi
+ExecStart=/home/pi/gui.py 
+
+[Install]
+WantedBy=multi-user.target
+EOT
+chmod +x /home/pi/gui.py 
+sudo systemctl enable gui.service
+
+# make pi user owner of all the files we downloaded
+chown -R pi /home/pi
 
 # block all internet access other than incomming ssh from local network
 # outgoing isn't blocked by default, we don't want updates unless we explicitly disable the firewall 
