@@ -2,8 +2,9 @@
 # Copyright 2020 Harlen Bains
 # linted using pylint
 # formatted using black
-"""This program activates leds that show the network and firewall status of the
-  Raspberry Pi. The LEDs blink to show that the Raspberry Pi isn't frozen.
+"""This program controls a push button with LEDs that allow a user to restart or
+  shutdown the Raspberry Pi. Hold down for 3 blinks to restart and 5 to
+  shutdown.
 """
 
 import time

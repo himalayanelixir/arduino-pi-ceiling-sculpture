@@ -2,7 +2,7 @@
 # Copyright 2020 Harlen Bains
 # linted using pylint
 # formatted using black
-"""This program activates leds that show the network and firewall status of the
+"""This program controls LEDs that show the network and firewall status of the
   Raspberry Pi. The LEDs blink to show that the Raspberry Pi isn't frozen.
 """
 
@@ -78,7 +78,7 @@ def status_error(pins, toggle):
 
 
 def main():
-    """Displays Raspberry Pi's status on to a screen
+    """Displays Raspberry Pi's status on to LEDs
     """
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
