@@ -37,28 +37,28 @@ wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ce
 # remove requirements.txt
 rm /home/pi/requirements.txt
 
-# download gui program from github
-wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/gui.py
-cat <<EOT >/etc/systemd/system/gui.service
+# download led program from github
+wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/leds.py
+cat <<EOT >/etc/systemd/system/leds.service
 [Unit]
-Description= Python3 script that runs the gui for the ceiling sculpture
+Description= Python3 script that runs the leds on the Raspberry Pi
 After=network.target
 
 [Service]
 User=pi
-ExecStart=/home/pi/gui.py 
+ExecStart=/home/pi/leds.py 
 
 [Install]
 WantedBy=multi-user.target
 EOT
-chmod +x /home/pi/gui.py 
-sudo systemctl enable gui.service
+chmod +x /home/pi/leds.py 
+sudo systemctl enable leds.service
 
 # download button program from github
 wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/button.py
 cat <<EOT >/etc/systemd/system/button.service
 [Unit]
-Description= Python3 script that runs the gui for the ceiling sculpture
+Description= Python3 script that runs the button on the Raspberry Pi
 After=network.target
 
 [Service]
