@@ -37,7 +37,7 @@ wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ce
 # remove requirements.txt
 rm /home/pi/requirements.txt
 
-# download led program from github
+# download leds program from github
 wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/leds.py
 cat <<EOT >/etc/systemd/system/leds.service
 [Unit]
