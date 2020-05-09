@@ -52,11 +52,11 @@ def status_good(pins, toggle):
     """
     if toggle:
         GPIO.output(pins[0], GPIO.LOW)
-        GPIO.output(pins[1], GPIO.LOW)
-        GPIO.output(pins[2], GPIO.HIGH)
+        GPIO.output(pins[1], GPIO.HIGH)
+        GPIO.output(pins[2], GPIO.LOW)
     else:
-        GPIO.output(pins[0], GPIO.HIGH)
-        GPIO.output(pins[1], GPIO.LOW)
+        GPIO.output(pins[0], GPIO.LOW)
+        GPIO.output(pins[1], GPIO.HIGH)
         GPIO.output(pins[2], GPIO.HIGH)
 
 
@@ -72,8 +72,8 @@ def status_error(pins, toggle):
         GPIO.output(pins[1], GPIO.LOW)
         GPIO.output(pins[2], GPIO.LOW)
     else:
-        GPIO.output(pins[0], GPIO.HIGH)
-        GPIO.output(pins[1], GPIO.HIGH)
+        GPIO.output(pins[0], GPIO.LOW)
+        GPIO.output(pins[1], GPIO.LOW)
         GPIO.output(pins[2], GPIO.LOW)
 
 
