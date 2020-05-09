@@ -71,6 +71,14 @@ EOT
 chmod +x /home/pi/button.py 
 sudo systemctl enable button.service
 
+# download restart program from github
+wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/restart.py
+chmod +x /home/pi/restart.py
+
+# download shutdown program from github
+wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/shutdown.py
+chmod +x /home/pi/shutdown.py
+
 # make pi user owner of all the files we downloaded
 chown -R pi /home/pi
 
