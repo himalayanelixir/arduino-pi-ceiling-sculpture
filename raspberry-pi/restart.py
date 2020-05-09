@@ -2,25 +2,25 @@
 # Copyright 2020 Harlen Bains
 # linted using pylint
 # formatted using black
-"""This program controls a push button with LEDs that allow a user to restart or
-  shutdown the Raspberry Pi. Hold down for 3 blinks to restart and 5 to
-  shutdown.
+"""This program restarts the Raspberry Pi safely. It uses the restart function
+  from button.py and blinks the button leds 3 times before restarting.
 """
 
-import time
 import os
 import RPi.GPIO as GPIO  # pylint: disable=import-error
 from button import restart
 
 
 def main():
-    """Displays Raspberry Pi's status on to a screen
+    """Restarts the Raspberry Pi
     """
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     led_pin = 23
     GPIO.setup(led_pin, GPIO.OUT)
+    os.system("sudo systemctl stop button.service")
     restart(led_pin)
+
 
 if __name__ == "__main__":
     main()

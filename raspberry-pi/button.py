@@ -19,11 +19,10 @@ def restart(led_pin):
       led_pin: The pin number where the led for the button is connected
     """
     for _ in range(0, 3):
-        GPIO.output(led_pin, GPIO.HIGH)
-        time.sleep(0.25)
         GPIO.output(led_pin, GPIO.LOW)
         time.sleep(0.25)
-    print("restarting")
+        GPIO.output(led_pin, GPIO.HIGH)
+        time.sleep(0.25)
     os.system("sudo reboot")
 
 
@@ -34,16 +33,15 @@ def shutdown(led_pin):
       led_pin: The pin number where the led for the button is connected
     """
     for _ in range(0, 5):
-        GPIO.output(led_pin, GPIO.HIGH)
-        time.sleep(0.25)
         GPIO.output(led_pin, GPIO.LOW)
         time.sleep(0.25)
-    print("shutting down")
+        GPIO.output(led_pin, GPIO.HIGH)
+        time.sleep(0.25)
     os.system("sudo shutdown -h now")
 
 
 def main():
-    """Displays Raspberry Pi's status on to a screen
+    """Adds button and button LED functionality to Raspberry Pi
     """
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
