@@ -17,12 +17,12 @@ sudo -u pi sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh
 sed -i 's/# DISABLE_AUTO_UPDATE="true"/DISABLE_AUTO_UPDATE="true"/g' /home/pi/.zshrc
 
 # create virtual environment for controller 
-python3 -m venv /home/pi/controller_env
+python3 -m venv /home/pi/pi_env
 # download the controller program from github with it's requirements.txt
 wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/controller.py
 wget -P /home/pi https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/requirements.txt
 # install pip dependencies from requirements.txt in the virtual environment
-source /home/pi/controller_env/bin/activate
+source /home/pi/pi_env/bin/activate
 pip3 install -r /home/pi/requirements.txt
 deactivate
 # make controller program executable
