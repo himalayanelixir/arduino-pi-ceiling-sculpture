@@ -22,7 +22,7 @@ python3 -m venv /home/pi/code/pi_env
 wget -P /home/pi/code https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/requirements.txt
 # install pip dependencies from requirements.txt in the virtual environment
 source /home/pi/code/pi_env/bin/activate
-pip3 install -r /home/code/pi/code/requirements.txt
+pip3 install -r /home/pi/code/requirements.txt
 deactivate
 # remove requirements.txt
 rm /home/pi/code/requirements.txt
