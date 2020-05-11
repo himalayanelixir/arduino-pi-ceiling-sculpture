@@ -22,7 +22,7 @@ python3 -m venv /home/pi/code/pi_env
 wget -P /home/pi/code https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/requirements.txt
 # install pip dependencies from requirements.txt in the virtual environment
 source /home/pi/code/pi_env/bin/activate
-pip3 install -r /home/code/pi/requirements.txt
+pip3 install -r /home/code/pi/code/requirements.txt
 deactivate
 # remove requirements.txt
 rm /home/pi/code/requirements.txt
@@ -80,7 +80,7 @@ echo 'alias controller="/home/pi/code/controller.py"' >>/home/pi/.zshrc
 echo 'alias shutdown="/home/pi/code/shutdown.py"' >>/home/pi/.zshrc
 echo 'alias restart="/home/pi/code/restart.py"' >>/home/pi/.zshrc
 # add /home/pi to path
-echo "export PATH=\"/home/pi:$PATH\"" >>/home/pi/.zshrc
+echo "export PATH=\"/home/pi/code:$PATH\"" >>/home/pi/.zshrc
 # set so that the controller starts up when a user logs in a virtual environment
 echo "controller.py" >>/home/pi/.zshrc
 
