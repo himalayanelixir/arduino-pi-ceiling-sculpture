@@ -67,35 +67,17 @@ bool did_timeout = false;
 void setup() {
   // setup serial port
   Serial.begin(9600);
-  // initialize all motor ports
-  Serial.println("Begining Initialization");
-  Serial.print("Motor Ports: ");
   for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
+    // initialize all motor ports
     int x = ports[i][0];
-    Serial.print(x);
-    Serial.print(" ");
     my_servo[i].attach(x);
-  }
-  // initialize all counter ports
-  Serial.println("");
-  Serial.print("Counter Ports: ");
-  for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
-    int x = ports[i][1];
-    Serial.print(x);
-    Serial.print(" ");
-    pinMode(x, INPUT_PULLUP);
-  }
-  // initialize all reset ports
-  Serial.println("");
-  Serial.print("Reset Ports: ");
-  for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
-    int x = ports[i][2];
-    Serial.print(x);
-    Serial.print(" ");
-    pinMode(x, INPUT_PULLUP);
-  }
-  // zero all motors and initialize reset variables
-  for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
+    // initialize all counter ports  
+    int y = ports[i][1];
+    pinMode(y, INPUT_PULLUP);
+    // initialize all reset ports
+    int z = ports[i][2];
+    pinMode(z, INPUT_PULLUP);
+    // zero all motors and initialize reset variables
     my_servo[i].write(90);
     motor_sensor_counter1[i] = 1;
     motor_sensor_counter2[i] = 1;
@@ -192,7 +174,6 @@ void PopulateArray() {
   String received_string = "";
   // give the string the value of the char array
   received_string = received_chars;
-
   // now lets populate the motor command array with values from the received
   // string
   for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
@@ -207,12 +188,9 @@ void PopulateArray() {
       motor_commands[i][0] = 1;
     } else if (value_1 == "Down") {
       motor_commands[i][0] = 2;
-    } else if (value_1 == "None") {
-      motor_commands[i][0] = 0;
     } else {
-      // Sends Error Message
+      motor_commands[i][0] = 0;
     }
-
     motor_commands[i][1] = value_2.toInt();
   }
 }
@@ -343,11 +321,9 @@ int CheckSwitch(int motor_number, int switchPort) {
     if (integrator[motor_number] < MAXIMUM_DEBOUNCE)
       integrator[motor_number]++;
   }
-
   /*Step 2: Update the output state based on the integrator.  Note that the
   output will only change states if the integrator has reached a limit,
   either 0 or MAXIMUM_DEBOUNCE. */
-
   if (integrator[motor_number] == 0) {
     previous_value[motor_number] = 0;
     return (0);
