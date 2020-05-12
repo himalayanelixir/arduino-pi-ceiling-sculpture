@@ -128,9 +128,6 @@ void loop() {
   }
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 void RecvWithStartEndMarkers() {
   // handles the receiving of data over the serial port
   static bool receive_in_progress = false;
@@ -235,9 +232,6 @@ String GetValue(String data, char separator, int index) {
   }
   return found > index ? data.substring(string_index[0], string_index[1]) : "";
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
 
 void ProcessData() {
   // function that moves the motors and executes till they are done moving or
@@ -373,9 +367,6 @@ void StartMotors(int i) {
   } else if (motor_commands[i][0] == 2) {
     // Move down
     my_servo[i].write(110);
-  } else if (motor_commands[i][0] == 0) {
-    // Don't Move
-    my_servo[i].write(90);
   } else {
     // Don't Move
     my_servo[i].write(90);
