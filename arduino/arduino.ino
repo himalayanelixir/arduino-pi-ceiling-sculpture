@@ -212,8 +212,6 @@ void PopulateArray() {
       motor_commands[i][0] = 2;
     } else if (value_1 == "None") {
       motor_commands[i][0] = 0;
-    } else if (value_1 == "Reset") {
-      motor_commands[i][0] = 3;
     } else {
       // Sends Error Message
     }
@@ -378,9 +376,6 @@ void StartMotors(int i) {
   } else if (motor_commands[i][0] == 0) {
     // Don't Move
     my_servo[i].write(90);
-  } else if (motor_commands[i][0] == 3) {
-    // Move Up for Reset
-    my_servo[i].write(80);
   } else {
     // Don't Move
     my_servo[i].write(90);
