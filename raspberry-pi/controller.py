@@ -69,7 +69,7 @@ def check_csvs():
     """Runs functions that check for and lint csv files.
     """
     # check if the csvs for desired and current state exist
-    print("\nChecking for CSV Files")
+    print("Checking for CSV Files")
     check_if_csv_exists(DESIRED_STATE_FILENAME)
     check_if_csv_exists(CURRENT_STATE_FILENAME)
     # lint csvs so that the contain valid data and are the coorect size
@@ -299,9 +299,6 @@ def execute_commands(serial_ports, command_string_execute):
     SPINNER.stop()
 
 
-##############################################################################
-##############################################################################
-##############################################################################
 def open_ports(serial_ports):
     """Open ports and create pySerial objects saving them to serial_ports.
 
@@ -568,11 +565,6 @@ def close_connections(serial_ports):
     SPINNER.stop()
 
 
-##############################################################################
-##############################################################################
-##############################################################################
-
-
 def main():
     """Loop of the program. Provides tui to interact with the ceiling sculpture
     """
@@ -580,10 +572,15 @@ def main():
     serial_ports = []
     while True:
         try:
+            print("""\033[35m                       __                __ __           """) # pylint: disable=anomalous-backslash-in-string
+            print("""  _____ ____   ____   / /_ _____ ____   / // /___   _____""") # pylint: disable=anomalous-backslash-in-string
+            print(""" / ___// __ \ / __ \ / __// ___// __ \ / // // _ \ / ___/""") # pylint: disable=anomalous-backslash-in-string
+            print("""/ /__ / /_/ // / / // /_ / /   / /_/ // // //  __// /    """) # pylint: disable=anomalous-backslash-in-string
+            print("""\___/ \____//_/ /_/ \__//_/    \____//_//_/ \___//_/     \033[0m""") # pylint: disable=anomalous-backslash-in-string
             # wait for user to want to run program
-            input_text_1 = input(
-                "\n\nPress Enter to Start the Program or type 'Exit' to Close:"
-            )
+            print("Press \033[32mEnter\033[0m to Start the Program or Type",
+                  "'\033[31mExit\033[0m' to Close:")
+            input_text_1 = input()
             if input_text_1 in ("Exit", "exit"):
                 break
             # find all usb devices connected at /dev/ttyU*
@@ -606,22 +603,22 @@ def main():
     while input_text_1 not in ("Exit", "exit"):
         try:
             print("===========\n")
-            input_text_2 = input(
-                "Enter '1' to set ceiling from csv, '2' to reset, and 'Exit' to close program)\n : "
-            )
+            print("Enter '\033[32m1\033[0m' to set ceiling from csv, '\033[32m2\033[0m'",
+                  "to reset, and '\033[31mExit\033[0m' to close program):")
+            input_text_2 = input()
             # csv mode
             if input_text_2 == "1":
-                print("CSV Mode\n")
+                print("\nCSV Mode\n")
                 check_csvs()
                 commands_from_csv(serial_ports)
             # csv reset
             elif input_text_2 == "2":
-                print("CSV Reset Mode\n")
+                print("\nCSV Reset Mode\n")
                 check_csvs()
                 commands_from_variable(serial_ports, "Up,100,")
             # array test
             elif input_text_2 == "3":
-                print("Test Mode (Only way to stop is to 'ctrl + c')\n")
+                print("\nTest Mode (Only way to stop is to 'ctrl + c')\n")
                 while True:
                     print("Resetting\n")
                     commands_from_variable(serial_ports, "Up,100,")
