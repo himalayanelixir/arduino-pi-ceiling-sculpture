@@ -94,5 +94,9 @@ ufw allow out 5353/udp
 # enable ufw, will auto start on boot
 echo "y" | ufw enable
 
+# change Rasberry Pi's hostname so we can use sculpture.local instead of raspberrpi.local
+sed -i 's/raspberrypi/sculpture/g' /etc/hostname
+sed -i 's/raspberrypi/sculpture/' /etc/hosts
+
 # tell pi to restart after one minute
 shutdown -r 1
