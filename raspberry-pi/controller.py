@@ -572,14 +572,26 @@ def main():
     serial_ports = []
     while True:
         try:
-            print("""\033[35m                       __                __ __           """) # pylint: disable=anomalous-backslash-in-string
-            print("""  _____ ____   ____   / /_ _____ ____   / // /___   _____""") # pylint: disable=anomalous-backslash-in-string
-            print(""" / ___// __ \ / __ \ / __// ___// __ \ / // // _ \ / ___/""") # pylint: disable=anomalous-backslash-in-string
-            print("""/ /__ / /_/ // / / // /_ / /   / /_/ // // //  __// /    """) # pylint: disable=anomalous-backslash-in-string
-            print("""\___/ \____//_/ /_/ \__//_/    \____//_//_/ \___//_/     \033[0m""") # pylint: disable=anomalous-backslash-in-string
+            print(
+                """\033[35m                       __                __ __           """
+            )  # pylint: disable=anomalous-backslash-in-string
+            print(
+                """  _____ ____   ____   / /_ _____ ____   / // /___   _____"""
+            )  # pylint: disable=anomalous-backslash-in-string
+            print(
+                """ / ___// __ \ / __ \ / __// ___// __ \ / // // _ \ / ___/"""
+            )  # pylint: disable=anomalous-backslash-in-string
+            print(
+                """/ /__ / /_/ // / / // /_ / /   / /_/ // // //  __// /    """
+            )  # pylint: disable=anomalous-backslash-in-string
+            print(
+                """\___/ \____//_/ /_/ \__//_/    \____//_//_/ \___//_/     \033[0m"""
+            )  # pylint: disable=anomalous-backslash-in-string
             # wait for user to want to run program
-            print("Press \033[32mEnter\033[0m to Start the Program or Type",
-                  "'\033[31mExit\033[0m' to Close:")
+            print(
+                "Press \033[32mEnter\033[0m to Start the Program or Type",
+                "'\033[31mExit\033[0m' to Close:",
+            )
             input_text_1 = input()
             if input_text_1 in ("Exit", "exit"):
                 break
@@ -603,8 +615,10 @@ def main():
     while input_text_1 not in ("Exit", "exit"):
         try:
             print("===========\n")
-            print("Enter '\033[32m1\033[0m' to set ceiling from csv, '\033[32m2\033[0m'",
-                  "to reset, and '\033[31mExit\033[0m' to close program):")
+            print(
+                "Enter '\033[32m1\033[0m' to set ceiling from csv, '\033[32m2\033[0m'",
+                "to reset, and '\033[31mExit\033[0m' to close program):",
+            )
             input_text_2 = input()
             # csv mode
             if input_text_2 == "1":
