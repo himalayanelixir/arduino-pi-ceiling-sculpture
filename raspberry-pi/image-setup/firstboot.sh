@@ -88,7 +88,7 @@ echo "controller.py" >>/home/pi/.zshrc
 # outgoing isn't blocked by default, we don't want updates unless we explicitly disable the firewall
 ufw default deny outgoing
 # allow local ssh
-ufw allow from 192.168.1.0/24 to any port 22
+ufw allow from 192.168.0.0/16 to any port 22
 # allow mDNS discovery on local network so 'ping raspberrypi.local' works
 ufw allow out 5353/udp
 # enable ufw, will auto start on boot
