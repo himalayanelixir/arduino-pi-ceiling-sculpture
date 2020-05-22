@@ -47,20 +47,22 @@ def find_arduinos():
         ).splitlines()
         # if there is at least one array found then print out number found
         # other wise print zero and error
-        print(f"\nFound \033[32m{len(serial_shell_capture_list)}\033[0m Array(s)")
-        print(f"of Max of {MAX_NUMBER_OF_ARRAYS}")
+        print(
+            f"Found \033[32m{len(serial_shell_capture_list)}\033[0m Array(s)",
+            f"of Max of {MAX_NUMBER_OF_ARRAYS}",
+        )
         # make sure that the # arrays found is less than or equal to MAX_NUMBER_OF_ARRAYS
         if len(serial_shell_capture_list) > MAX_NUMBER_OF_ARRAYS:
             # make list empty so we don't try to close ports when this error occurs
             serial_shell_capture_list = []
             print(
-                "\033[31mERROR: NUMBER OF ARRAYS FOUND GREATER THAN MAX NUMBER OF ARRAYS\033[0m"
+                f"\033[31mERROR: NUMBER OF ARRAYS FOUND GREATER THAN {MAX_NUMBER_OF_ARRAYS}\033[0m"
             )
             raise Error
     except subprocess.CalledProcessError:
         # need to still have a valie
         serial_shell_capture_list = []
-        print(f"\nFound \033[31m0\033[0m Array(s) of Max of {MAX_NUMBER_OF_ARRAYS}")
+        print(f"\nFound \033[31m0\033[0m Array(s) of Max {MAX_NUMBER_OF_ARRAYS}")
         raise Error
     return serial_shell_capture_list
 
@@ -87,9 +89,9 @@ def check_if_csv_exists(csv_filename):
       Error: If file is not found.
     """
     if path.exists(csv_filename):
-        print(csv_filename + "\033[32m FOUND\033[0m")
+        print(csv_filename + " (\033[32mFOUND\033[0m)")
     else:
-        print(csv_filename + "\033[31m FAILED: FILE NOT FOUND\033[0m")
+        print(csv_filename + " (\033[31mERROR: FILE NOT FOUND\033[0m)")
         raise Error
 
 
@@ -134,17 +136,19 @@ def lint_csv_file(csv_filename):
                     except (IndexError, ValueError):
                         csv_filename_list_linted[count_row][count_column] = "0"
     except EnvironmentError:
-        SPINNER.write(csv_filename + " \033[31m" + "FAILED: CAN'T READ CSV" + "\033[0m")
+        SPINNER.write(
+            csv_filename + " (\033[31m" + "ERROR: CAN'T READ CSV" + "\033[0m)"
+        )
         raise Error
     # write values to file overwriting previous file
     try:
         with open(csv_filename, "w", newline="") as csv_filename_file:
             csv_filename_writer = csv.writer(csv_filename_file, quoting=csv.QUOTE_ALL)
             csv_filename_writer.writerows(csv_filename_list_linted)
-            SPINNER.write(csv_filename + " \033[32m" + "LINTED" + "\033[0m")
+            SPINNER.write(csv_filename + " (\033[32m" + "LINTED" + "\033[0m)")
     except EnvironmentError:
         SPINNER.write(
-            csv_filename + " \033[31m" + "FAILED: CAN'T WRITE CSV" + "\033[0m"
+            csv_filename + " (\033[31m" + "ERROR: CAN'T WRITE CSV" + "\033[0m)"
         )
         raise Error
 
@@ -158,37 +162,50 @@ def lint_serial_port_values(serial_ports):
 
     Raises:
       Error: Duplicate array numbers
-      Error: Number of arrys is out of range or too many are connected.
+      Error: Number of array is out of range or too many are connected.
       Error: Number of motors is out or range.
     """
+    error = False
     list_array_numbers = []
     list_motor_numbers = []
+    seen = {}
+    duplicates = []
     print("\nChecking Array and Motor Numbers")
     for row in serial_ports:
         list_array_numbers.append(row[2])
         list_motor_numbers.append(row[3])
     # check if there are any duplicates
-    if len(list_array_numbers) != len(set(list_array_numbers)):
-        print("Array Numbers \033[31mFAILED: DUPLICATES\033[0m")
-        raise Error
+    for number in list_array_numbers:
+        if number not in seen:
+            seen[number] = 1
+        else:
+            if seen[number] == 1:
+                duplicates.append(number)
+            seen[number] += 1
+    for number in duplicates:
+        print(f"Array Numbers (\033[31mERROR: ARRAY {number} DUPLICATES\033[0m)")
+        error = True
+
     # check and see if any of the arrays are out of the correct range
-    for value in list_array_numbers:
-        # >= because array numbers from the Arduino start at 0
-        if int(value) >= MAX_NUMBER_OF_ARRAYS or int(value) < 0:
-            print(
-                "Array Numbers \033[31mFAILED: OUT OF RANGE OR TOO MANY ARRAYS CONNECTED\033[0m"
-            )
-            raise Error
+    for number in list_array_numbers:
+        # >= because array numbers from the Arduino start at 1
+        if int(number) >= MAX_NUMBER_OF_ARRAYS or int(number) < 1:
+            print(f"Array Numbers (\033[31mERROR: ARRAY {number} OUT OF RANGE\033[0m)")
+            error = True
     # check and see if any of the motor numbers are out of the correct range
-    for value in list_motor_numbers:
+    for count_number, number in enumerate(list_motor_numbers):
         # > because motor numbers start at 1 when counted aka 0 motors means no motors
         # while 1 motor means #1. When sending commands motor one is considered as #0
-        if int(value) > MAX_NUMBER_OF_MOTORS or int(value) < 1:
-            print("Motor Numbers \033[31mFAILED: OUT OF RANGE\033[0m")
-            raise Error
-
-    print("Array Numbers \033[32mLINTED\033[0m")
-    print("Motor Numbers \033[32mLINTED\033[0m")
+        if int(number) > MAX_NUMBER_OF_MOTORS or int(number) < 1:
+            print(
+                f"Motor Numbers (\033[31mERROR: ARRAY {list_array_numbers[count_number]}",
+                "NUMBER OF MOTORS {number} OUT OF RANGE\033[0m)",
+            )
+            error = True
+    if error:
+        raise Error
+    print("Array Numbers (\033[32mSUCCESS\033[0m)")
+    print("Motor Numbers (\033[32mSUCCESS\033[0m)")
 
 
 def commands_from_csv(serial_ports):
@@ -327,9 +344,9 @@ def open_ports(serial_ports):
                 + str(count)
                 + " "
                 + serial_ports[count][0]
-                + " \033[32m"
-                + "READY"
-                + "\033[0m"
+                + " (\033[32m"
+                + "SUCCESS"
+                + "\033[0m)"
             )
         except serial.serialutil.SerialException:
             SPINNER.write(
@@ -337,9 +354,9 @@ def open_ports(serial_ports):
                 + str(count)
                 + " "
                 + serial_ports[count][0]
-                + " \033[31m"
-                + "FAILED"
-                + "\033[0m"
+                + " (\033[31m"
+                + "ERROR"
+                + "\033[0m)"
             )
             SPINNER.stop()
             raise Error
@@ -361,7 +378,7 @@ def connect_to_arrays(serial_ports):
     Raises:
       Error: If the correct message is not recived within timeout.
     """
-    print("\nConnecing to Arrays")
+    print("\nConnecting to Array(s)")
     # used for thread objects
     connection_threads = [None] * len(serial_ports)
     # used to store returned values from threads
@@ -374,7 +391,6 @@ def connect_to_arrays(serial_ports):
         )
         # start threads
         connection_threads[count].start()
-
     # wait for threads to finish
     for count, _ in enumerate(serial_ports):
         connection_threads[count].join()
@@ -407,24 +423,32 @@ def wait_for_arduino_connection(serial_ports, port, results):
             array_info[0],
             array_info[1],
         ]
-        SPINNER.write("Serial Port " + str(port) + " \033[32m" + "READY" + "\033[0m")
+        SPINNER.write(
+            "Serial Port "
+            + str(port)
+            + " ARRAY "
+            + str(array_info[0])
+            + " MOTOR(S) "
+            + str(array_info[1])
+            + " (\033[32mSUCCESS\033[0m)"
+        )
     except timeout_decorator.TimeoutError:
         error = True
         SPINNER.write(
             "Serial Port "
             + str(port)
-            + " \033[31m"
-            + "FAILED: WAITING FOR MESSAGE TIMEOUT"
-            + "\033[0m"
+            + " (\033[31m"
+            + "ERROR: WAITING FOR MESSAGE TIMEOUT"
+            + "\033[0m)"
         )
     except IndexError:
         error = True
         SPINNER.write(
             "Serial Port "
             + str(port)
-            + " \033[31m"
-            + "FAILED: NEGATIVE ARRAY NUMBER OR MOTOR NUMBER PASSED"
-            + "\033[0m"
+            + " (\033[31m"
+            + "ERROR: NEGATIVE ARRAY NUMBER OR MOTOR NUMBER PASSED"
+            + "\033[0m)"
         )
     # works as a return functon for the thread
     results[port] = [error, serial_ports[port]]
@@ -499,9 +523,9 @@ def move_arrays(serial_ports, parce_string, port):
         SPINNER.write(
             "== == Array: "
             + str(port)
-            + " \033[31m"
-            + "EXECUTION FAILED TIMEOUT"
-            + "\033[0m"
+            + " (\033[31m"
+            + "EXECUTION ERROR TIMEOUT"
+            + "\033[0m)"
         )
 
 
@@ -519,14 +543,14 @@ def move_arrays_execute(serial_ports, parce_string, port):
     waiting_for_reply = False
     if not waiting_for_reply:
         serial_ports[port][1].write(parce_string.encode())
-        SPINNER.write("-> -> Array: " + str(port) + " \033[32m" + "SENT" + "\033[0m")
+        SPINNER.write("-> -> Array: " + str(port) + " (\033[32m" + "SENT" + "\033[0m)")
         waiting_for_reply = True
 
     if waiting_for_reply:
         while serial_ports[port][1].inWaiting() == 0:
             pass
         data_recieved = recieve_from_arduino(serial_ports, port)
-        SPINNER.write("<- <- Array: " + str(port) + " " + data_recieved)
+        SPINNER.write("<- <- Array: " + str(port) + " (" + data_recieved + ")")
         waiting_for_reply = False
 
 
@@ -547,9 +571,9 @@ def close_connections(serial_ports):
                 + str(count)
                 + " "
                 + serial_ports[count][0]
-                + " \033[32m"
+                + " (\033[32m"
                 + "CLOSED"
-                + "\033[0m"
+                + "\033[0m)"
             )
         except AttributeError:
             SPINNER.write(
@@ -557,9 +581,9 @@ def close_connections(serial_ports):
                 + str(count)
                 + " "
                 + serial_ports[count][0]
-                + " \033[31m"
-                + "FAILED"
-                + "\033[0m"
+                + " (\033[31m"
+                + "ERROR"
+                + "\033[0m)"
             )
             SPINNER.stop()
     SPINNER.stop()
@@ -589,8 +613,8 @@ def main():
             )  # pylint: disable=anomalous-backslash-in-string
             # wait for user to want to run program
             print(
-                "Press \033[32mEnter\033[0m to Start the Program or Type",
-                "'\033[31mExit\033[0m' to Close:",
+                "Press \033[32mENTER\033[0m to Start the Program or Type",
+                "'\033[31mexit\033[0m' to Close:",
             )
             input_text_1 = input()
             if input_text_1 in ("Exit", "exit"):
@@ -617,7 +641,7 @@ def main():
             print("===========\n")
             print(
                 "Enter '\033[32m1\033[0m' to set ceiling from csv, '\033[32m2\033[0m'",
-                "to reset, and '\033[31mExit\033[0m' to close program):",
+                "to reset, and '\033[31mexit\033[0m' to close program):",
             )
             input_text_2 = input()
             # csv mode
@@ -661,7 +685,7 @@ END_MARKER = 62
 SPINNER = yaspin(Spinners.weather)
 # adjustable
 MAX_TURNS = 10
-MAX_NUMBER_OF_ARRAYS = 4
+MAX_NUMBER_OF_ARRAYS = 5
 MAX_NUMBER_OF_MOTORS = 10
 USB_PATH = "/dev/ttyU*"
 DESIRED_STATE_FILENAME = "desired-state.csv"
