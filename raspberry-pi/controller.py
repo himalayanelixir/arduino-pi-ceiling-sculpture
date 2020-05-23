@@ -185,17 +185,16 @@ def lint_serial_port_values(serial_ports):
     for number in duplicates:
         print(f"Array Numbers (\033[31mERROR: ARRAY {number} DUPLICATES\033[0m)")
         error = True
-
     # check and see if any of the arrays are out of the correct range
     for number in list_array_numbers:
-        # >= because array numbers from the Arduino start at 1
-        if int(number) >= MAX_NUMBER_OF_ARRAYS or int(number) < 1:
+        # >= because array numbers from the Arduino start at 0
+        if int(number) >= MAX_NUMBER_OF_ARRAYS or int(number) < 0:
             print(f"Array Numbers (\033[31mERROR: ARRAY {number} OUT OF RANGE\033[0m)")
             error = True
     # check and see if any of the motor numbers are out of the correct range
     for count_number, number in enumerate(list_motor_numbers):
         # > because motor numbers start at 1 when counted aka 0 motors means no motors
-        # while 1 motor means #1. When sending commands motor one is considered as #0
+        # while 1 motor means #0. When sending commands motor one is considered as #0
         if int(number) > MAX_NUMBER_OF_MOTORS or int(number) < 1:
             print(
                 f"Motor Numbers (\033[31mERROR: ARRAY {list_array_numbers[count_number]}",
@@ -204,8 +203,8 @@ def lint_serial_port_values(serial_ports):
             error = True
     if error:
         raise Error
-    print("Array Numbers (\033[32mSUCCESS\033[0m)")
-    print("Motor Numbers (\033[32mSUCCESS\033[0m)")
+    print("Array Numbers (\033[32mCOMPLETE\033[0m)")
+    print("Motor Numbers (\033[32mCOMPLETE\033[0m)")
 
 
 def commands_from_csv(serial_ports):
@@ -345,7 +344,7 @@ def open_ports(serial_ports):
                 + " "
                 + serial_ports[count][0]
                 + " (\033[32m"
-                + "SUCCESS"
+                + "COMPLETE"
                 + "\033[0m)"
             )
         except serial.serialutil.SerialException:
@@ -430,7 +429,7 @@ def wait_for_arduino_connection(serial_ports, port, results):
             + str(array_info[0])
             + " MOTOR(S) "
             + str(array_info[1])
-            + " (\033[32mSUCCESS\033[0m)"
+            + " (\033[32mCOMPLETE\033[0m)"
         )
     except timeout_decorator.TimeoutError:
         error = True
@@ -685,6 +684,7 @@ START_MARKER = 60
 END_MARKER = 62
 SPINNER = yaspin(Spinners.weather)
 # adjustable
+# positive integers only
 MAX_TURNS = 10
 MAX_NUMBER_OF_ARRAYS = 5
 MAX_NUMBER_OF_MOTORS = 10
