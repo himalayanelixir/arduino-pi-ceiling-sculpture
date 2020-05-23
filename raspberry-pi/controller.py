@@ -27,6 +27,8 @@ BAUD_RATE = 9600
 START_MARKER = 60
 END_MARKER = 62
 SPINNER = yaspin(Spinners.weather)
+ARDUINO_MESSAGE_TIMEOUT = 10
+ARDUINO_EXECUTE_TIMEOUT = 100
 # adjustable
 # positive integers only
 MAX_TURNS = 10
@@ -87,32 +89,6 @@ def find_arduinos():
         )
         raise Error
     return serial_shell_capture_list
-
-
-def check_csv(filename):
-    """Runs functions that check for and lint csv files.
-    """
-    # check if the csvs for desired and current state exist
-    print("Checking for CSV Files")
-    check_if_csv_exists(filename)
-    # lint csvs so that the contain valid data and are the correct size
-    lint_csv_file(filename)
-
-
-def check_if_csv_exists(csv_filename):
-    """Check if file exists.
-
-    Args:
-      csv_filename: The name of the file we are checking for.
-
-    Raises:
-      Error: If file is not found.
-    """
-    if path.exists(csv_filename):
-        print(csv_filename + " (\033[32mFOUND\033[0m)")
-    else:
-        print(csv_filename + " (\033[31mERROR: FILE NOT FOUND\033[0m)")
-        raise Error
 
 
 def lint_csv_file(csv_filename):
@@ -473,7 +449,7 @@ def wait_for_arduino_connection(serial_ports, port, results):
     results[port] = [error, serial_ports[port]]
 
 
-@timeout_decorator.timeout(10, use_signals=False)
+@timeout_decorator.timeout(ARDUINO_MESSAGE_TIMEOUT, use_signals=False)
 def wait_for_arduino_connection_execute(serial_ports, port):
     """Waits for Arduino to send ready message. Created so we can have a
     timeout and a try catch block.
@@ -549,7 +525,7 @@ def move_arrays(serial_ports, parce_string, port):
         )
 
 
-@timeout_decorator.timeout(100, use_signals=False)
+@timeout_decorator.timeout(ARDUINO_EXECUTE_TIMEOUT, use_signals=False)
 def move_arrays_execute(serial_ports, parce_string, port):
     """Sends commands Arduino and then waits for a reply. Created off move_arrays() so
     we can have both a timeout and a try catch block.
@@ -672,7 +648,7 @@ def main():
             if len(serial_ports) != 0:
                 close_connections(serial_ports)
     ###########
-    while input_text_1 not in ("Exit", "exit"):
+    while input_text_1 != "Exit":
         try:
             print("\033[96m===========\033[0m\n")
             input_text_2 = questionary.select(
@@ -683,11 +659,11 @@ def main():
                 input_text_3 = questionary.select(
                     "Which csv file do you want to use?", find_csvs()
                 ).ask()
-                check_csv(input_text_3)
-                check_csv(CURRENT_STATE_FILENAME)
+                lint_csv_file(input_text_3)
+                lint_csv_file(CURRENT_STATE_FILENAME)
                 commands_from_csv(serial_ports, input_text_3)
             elif input_text_2 == "Reset":
-                check_csv(CURRENT_STATE_FILENAME)
+                lint_csv_file(CURRENT_STATE_FILENAME)
                 commands_from_variable(serial_ports, "Up,100,")
             elif input_text_2 == "Test":
                 print("\nTest Mode (Only way to stop is to 'ctrl + c')\n")
