@@ -3,7 +3,6 @@
 // Google C++ Style Guide https://google.github.io/styleguide/cppguide.html
 #include <Servo.h>
 #include <String.h>
-
 // constants
 #define DEBOUNCE_TIME .4
 #define SAMPLE_FREQUENCY 20
@@ -15,19 +14,6 @@
 #define TIMEOUT 50000
 #define IGNORE_INPUT_TIME 150
 #define MESSAGE_CHAR_LENGTH 300
-
-// function declarations
-void RecvWithStartEndMarkers();
-void Finished();
-void PopulateArray();
-String GetValue();
-void ProcessData();
-int CountMoving();
-void CheckCounter();
-void StartMotors();
-int CheckSwitch();
-void StartMotors();
-
 // variables for communication
 char received_chars[MESSAGE_CHAR_LENGTH];
 bool new_data = false;
@@ -64,52 +50,6 @@ int timeout_counter = 0;
 int moving_motors = 0;
 bool did_timeout = false;
 
-void setup() {
-  // setup serial port
-  Serial.begin(9600);
-  for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
-    // initialize all motor ports
-    int x = ports[i][0];
-    my_servo[i].attach(x);
-    // initialize all counter ports  
-    int y = ports[i][1];
-    pinMode(y, INPUT_PULLUP);
-    // initialize all reset ports
-    int z = ports[i][2];
-    pinMode(z, INPUT_PULLUP);
-    // zero all motors and initialize reset variables
-    my_servo[i].write(90);
-    motor_sensor_counter1[i] = 1;
-    motor_sensor_counter2[i] = 1;
-    output[i] = 1;
-    integrator[i] = MAXIMUM_DEBOUNCE;
-    motor_commands[i][3] = IGNORE_INPUT_TIME;
-  }
-  Serial.print("<");
-  Serial.print("Arduino is ready");
-  Serial.print(" Array Number: ");
-  Serial.print(ARRAY_NUMBER);
-  Serial.print(" Number of Motors: ");
-  Serial.print(NUMBER_OF_MOTORS);
-  Serial.print(">");
-}
-
-void loop() {
-  // check to see if there is any new data
-  RecvWithStartEndMarkers();
-  // if there is new data process it
-  if (new_data == true) {
-    new_data = false;
-    go = true;
-    did_timeout = false;
-    timeout_counter = 0;
-    Serial.print("<");
-    PopulateArray();
-    ProcessData();
-    Finished();
-  }
-}
-
 void RecvWithStartEndMarkers() {
   // handles the receiving of data over the serial port
   static bool receive_in_progress = false;
@@ -141,22 +81,16 @@ void RecvWithStartEndMarkers() {
 void Finished() {
   // sends message back to raspberry pi saying the command has been executed
   if (did_timeout == true) {
-    Serial.print("\033[31m");
-    Serial.print("RECIEVED: TIMEOUT");
-    Serial.print(" - MOTOR(S): ");
+    Serial.print("\033[31mRECIEVED: TIMEOUT - MOTOR(S): ");
     for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
       if (motor_commands[i][1] != 0) {
         Serial.print(i);
         Serial.print(" ");
       }
     }
-    Serial.print("\033[0m");
-    Serial.print(">");
+    Serial.print("\033[0m>");
   } else {
-    Serial.print("\033[32m");
-    Serial.print("RECIEVED: DONE");
-    Serial.print("\033[0m");
-    Serial.print(">");
+    Serial.print("\033[32mRECIEVED: DONE\033[0m>");
   }
   for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
     my_servo[i].write(90);
@@ -346,5 +280,49 @@ void StartMotors(int i) {
   } else {
     // Don't Move
     my_servo[i].write(90);
+  }
+}
+
+void setup() {
+  // setup serial port
+  Serial.begin(9600);
+  for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
+    // initialize all motor ports
+    int x = ports[i][0];
+    my_servo[i].attach(x);
+    // initialize all counter ports
+    int y = ports[i][1];
+    pinMode(y, INPUT_PULLUP);
+    // initialize all reset ports
+    int z = ports[i][2];
+    pinMode(z, INPUT_PULLUP);
+    // zero all motors and initialize reset variables
+    my_servo[i].write(90);
+    motor_sensor_counter1[i] = 1;
+    motor_sensor_counter2[i] = 1;
+    output[i] = 1;
+    integrator[i] = MAXIMUM_DEBOUNCE;
+    motor_commands[i][3] = IGNORE_INPUT_TIME;
+  }
+  Serial.print("<Arduino is Ready Array Number: ");
+  Serial.print(ARRAY_NUMBER);
+  Serial.print(" Number of Motors: ");
+  Serial.print(NUMBER_OF_MOTORS);
+  Serial.print(">");
+}
+
+void loop() {
+  // check to see if there is any new data
+  RecvWithStartEndMarkers();
+  // if there is new data process it
+  if (new_data == true) {
+    new_data = false;
+    go = true;
+    did_timeout = false;
+    timeout_counter = 0;
+    Serial.print("<");
+    PopulateArray();
+    ProcessData();
+    Finished();
   }
 }

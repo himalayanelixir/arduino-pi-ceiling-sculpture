@@ -404,7 +404,7 @@ def connect_to_arrays(serial_ports):
 
 
 def wait_for_arduino_connection(serial_ports, port, results):
-    """Wait until the Arduino sends "Arduino Ready" - allows time for Arduino
+    """Wait until the Arduino sends "Arduino is Ready" - allows time for Arduino
     reset it also ensures that any bytes left over from a previous message are
     discarded.
 
@@ -468,7 +468,7 @@ def wait_for_arduino_connection_execute(serial_ports, port):
       Array number and the number of motors conntected to it.
     """
     msg = ""
-    while msg.find("Arduino is ready") == -1:
+    while msg.find("Arduino is Ready") == -1:
         while serial_ports[port][1].inWaiting() == 0:
             pass
         msg = recieve_from_arduino(serial_ports, port)
