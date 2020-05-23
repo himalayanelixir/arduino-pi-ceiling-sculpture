@@ -10,9 +10,12 @@ import csv
 import shutil
 import subprocess
 import time
+import glob
+import os
 from os import path
 from threading import Thread
 import serial  # pylint: disable=import-error
+import questionary # pylint: disable=import-error
 from yaspin import yaspin  # pylint: disable=import-error
 from yaspin.spinners import Spinners  # pylint: disable=import-error
 import timeout_decorator  # pylint: disable=import-error
@@ -67,16 +70,14 @@ def find_arduinos():
     return serial_shell_capture_list
 
 
-def check_csvs():
+def check_csv(filename):
     """Runs functions that check for and lint csv files.
     """
     # check if the csvs for desired and current state exist
     print("Checking for CSV Files")
-    check_if_csv_exists(DESIRED_STATE_FILENAME)
-    check_if_csv_exists(CURRENT_STATE_FILENAME)
-    # lint csvs so that the contain valid data and are the coorect size
-    lint_csv_file(DESIRED_STATE_FILENAME)
-    lint_csv_file(CURRENT_STATE_FILENAME)
+    check_if_csv_exists(filename)
+    # lint csvs so that the contain valid data and are the correct size
+    lint_csv_file(filename)
 
 
 def check_if_csv_exists(csv_filename):
@@ -207,7 +208,7 @@ def lint_serial_port_values(serial_ports):
     print("Motor Numbers (\033[32mCOMPLETE\033[0m)")
 
 
-def commands_from_csv(serial_ports):
+def commands_from_csv(serial_ports, desired_state_filename):
     """Reads data from desiered_state.csv, lints it, and then executes the commands.
 
     Args:
@@ -220,7 +221,7 @@ def commands_from_csv(serial_ports):
     current_state_list = []
     # not putting try except blocks around with statements because they have
     # already been read and written to before and are accessable
-    with open(DESIRED_STATE_FILENAME, "r") as desired_state_file:
+    with open(desired_state_filename, "r") as desired_state_file:
         desired_state_reader = csv.reader(desired_state_file, delimiter=",")
         desired_state_list = list(desired_state_reader)
     with open(CURRENT_STATE_FILENAME, "r", newline="") as current_state_file:
@@ -255,7 +256,7 @@ def commands_from_csv(serial_ports):
     # call execute commands
     print(command_string)
     execute_commands(serial_ports, command_string)
-    shutil.copy2(DESIRED_STATE_FILENAME, CURRENT_STATE_FILENAME)
+    shutil.copy2(desired_state_filename, CURRENT_STATE_FILENAME)
 
 
 def commands_from_variable(serial_ports, variable_string):
@@ -588,6 +589,10 @@ def close_connections(serial_ports):
             SPINNER.stop()
     SPINNER.stop()
 
+def find_csvs():
+    os.chdir(CSV_PATH)
+    return glob.glob('*.{}'.format('csv'))
+
 
 def main():
     """Loop of the program. Provides tui to interact with the ceiling sculpture
@@ -612,12 +617,13 @@ def main():
                 """\___/ \____//_/ /_/ \__//_/    \____//_//_/ \___//_/     \033[0m"""
             )  # pylint: disable=anomalous-backslash-in-string
             # wait for user to want to run program
-            print(
-                "Press \033[32mENTER\033[0m to Start the Program or Type",
-                "'\033[31mexit\033[0m' to Close:",
-            )
-            input_text_1 = input()
-            if input_text_1 in ("Exit", "exit"):
+            input_text_1 = questionary.select(
+                "What do you want to do?",
+                choices=[
+                    'Start',
+                    'Exit'
+                ]).ask()
+            if input_text_1 == "Exit":
                 break
             # find all usb devices connected at /dev/ttyU*
             # we are assuming that all usb devices at this address are Arduinos
@@ -638,24 +644,27 @@ def main():
     ###########
     while input_text_1 not in ("Exit", "exit"):
         try:
+            print(find_csvs())
             print("===========\n")
-            print(
-                "Enter '\033[32m1\033[0m' to set ceiling from csv, '\033[32m2\033[0m'",
-                "to reset, and '\033[31mexit\033[0m' to close program):",
-            )
-            input_text_2 = input()
-            # csv mode
-            if input_text_2 == "1":
-                print("\nCSV Mode\n")
-                check_csvs()
-                commands_from_csv(serial_ports)
-            # csv reset
-            elif input_text_2 == "2":
-                print("\nCSV Reset Mode\n")
-                check_csvs()
+            input_text_2 = questionary.select(
+                "What do you want to do?",
+                    choices=[
+                    'Run from csv',
+                    'Reset',
+                    'Test',
+                    'Exit'
+                ]).ask()
+            if input_text_2 == "Run from csv":
+                input_text_3 = questionary.select(
+                    "Which csv file do you want to use?",
+                    find_csvs()).ask()
+                check_csv(input_text_3)
+                check_csv(CURRENT_STATE_FILENAME)
+                commands_from_csv(serial_ports,input_text_3)
+            elif input_text_2 == "Reset":
+                check_csv(CURRENT_STATE_FILENAME)
                 commands_from_variable(serial_ports, "Up,100,")
-            # array test
-            elif input_text_2 == "3":
+            elif input_text_2 == "Test":
                 print("\nTest Mode (Only way to stop is to 'ctrl + c')\n")
                 while True:
                     print("Resetting\n")
@@ -666,9 +675,7 @@ def main():
                     commands_from_variable(serial_ports, "Down,5,")
                     print("Wait 10 seconds\n")
                     time.sleep(10)
-            # exit
-            elif input_text_2 in ("Exit", "exit"):
-                # close all serial connections
+            elif input_text_2 == "Exit":
                 close_connections(serial_ports)
                 break
             else:
@@ -689,7 +696,7 @@ MAX_TURNS = 10
 MAX_NUMBER_OF_ARRAYS = 5
 MAX_NUMBER_OF_MOTORS = 10
 USB_PATH = "/dev/ttyU*"
-DESIRED_STATE_FILENAME = "desired-state.csv"
+CSV_PATH = '/home/pi/'
 CURRENT_STATE_FILENAME = "current-state.csv"
 
 if __name__ == "__main__":
