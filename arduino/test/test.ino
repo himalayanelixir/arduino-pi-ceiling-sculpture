@@ -12,7 +12,7 @@
 #define ARRAY_NUMBER 1
 #define NUMBER_OF_MOTORS 2
 #define NUMBER_OF_MOTORS_MOVING 1
-#define TIMEOUT 500
+#define TIMEOUT 50
 #define IGNORE_INPUT_TIME 150
 #define MESSAGE_CHAR_LENGTH 300
 
@@ -67,35 +67,17 @@ bool did_timeout = false;
 void setup() {
   // setup serial port
   Serial.begin(9600);
-  // initialize all motor ports
-  Serial.println("Begining Initialization");
-  Serial.print("Motor Ports: ");
   for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
+    // initialize all motor ports
     int x = ports[i][0];
-    Serial.print(x);
-    Serial.print(" ");
     my_servo[i].attach(x);
-  }
-  // initialize all counter ports
-  Serial.println("");
-  Serial.print("Counter Ports: ");
-  for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
-    int x = ports[i][1];
-    Serial.print(x);
-    Serial.print(" ");
-    pinMode(x, INPUT_PULLUP);
-  }
-  // initialize all reset ports
-  Serial.println("");
-  Serial.print("Reset Ports: ");
-  for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
-    int x = ports[i][2];
-    Serial.print(x);
-    Serial.print(" ");
-    pinMode(x, INPUT_PULLUP);
-  }
-  // zero all motors and initialize reset variables
-  for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
+    // initialize all counter ports  
+    int y = ports[i][1];
+    pinMode(y, INPUT_PULLUP);
+    // initialize all reset ports
+    int z = ports[i][2];
+    pinMode(z, INPUT_PULLUP);
+    // zero all motors and initialize reset variables
     my_servo[i].write(90);
     motor_sensor_counter1[i] = 1;
     motor_sensor_counter2[i] = 1;
@@ -127,9 +109,6 @@ void loop() {
     Finished();
   }
 }
-
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
 
 void RecvWithStartEndMarkers() {
   // handles the receiving of data over the serial port
@@ -195,7 +174,6 @@ void PopulateArray() {
   String received_string = "";
   // give the string the value of the char array
   received_string = received_chars;
-
   // now lets populate the motor command array with values from the received
   // string
   for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
@@ -210,14 +188,9 @@ void PopulateArray() {
       motor_commands[i][0] = 1;
     } else if (value_1 == "Down") {
       motor_commands[i][0] = 2;
-    } else if (value_1 == "None") {
-      motor_commands[i][0] = 0;
-    } else if (value_1 == "Reset") {
-      motor_commands[i][0] = 3;
     } else {
-      // Sends Error Message
+      motor_commands[i][0] = 0;
     }
-
     motor_commands[i][1] = value_2.toInt();
   }
 }
@@ -238,38 +211,35 @@ String GetValue(String data, char separator, int index) {
   return found > index ? data.substring(string_index[0], string_index[1]) : "";
 }
 
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 void ProcessData() {
   // function that moves the motors and executes till they are done moving or
   // timeout
   while (go == true) {
-    go = false;
+    // go = false;
+    // // turn the LED on (HIGH is the voltage level)
+    // digitalWrite(LED_BUILTIN, HIGH);
+    // // wait for 5 seconds
+    // delay(5000);
+    //  // turn the LED off by making the voltage LOW
+    // digitalWrite(LED_BUILTIN, LOW);
+
     // turn the LED on (HIGH is the voltage level)
     digitalWrite(LED_BUILTIN, HIGH);
-    // wait for 5 seconds
-    delay(5000);
-     // turn the LED off by making the voltage LOW
+    // wait for half a seconds
+    delay(50);
+    // turn the LED off by making the voltage LOW
     digitalWrite(LED_BUILTIN, LOW);
-
-  //   // turn the LED on (HIGH is the voltage level)
-  //   digitalWrite(LED_BUILTIN, HIGH);
-  //   // wait for half a seconds
-  //   delay(50);
-  //   // turn the LED off by making the voltage LOW
-  //   digitalWrite(LED_BUILTIN, LOW);
-  //   // wait for half a seconds
-  //   delay(50);
-  //   timeout_counter = timeout_counter + 1;
-  //   // time out loop if stall
-  //   if (timeout_counter >= TIMEOUT) {
-  //     go = false;
-  //     did_timeout = true;
-  //     for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
-  //     my_servo[i].write(90);
-  //     }
-  //   }
+    // wait for half a seconds
+    delay(50);
+    timeout_counter = timeout_counter + 1;
+    // time out loop if stall
+    if (timeout_counter >= TIMEOUT) {
+      go = false;
+      did_timeout = true;
+      for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
+      my_servo[i].write(90);
+      }
+    }
    }
 }
 
@@ -317,11 +287,9 @@ int CheckSwitch(int motor_number, int switchPort) {
     if (integrator[motor_number] < MAXIMUM_DEBOUNCE)
       integrator[motor_number]++;
   }
-
   /*Step 2: Update the output state based on the integrator.  Note that the
   output will only change states if the integrator has reached a limit,
   either 0 or MAXIMUM_DEBOUNCE. */
-
   if (integrator[motor_number] == 0) {
     previous_value[motor_number] = 0;
     return (0);
@@ -341,12 +309,6 @@ void StartMotors(int i) {
   } else if (motor_commands[i][0] == 2) {
     // Move down
     my_servo[i].write(110);
-  } else if (motor_commands[i][0] == 0) {
-    // Don't Move
-    my_servo[i].write(90);
-  } else if (motor_commands[i][0] == 3) {
-    // Move Up for Reset
-    my_servo[i].write(80);
   } else {
     // Don't Move
     my_servo[i].write(90);

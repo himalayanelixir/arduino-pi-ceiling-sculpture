@@ -498,11 +498,12 @@ def recieve_from_arduino(serial_ports, port):
         recieve_char = serial_ports[port][1].read()
         recieve_char = recieve_char.decode("utf-8")
     # save data until the end marker is found
-    while ord(recieve_char) != END_MARKER:
-        if ord(recieve_char) != START_MARKER:
-            recieve_string = recieve_string + recieve_char
+    while True:
         recieve_char = serial_ports[port][1].read()
         recieve_char = recieve_char.decode("utf-8")
+        if ord(recieve_char) == END_MARKER:
+            break
+        recieve_string = recieve_string + recieve_char
     return recieve_string
 
 
