@@ -28,7 +28,7 @@ def main():
         """ / /  /  __(__  ) /_/ /_/ / /  / /_  """
     )  # pylint: disable=anomalous-backslash-in-string
     print(
-        """/_/   \___/____/\__/\__,_/_/   \__/  \033[0m"""
+        """/_/   \___/____/\__/\__,_/_/   \__/  \033[0m\n"""
     )  # pylint: disable=anomalous-backslash-in-string
     input_text = questionary.select(
         "Do you want to restart the Raspberry Pi?", choices=["Yes", "No"]

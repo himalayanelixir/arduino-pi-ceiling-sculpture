@@ -66,6 +66,9 @@ def find_arduinos():
         # need to still have a valie
         serial_shell_capture_list = []
         print(f"\nFound \033[31m0\033[0m Array(s) of Max {MAX_NUMBER_OF_ARRAYS}")
+        print(
+            f"\033[31mERROR: NO ARRAYS FOUND\033[0m"
+        )
         raise Error
     return serial_shell_capture_list
 
@@ -622,6 +625,11 @@ def main():
             print(
                 """\___/ \____//_/ /_/ \__//_/    \____//_//_/ \___//_/     \033[0m"""
             )  # pylint: disable=anomalous-backslash-in-string
+            print(
+                f"\033[96mMAX TURNS {MAX_TURNS} -- MAX ARRAYS {MAX_NUMBER_OF_ARRAYS}",
+                f" -- MAX MOTORS {MAX_NUMBER_OF_MOTORS}\nUSB PATH {USB_PATH}",
+                f" -- CSV PATH {CSV_PATH}\033[0m\n",
+            )
             # wait for user to want to run program
             input_text_1 = questionary.select(
                 "What do you want to do?", choices=["Start", "Exit"]
