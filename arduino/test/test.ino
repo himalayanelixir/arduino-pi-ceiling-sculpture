@@ -270,7 +270,7 @@ void setup() {
     integrator[i] = MAXIMUM_DEBOUNCE;
     motor_commands[i][3] = IGNORE_INPUT_TIME;
   }
-  Serial.print("<Arduino is ready Array Number: ");
+  Serial.print("<Arduino is Ready Array Number: ");
   Serial.print(ARRAY_NUMBER);
   Serial.print(" Number of Motors: ");
   Serial.print(NUMBER_OF_MOTORS);

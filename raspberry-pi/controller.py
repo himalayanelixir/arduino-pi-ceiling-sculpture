@@ -21,6 +21,22 @@ import timeout_decorator  # pylint: disable=import-error
 import questionary  # pylint: disable=import-error
 
 
+# constants
+# don't change
+BAUD_RATE = 9600
+START_MARKER = 60
+END_MARKER = 62
+SPINNER = yaspin(Spinners.weather)
+# adjustable
+# positive integers only
+MAX_TURNS = 10
+MAX_NUMBER_OF_ARRAYS = 5
+MAX_NUMBER_OF_MOTORS = 10
+USB_PATH = "/dev/ttyU*"
+CSV_PATH = "/home/pi/"
+CURRENT_STATE_FILENAME = "/home/pi/code/current-state.csv"
+
+
 class Error(Exception):
     """Exception that is raised when an error occurs in the program
     causes the program to print out a message and then loop.
@@ -600,7 +616,10 @@ def find_csvs():
       List contatining strings with the names of the csv files in CSV_PATH.
     """
     os.chdir(CSV_PATH)
-    return glob.glob("*.{}".format("csv"))
+    csvs_found = glob.glob("*.{}".format("csv"))
+    if not csvs_found:
+        csvs_found = ["No csv's found"]
+    return csvs_found
 
 
 def main():
@@ -655,8 +674,7 @@ def main():
     ###########
     while input_text_1 not in ("Exit", "exit"):
         try:
-            print(find_csvs())
-            print("===========\n")
+            print("\033[96m===========\033[0m\n")
             input_text_2 = questionary.select(
                 "What do you want to do?",
                 choices=["Run from csv", "Reset", "Test", "Exit"],
@@ -685,26 +703,9 @@ def main():
             elif input_text_2 == "Exit":
                 close_connections(serial_ports)
                 break
-            else:
-                print("Invalid Input\n")
         except Error:
             pass
 
-
-# global variables
-# don't change
-BAUD_RATE = 9600
-START_MARKER = 60
-END_MARKER = 62
-SPINNER = yaspin(Spinners.weather)
-# adjustable
-# positive integers only
-MAX_TURNS = 10
-MAX_NUMBER_OF_ARRAYS = 5
-MAX_NUMBER_OF_MOTORS = 10
-USB_PATH = "/dev/ttyU*"
-CSV_PATH = "/home/pi/"
-CURRENT_STATE_FILENAME = "/home/pi/code/current-state.csv"
 
 if __name__ == "__main__":
     main()
