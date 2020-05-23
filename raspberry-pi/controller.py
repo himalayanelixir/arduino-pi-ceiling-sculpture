@@ -15,10 +15,10 @@ import os
 from os import path
 from threading import Thread
 import serial  # pylint: disable=import-error
-import questionary # pylint: disable=import-error
 from yaspin import yaspin  # pylint: disable=import-error
 from yaspin.spinners import Spinners  # pylint: disable=import-error
 import timeout_decorator  # pylint: disable=import-error
+import questionary  # pylint: disable=import-error
 
 
 class Error(Exception):
@@ -589,9 +589,15 @@ def close_connections(serial_ports):
             SPINNER.stop()
     SPINNER.stop()
 
+
 def find_csvs():
+    """Finds csv files in CSV_PATH. Used to populate menu.
+
+    Returns:
+      List contatining strings with the names of the csv files in CSV_PATH.
+    """
     os.chdir(CSV_PATH)
-    return glob.glob('*.{}'.format('csv'))
+    return glob.glob("*.{}".format("csv"))
 
 
 def main():
@@ -618,11 +624,8 @@ def main():
             )  # pylint: disable=anomalous-backslash-in-string
             # wait for user to want to run program
             input_text_1 = questionary.select(
-                "What do you want to do?",
-                choices=[
-                    'Start',
-                    'Exit'
-                ]).ask()
+                "What do you want to do?", choices=["Start", "Exit"]
+            ).ask()
             if input_text_1 == "Exit":
                 break
             # find all usb devices connected at /dev/ttyU*
@@ -648,19 +651,15 @@ def main():
             print("===========\n")
             input_text_2 = questionary.select(
                 "What do you want to do?",
-                    choices=[
-                    'Run from csv',
-                    'Reset',
-                    'Test',
-                    'Exit'
-                ]).ask()
+                choices=["Run from csv", "Reset", "Test", "Exit"],
+            ).ask()
             if input_text_2 == "Run from csv":
                 input_text_3 = questionary.select(
-                    "Which csv file do you want to use?",
-                    find_csvs()).ask()
+                    "Which csv file do you want to use?", find_csvs()
+                ).ask()
                 check_csv(input_text_3)
                 check_csv(CURRENT_STATE_FILENAME)
-                commands_from_csv(serial_ports,input_text_3)
+                commands_from_csv(serial_ports, input_text_3)
             elif input_text_2 == "Reset":
                 check_csv(CURRENT_STATE_FILENAME)
                 commands_from_variable(serial_ports, "Up,100,")
@@ -696,7 +695,7 @@ MAX_TURNS = 10
 MAX_NUMBER_OF_ARRAYS = 5
 MAX_NUMBER_OF_MOTORS = 10
 USB_PATH = "/dev/ttyU*"
-CSV_PATH = '/home/pi/'
+CSV_PATH = "/home/pi/"
 CURRENT_STATE_FILENAME = "/home/pi/code/current-state.csv"
 
 if __name__ == "__main__":

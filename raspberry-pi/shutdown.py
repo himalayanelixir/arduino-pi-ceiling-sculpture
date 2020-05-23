@@ -6,20 +6,13 @@
   from button.py and blinks the button leds 5 times before shutting down.
 """
 
-import os
-import RPi.GPIO as GPIO  # pylint: disable=import-error
 from button import shutdown
 
 
 def main():
     """Shutsdown the Raspberry Pi
     """
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
-    led_pin = 23
-    GPIO.setup(led_pin, GPIO.OUT)
-    os.system("sudo systemctl stop button.service")
-    shutdown(led_pin)
+    shutdown(23)
 
 
 if __name__ == "__main__":
