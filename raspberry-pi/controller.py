@@ -697,7 +697,7 @@ MAX_NUMBER_OF_ARRAYS = 5
 MAX_NUMBER_OF_MOTORS = 10
 USB_PATH = "/dev/ttyU*"
 CSV_PATH = '/home/pi/'
-CURRENT_STATE_FILENAME = "current-state.csv"
+CURRENT_STATE_FILENAME = "/home/pi/code/current-state.csv"
 
 if __name__ == "__main__":
     main()
