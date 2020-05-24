@@ -12,7 +12,6 @@ import subprocess
 import time
 import glob
 import os
-from os import path
 from threading import Thread
 import serial  # pylint: disable=import-error
 from yaspin import yaspin  # pylint: disable=import-error
@@ -36,7 +35,7 @@ MAX_NUMBER_OF_ARRAYS = 5
 MAX_NUMBER_OF_MOTORS = 10
 USB_PATH = "/dev/ttyU*"
 CSV_PATH = "/home/pi/"
-CURRENT_STATE_FILENAME = "/home/pi/code/current-state.csv"
+CURRENT_STATE_FILENAME = "code/current-state.csv"
 
 
 class Error(Exception):
@@ -84,9 +83,7 @@ def find_arduinos():
         # need to still have a valie
         serial_shell_capture_list = []
         print(f"\nFound \033[31m0\033[0m Array(s) of Max {MAX_NUMBER_OF_ARRAYS}")
-        print(
-            f"\033[31mERROR: NO ARRAYS FOUND\033[0m"
-        )
+        print(f"\033[31mERROR: NO ARRAYS FOUND\033[0m")
         raise Error
     return serial_shell_capture_list
 
@@ -141,7 +138,7 @@ def lint_csv_file(csv_filename):
         with open(csv_filename, "w", newline="") as csv_filename_file:
             csv_filename_writer = csv.writer(csv_filename_file, quoting=csv.QUOTE_ALL)
             csv_filename_writer.writerows(csv_filename_list_linted)
-            SPINNER.write(csv_filename + " (\033[32m" + "LINTED" + "\033[0m)")
+            SPINNER.write(csv_filename + " (\033[32m" + "COMPLETE" + "\033[0m)")
     except EnvironmentError:
         SPINNER.write(
             csv_filename + " (\033[31m" + "ERROR: CAN'T WRITE CSV" + "\033[0m)"
@@ -249,7 +246,6 @@ def commands_from_csv(serial_ports, desired_state_filename):
     # remove final semicolon
     command_string = command_string[:-1]
     # call execute commands
-    print(command_string)
     execute_commands(serial_ports, command_string)
     shutil.copy2(desired_state_filename, CURRENT_STATE_FILENAME)
 
@@ -282,7 +278,6 @@ def commands_from_variable(serial_ports, variable_string):
     # remove final semicolon
     command_string = command_string[:-1]
     # call execute commands
-    print(command_string)
     execute_commands(serial_ports, command_string)
 
 
@@ -659,11 +654,15 @@ def main():
                 input_text_3 = questionary.select(
                     "Which csv file do you want to use?", find_csvs()
                 ).ask()
+                print("\nLinting csv files")
                 lint_csv_file(input_text_3)
                 lint_csv_file(CURRENT_STATE_FILENAME)
+                print("\nExecuting Commands")
                 commands_from_csv(serial_ports, input_text_3)
             elif input_text_2 == "Reset":
+                print("\nLinting csv files")
                 lint_csv_file(CURRENT_STATE_FILENAME)
+                print("\nExecuting Commands")
                 commands_from_variable(serial_ports, "Up,100,")
             elif input_text_2 == "Test":
                 print("\nTest Mode (Only way to stop is to 'ctrl + c')\n")

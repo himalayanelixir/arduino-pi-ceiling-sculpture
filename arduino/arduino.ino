@@ -90,7 +90,7 @@ void Finished() {
     }
     Serial.print("\033[0m>");
   } else {
-    Serial.print("\033[32mRECIEVED: DONE\033[0m>");
+    Serial.print("\033[32mRECIEVED: SUCCESS\033[0m>");
   }
   for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
     my_servo[i].write(90);
