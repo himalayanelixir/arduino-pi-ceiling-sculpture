@@ -648,7 +648,7 @@ def main():
             print("\033[96m===========\033[0m\n")
             input_text_2 = questionary.select(
                 "What do you want to do?",
-                choices=["Run from csv", "Reset", "Test", "Exit"],
+                choices=["Run from csv", "Reset", "Single command","Test", "Exit"],
             ).ask()
             if input_text_2 == "Run from csv":
                 input_text_3 = questionary.select(
@@ -664,6 +664,9 @@ def main():
                 lint_csv_file(CURRENT_STATE_FILENAME)
                 print("\nExecuting Commands")
                 commands_from_variable(serial_ports, "Up,100,")
+            elif input_text_2 == "Single command":
+                input_text_3 = questionary.text('Enter a command in format "Up,10," (not checked for correctness and 2nd comma is nessarray)').ask()
+                commands_from_variable(serial_ports, input_text_3)
             elif input_text_2 == "Test":
                 print("\nTest Mode (Only way to stop is to 'ctrl + c')\n")
                 while True:
