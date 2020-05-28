@@ -31,7 +31,7 @@ rm /home/pi/code/requirements.txt
 wget -P /home/pi/code https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/controller.py
 # create empty csv files to store the state of the sculpture
 touch /home/pi/code/current-state.csv
-touch /home/pi/sample.csv
+touch /home/pi/example.csv
 
 # download leds program from github
 wget -P /home/pi/code https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/leds.py
