@@ -65,11 +65,8 @@ WantedBy=multi-user.target
 EOT
 sudo systemctl enable button.service
 
-# download restart program from github
-wget -P /home/pi/code https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/restart.py
-
-# download shutdown program from github
-wget -P /home/pi/code https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/shutdown.py
+# download shutdown/restart program from github
+wget -P /home/pi/code https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/power.py
 
 # make all the files we downloaded executable
 chmod +x /home/pi/code/controller.py /home/pi/code/leds.py /home/pi/code/button.py /home/pi/code/shutdown.py /home/pi/code/restart.py
@@ -77,8 +74,8 @@ chmod +x /home/pi/code/controller.py /home/pi/code/leds.py /home/pi/code/button.
 chown -R pi /home/pi
 # setup aliases
 echo 'alias controller="/home/pi/code/controller.py"' >>/home/pi/.zshrc
-echo 'alias shutdown="/home/pi/code/shutdown.py"' >>/home/pi/.zshrc
-echo 'alias restart="/home/pi/code/restart.py"' >>/home/pi/.zshrc
+echo 'alias shutdown="/home/pi/code/power.py shutdown"' >>/home/pi/.zshrc
+echo 'alias restart="/home/pi/code/power.py restart"' >>/home/pi/.zshrc
 # add /home/pi to path
 echo "export PATH=\"/home/pi/code:$PATH\"" >>/home/pi/.zshrc
 # set so that the controller starts up when a user logs in a virtual environment
