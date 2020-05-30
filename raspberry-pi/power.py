@@ -18,6 +18,7 @@ from button import restart
 def shutdown_prompt():
     """Shutsdown the Raspberry Pi
     """
+    # ascii art created using http://patorjk.com/software/taag/
     print(
         """\033[96m         __          __      __                  """
     )  # pylint: disable=anomalous-backslash-in-string
@@ -51,6 +52,7 @@ def shutdown_prompt():
 def restart_prompt():
     """Restarts the Raspberry Pi
     """
+    # ascii art created using http://patorjk.com/software/taag/
     print(
         """\033[96m                   __             __ """
     )  # pylint: disable=anomalous-backslash-in-string

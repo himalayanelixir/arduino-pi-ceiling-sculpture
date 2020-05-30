@@ -69,7 +69,7 @@ sudo systemctl enable button.service
 wget -P /home/pi/code https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/power.py
 
 # make all the files we downloaded executable
-chmod +x /home/pi/code/controller.py /home/pi/code/leds.py /home/pi/code/button.py /home/pi/code/shutdown.py /home/pi/code/restart.py
+chmod +x /home/pi/code/controller.py /home/pi/code/leds.py /home/pi/code/button.py /home/pi/code/power.py
 # make pi user owner of all the files we downloaded (needed since this program runs as root on firstboot)
 chown -R pi /home/pi
 # setup aliases
@@ -80,16 +80,6 @@ echo 'alias restart="/home/pi/code/power.py restart"' >>/home/pi/.zshrc
 echo "export PATH=\"/home/pi/code:$PATH\"" >>/home/pi/.zshrc
 # set so that the controller starts up when a user logs in a virtual environment
 echo "controller.py" >>/home/pi/.zshrc
-
-# block all internet access other than incomming ssh from local network
-# outgoing isn't blocked by default, we don't want updates unless we explicitly disable the firewall
-ufw default deny outgoing
-# allow local ssh
-ufw allow from 192.168.0.0/16 to any port 22
-# allow mDNS discovery on local network so 'ping raspberrypi.local' works
-ufw allow out 5353/udp
-# enable ufw, will auto start on boot
-echo "y" | ufw enable
 
 # change Rasberry Pi's hostname so we can use sculpture.local instead of raspberrpi.local
 sed -i 's/raspberrypi/sculpture/g' /etc/hostname

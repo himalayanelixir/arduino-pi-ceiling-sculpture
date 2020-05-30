@@ -603,6 +603,7 @@ def setup_system(serial_ports):
     """
     while True:
         try:
+            # ascii art created using http://patorjk.com/software/taag/
             print(
                 """\033[35m                       __                __ __           """
             )  # pylint: disable=anomalous-backslash-in-string
