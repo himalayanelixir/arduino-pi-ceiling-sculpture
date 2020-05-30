@@ -2,6 +2,7 @@
 # Copyright 2020 Harlen Bains
 # linted using pylint
 # formatted using black
+# pylint: disable=duplicate-code
 """This script runs on the Raspberry Pi and sends commands to Arduinos.
 Once a command is sent it then waits a reply and then loops.
 """
@@ -593,11 +594,13 @@ def find_csvs():
     return csvs_found
 
 
-def main():
-    """Loop of the program. Provides tui to interact with the ceiling sculpture
+def setup_system(serial_ports):
+    """Provides UI to connect to Arduinos and set up serial objects
+
+    Args:
+      serial_ports: List containing address of USB ports, pySerial object, array number,
+        and number of motors.
     """
-    # address of USB port,pySerial object, array number, and number of motors
-    serial_ports = []
     while True:
         try:
             print(
@@ -642,13 +645,22 @@ def main():
             # if we got to connecting to ports then close ports otherwise loop
             if len(serial_ports) != 0:
                 close_connections(serial_ports)
-    ###########
-    while input_text_1 != "Exit":
+    return serial_ports, input_text_1
+
+
+def run_system(serial_ports):
+    """Provides UI to send commands to the ceiling sculpture
+
+    Args:
+      serial_ports: List containing address of USB ports, pySerial object, array number,
+        and number of motors.
+    """
+    while True:
         try:
             print("\033[96m===========\033[0m\n")
             input_text_2 = questionary.select(
                 "What do you want to do?",
-                choices=["Run from csv", "Reset", "Single command","Test", "Exit"],
+                choices=["Run from csv", "Reset", "Single command", "Test", "Exit"],
             ).ask()
             if input_text_2 == "Run from csv":
                 input_text_3 = questionary.select(
@@ -665,7 +677,9 @@ def main():
                 print("\nExecuting Commands")
                 commands_from_variable(serial_ports, "Up,100,")
             elif input_text_2 == "Single command":
-                input_text_3 = questionary.text('Enter a command in format "Up,10," (not checked for correctness and 2nd comma is nessarray)').ask()
+                input_text_3 = questionary.text(
+                    'Enter a command in format "Up,10," (2nd comma required)'
+                ).ask()
                 commands_from_variable(serial_ports, input_text_3)
             elif input_text_2 == "Test":
                 print("\nTest Mode (Only way to stop is to 'ctrl + c')\n")
@@ -683,6 +697,16 @@ def main():
                 break
         except Error:
             pass
+
+
+def main():
+    """Loop of the program. Provides tui to interact with the ceiling sculpture
+    """
+    # address of USB port,pySerial object, array number, and number of motors
+    serial_ports = []
+    serial_ports, input_text = setup_system(serial_ports)
+    if input_text != "Exit":
+        run_system(serial_ports)
 
 
 if __name__ == "__main__":
