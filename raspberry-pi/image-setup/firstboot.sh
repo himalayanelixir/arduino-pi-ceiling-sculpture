@@ -37,7 +37,7 @@ touch /home/pi/example.csv
 wget -P /home/pi/code https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/leds.py
 cat <<EOT >/etc/systemd/system/leds.service
 [Unit]
-Description= Python3 script that runs the leds on the Raspberry Pi
+Description= Program that controlls the leds on the Raspberry Pi
 After=network.target
 
 [Service]
@@ -53,12 +53,28 @@ sudo systemctl enable leds.service
 wget -P /home/pi/code https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/button.py
 cat <<EOT >/etc/systemd/system/button.service
 [Unit]
-Description= Python3 script that runs the button on the Raspberry Pi
+Description= Program that controlls the button on the Raspberry Pi
 After=network.target
 
 [Service]
 User=pi
 ExecStart=/home/pi/code/button.py
+
+[Install]
+WantedBy=multi-user.target
+EOT
+sudo systemctl enable button.service
+
+# download firewall script from github
+wget -P /home/pi/code https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/image-setup/firewall.sh
+cat <<EOT >/etc/systemd/system/firewall.service
+[Unit]
+Description= Script that resets and enables the firewall on the Raspberry Pi
+After=network.target
+
+[Service]
+User=root
+ExecStart=/home/pi/code/firewall.sh
 
 [Install]
 WantedBy=multi-user.target
