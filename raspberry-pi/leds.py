@@ -90,7 +90,7 @@ def main():
         GPIO.setup(pin, GPIO.OUT)
     for pin in led_firewall_pins:
         GPIO.setup(pin, GPIO.OUT)
-    time.sleep(30)
+    time.sleep(15)
     while True:
         if get_firewall_status():
             status_good(led_firewall_pins, toggle)
