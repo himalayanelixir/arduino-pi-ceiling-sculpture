@@ -73,7 +73,7 @@ Description= Script that resets and enables the firewall on the Raspberry Pi
 After=network.target
 
 [Service]
-User=root
+User=pi
 ExecStart=/home/pi/code/firewall.sh
 
 [Install]
