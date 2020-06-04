@@ -79,19 +79,19 @@ ExecStart=/home/pi/code/firewall.sh
 [Install]
 WantedBy=multi-user.target
 EOT
-sudo systemctl enable button.service
+sudo systemctl enable firewall.service
 
 # download shutdown/restart program from github
-wget -P /home/pi/code https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/power.py
+wget -P /home/pi/code https://raw.githubusercontent.com/himalayanelixir/arduino-pi-ceiling-sculpture/master/raspberry-pi/shutdown-restart.py
 
 # make all the files we downloaded executable
-chmod +x /home/pi/code/controller.py /home/pi/code/leds.py /home/pi/code/button.py /home/pi/code/power.py
+chmod +x /home/pi/code/controller.py /home/pi/code/leds.py /home/pi/code/button.py /home/pi/code/shutdown-restart.py /home/pi/code/firewall.sh
 # make pi user owner of all the files we downloaded (needed since this program runs as root on firstboot)
 chown -R pi /home/pi
 # setup aliases
 echo 'alias controller="/home/pi/code/controller.py"' >>/home/pi/.zshrc
-echo 'alias shutdown="/home/pi/code/power.py shutdown"' >>/home/pi/.zshrc
-echo 'alias restart="/home/pi/code/power.py restart"' >>/home/pi/.zshrc
+echo 'alias shutdown="/home/pi/code/shutdown-restart.py shutdown"' >>/home/pi/.zshrc
+echo 'alias restart="/home/pi/code/shutdown-restart.py restart"' >>/home/pi/.zshrc
 # add /home/pi to path
 echo "export PATH=\"/home/pi/code:$PATH\"" >>/home/pi/.zshrc
 # set so that the controller starts up when a user logs in a virtual environment

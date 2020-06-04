@@ -51,6 +51,7 @@ def main():
     led_pin = 23
     GPIO.setup(button_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.setup(led_pin, GPIO.OUT)
+    time.sleep(30)
     while True:
         if GPIO.input(button_pin) == GPIO.HIGH:
             if counter % 5 == 0:
