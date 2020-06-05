@@ -32,9 +32,10 @@ ARDUINO_EXECUTE_TIMEOUT = 100
 # adjustable
 # positive integers only
 MAX_TURNS = 10
-MAX_NUMBER_OF_ARRAYS = 5
-MAX_NUMBER_OF_MOTORS = 10
-USB_PATH = "/dev/ttyU*"
+MAX_NUMBER_OF_ARRAYS = 36
+MAX_NUMBER_OF_MOTORS = 22
+#USB_PATH = "/dev/ttyU*"
+USB_PATH = "/dev/ttyACM*"
 CSV_PATH = "/home/pi/"
 CURRENT_STATE_FILENAME = "code/current-state.csv"
 
@@ -247,6 +248,7 @@ def commands_from_csv(serial_ports, desired_state_filename):
     # remove final semicolon
     command_string = command_string[:-1]
     # call execute commands
+    print(command_string)
     execute_commands(serial_ports, command_string)
     shutil.copy2(desired_state_filename, CURRENT_STATE_FILENAME)
 
