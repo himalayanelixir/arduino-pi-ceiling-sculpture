@@ -20,7 +20,7 @@ def shutdown_prompt():
     """
     # ascii art created using http://patorjk.com/software/taag/
     print(
-        """\033[96m         __          __      __                  """
+        """\033[35m         __          __      __                  """
     )  # pylint: disable=anomalous-backslash-in-string
     # pylint: disable=duplicate-code
     print(
@@ -54,7 +54,7 @@ def restart_prompt():
     """
     # ascii art created using http://patorjk.com/software/taag/
     print(
-        """\033[96m                   __             __ """
+        """\033[35m                   __             __ """
     )  # pylint: disable=anomalous-backslash-in-string
     print(
         """   ________  _____/ /_____ ______/ /_"""
