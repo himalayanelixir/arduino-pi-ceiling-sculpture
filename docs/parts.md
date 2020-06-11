@@ -9,4 +9,13 @@
 
 ## <a name='Parts'></a>Parts
 
-* Motors - FS5109R-V2 6V 10kg digital 360° Continuous Rotation Servo (FS5109R-C005)
+| Part              | Part Name                                                                |
+|-------------------|--------------------------------------------------------------------------|
+| Motors            | FS5109R-V2 6V 10kg digital 360° Continuous Rotation Servo (FS5109R-C005) |
+| 2 Pin Connectors  | KF301-2P                                                                 |
+| 3 Pin Connectors  | KF301-3P                                                                 |
+| 4 Pin Connectors  | KF301-4P                                                                 |
+| Male Headers      | Male Header 0.1" 2.54mm Breadboard PCB Strip Connectors                  |
+| Female Headers    | Female Header 0.1" 2.54mm PCB Strip Connectors                           |
+| Voltage Regulator | Pololu 9V Step-Up Voltage Regulator U3V12F9                              |
+| Arduino           | Arduino Mega 2560 R3                                                     |
