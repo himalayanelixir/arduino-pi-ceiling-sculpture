@@ -4,15 +4,12 @@
 #include <Servo.h>
 #include <String.h>
 // constants
-#define DEBOUNCE_TIME .4
-#define SAMPLE_FREQUENCY 20
-#define MAXIMUM_DEBOUNCE (DEBOUNCE_TIME * SAMPLE_FREQUENCY)
+#define MAXIMUM_DEBOUNCE 8
 #define MAXIMUM_NUMBER_OF_MOTORS 22
 #define ARRAY_NUMBER 1
 #define NUMBER_OF_MOTORS 20
 #define NUMBER_OF_MOTORS_MOVING 5
 #define TIMEOUT 50000
-#define IGNORE_INPUT_TIME 50
 #define MESSAGE_CHAR_LENGTH 300
 // variables for communication
 char received_chars[MESSAGE_CHAR_LENGTH];
@@ -28,9 +25,8 @@ int ports[MAXIMUM_NUMBER_OF_MOTORS][3] = {
     {62, 66, 67}
 };
 // integer array that contains the direction and number of rotations a motor,
-// and a flag that determines if it's moving, and another number that determines
-// if we are ignoreing inputs from the switches or not
-int motor_commands[NUMBER_OF_MOTORS][4] = { 0 };
+// and a flag that determines if it's moving
+int motor_commands[NUMBER_OF_MOTORS][3] = { 0 };
 // array of new switch values
 byte motor_sensor_counter1[NUMBER_OF_MOTORS] = { 0 };
 // array of old switch values
@@ -94,10 +90,10 @@ void Finished() {
   }
   for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
     my_servo[i].write(90);
+    integrator[i] = 0;
     motor_commands[i][0] = 0;
     motor_commands[i][1] = 0;
     motor_commands[i][2] = 0;
-    motor_commands[i][3] = IGNORE_INPUT_TIME;
   }
 }
 
@@ -120,12 +116,15 @@ void PopulateArray() {
 
     if (value_1 == "Up") {
       motor_commands[i][0] = 1;
+      // need to add one to up commands to deal with integrator defaulting to 0
+      motor_commands[i][1] = value_2.toInt() + 1;
     } else if (value_1 == "Down") {
       motor_commands[i][0] = 2;
+      motor_commands[i][1] = value_2.toInt();
     } else {
       motor_commands[i][0] = 0;
+      motor_commands[i][1] = 0;
     }
-    motor_commands[i][1] = value_2.toInt();
   }
 }
 
@@ -165,10 +164,6 @@ void ProcessData() {
     for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
       if (motor_commands[i][2] == 1) {
         CheckCounter(i);
-        // subtract from IGNORE_INPUT_TIME
-        if (motor_commands[i][3] > 0) {
-          motor_commands[i][3] = motor_commands[i][3] - 1;
-        }
         // stop motors that have reached 0
         if (motor_commands[i][1] <= 0) {
           my_servo[i].write(90);
@@ -184,9 +179,6 @@ void ProcessData() {
         motor_commands[i][0] = 2;
         motor_commands[i][1] = 1;
         motor_commands[i][2] = 0;
-        // do not set ignore counter as we don't know excatly where it
-        // stopped
-        motor_commands[i][3] = IGNORE_INPUT_TIME;
       }
     }
     // see how many turns are left in the array
@@ -225,15 +217,11 @@ void CheckCounter(int i) {
   motor_sensor_counter1[i] = CheckSwitch(i, ports[i][1]);
   if (motor_commands[i][0] == 1) {
     if (motor_sensor_counter1[i] == 1 && motor_sensor_counter2[i] == 0) {
-      if (motor_commands[i][3] == 0) {
-        motor_commands[i][1] = motor_commands[i][1] - 1;
-      }
+      motor_commands[i][1] = motor_commands[i][1] - 1;
     }
   } else {
     if (motor_sensor_counter1[i] == 0 && motor_sensor_counter2[i] == 1) {
-      if (motor_commands[i][3] == 0) {
-        motor_commands[i][1] = motor_commands[i][1] - 1;
-      }
+      motor_commands[i][1] = motor_commands[i][1] - 1;
     }
   }
   if (motor_commands[i][1] < 0) {
@@ -301,8 +289,6 @@ void setup() {
     motor_sensor_counter1[i] = 1;
     motor_sensor_counter2[i] = 1;
     output[i] = 1;
-    integrator[i] = MAXIMUM_DEBOUNCE;
-    motor_commands[i][3] = IGNORE_INPUT_TIME;
   }
   Serial.print("<Arduino is Ready Array Number: ");
   Serial.print(ARRAY_NUMBER);
