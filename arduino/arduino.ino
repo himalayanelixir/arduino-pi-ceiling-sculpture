@@ -6,8 +6,8 @@
 // constants
 #define MAXIMUM_DEBOUNCE 8
 #define MAXIMUM_NUMBER_OF_MOTORS 22
-#define ARRAY_NUMBER 1
-#define NUMBER_OF_MOTORS 20
+#define ARRAY_NUMBER 0
+#define NUMBER_OF_MOTORS 2
 #define NUMBER_OF_MOTORS_MOVING 5
 #define TIMEOUT 50000
 #define MESSAGE_CHAR_LENGTH 300
@@ -90,7 +90,6 @@ void Finished() {
   }
   for (int i = 0; i < NUMBER_OF_MOTORS; i++) {
     my_servo[i].write(90);
-    integrator[i] = 0;
     motor_commands[i][0] = 0;
     motor_commands[i][1] = 0;
     motor_commands[i][2] = 0;
@@ -116,11 +115,18 @@ void PopulateArray() {
 
     if (value_1 == "Up") {
       motor_commands[i][0] = 1;
-      // need to add one to up commands to deal with integrator defaulting to 0
+      // need to add one to up commands to deal with integrator and counter
+      // values, forcing an edge
       motor_commands[i][1] = value_2.toInt() + 1;
+      integrator[i] = 0;
+      motor_sensor_counter1[i] = 0;
+      motor_sensor_counter2[i] = 0;
     } else if (value_1 == "Down") {
       motor_commands[i][0] = 2;
-      motor_commands[i][1] = value_2.toInt();
+      motor_commands[i][1] = value_2.toInt() + 1;;
+      integrator[i] = 1;
+      motor_sensor_counter1[i] = 1;
+      motor_sensor_counter2[i] = 1;
     } else {
       motor_commands[i][0] = 0;
       motor_commands[i][1] = 0;
@@ -216,10 +222,12 @@ void CheckCounter(int i) {
   motor_sensor_counter2[i] = motor_sensor_counter1[i];
   motor_sensor_counter1[i] = CheckSwitch(i, ports[i][1]);
   if (motor_commands[i][0] == 1) {
+    // if up
     if (motor_sensor_counter1[i] == 1 && motor_sensor_counter2[i] == 0) {
       motor_commands[i][1] = motor_commands[i][1] - 1;
     }
   } else {
+    // if down
     if (motor_sensor_counter1[i] == 0 && motor_sensor_counter2[i] == 1) {
       motor_commands[i][1] = motor_commands[i][1] - 1;
     }
