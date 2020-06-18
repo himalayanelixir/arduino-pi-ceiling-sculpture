@@ -34,7 +34,7 @@ ARDUINO_EXECUTE_TIMEOUT = 100
 MAX_TURNS = 20
 MAX_NUMBER_OF_ARRAYS = 36
 MAX_NUMBER_OF_MOTORS = 22
-#USB_PATH = "/dev/ttyU*"
+# USB_PATH = "/dev/ttyU*"
 USB_PATH = "/dev/ttyACM*"
 CSV_PATH = "/home/pi/"
 CURRENT_STATE_FILENAME = "code/current-state.csv"
@@ -593,6 +593,7 @@ def find_csvs():
     csvs_found = glob.glob("*.{}".format("csv"))
     if not csvs_found:
         csvs_found = ["No csv's found"]
+    csvs_found.append("Back")
     return csvs_found
 
 
@@ -669,11 +670,12 @@ def run_system(serial_ports):
                 input_text_3 = questionary.select(
                     "Which csv file do you want to use?", find_csvs()
                 ).ask()
-                print("\nLinting csv files")
-                lint_csv_file(input_text_3)
-                lint_csv_file(CURRENT_STATE_FILENAME)
-                print("\nExecuting Commands")
-                commands_from_csv(serial_ports, input_text_3)
+                if input_text_3 != "Back":
+                    print("\nLinting csv files")
+                    lint_csv_file(input_text_3)
+                    lint_csv_file(CURRENT_STATE_FILENAME)
+                    print("\nExecuting Commands")
+                    commands_from_csv(serial_ports, input_text_3)
             elif input_text_2 == "Reset":
                 print("\nLinting csv files")
                 lint_csv_file(CURRENT_STATE_FILENAME)
@@ -681,20 +683,41 @@ def run_system(serial_ports):
                 commands_from_variable(serial_ports, "Up,100,")
             elif input_text_2 == "Single command":
                 input_text_3 = questionary.text(
-                    'Enter a command in format "Up,10," (2nd comma required)'
+                    'Enter a command in format "Up,10," ("Back" to exit)'
                 ).ask()
-                commands_from_variable(serial_ports, input_text_3)
+                if input_text_3 != "Back":
+                    commands_from_variable(serial_ports, input_text_3)
             elif input_text_2 == "Test":
-                print("\nTest Mode (Only way to stop is to 'ctrl + c')\n")
+                print("\nTest Mode (Only way to stop is to 'ctrl + c' many times)\n")
                 while True:
                     print("Resetting\n")
                     commands_from_variable(serial_ports, "Up,100,")
-                    print("Wait 10 seconds\n")
-                    time.sleep(10)
+                    print("Waiting 5 seconds\n")
+                    time.sleep(5)
                     print("Moving Down 5 Turns\n")
                     commands_from_variable(serial_ports, "Down,5,")
-                    print("Wait 10 seconds\n")
-                    time.sleep(10)
+                    print("Wait 5 seconds\n")
+                    time.sleep(5)
+                    print("Moving Up 1 Turn\n")
+                    commands_from_variable(serial_ports, "Up,1,")
+                    print("Wait 5 seconds\n")
+                    time.sleep(5)
+                    print("Moving Up 1 Turn\n")
+                    commands_from_variable(serial_ports, "Up,1,")
+                    print("Wait 5 seconds\n")
+                    time.sleep(5)
+                    print("Moving Down 1 Turn\n")
+                    commands_from_variable(serial_ports, "Down,1,")
+                    print("Wait 5 seconds\n")
+                    time.sleep(5)
+                    print("Moving Down 1 Turn\n")
+                    commands_from_variable(serial_ports, "Down,1,")
+                    print("Wait 5 seconds\n")
+                    time.sleep(5)
+                    print("Moving Up 1 Turn\n")
+                    commands_from_variable(serial_ports, "Up,1,")
+                    print("Wait 5 seconds\n")
+                    time.sleep(5)
             elif input_text_2 == "Exit":
                 close_connections(serial_ports)
                 break
