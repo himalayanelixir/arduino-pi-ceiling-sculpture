@@ -20,9 +20,15 @@
 | Voltage Regulator | Pololu 9V Step-Up Voltage Regulator U3V12F9                              |
 | Arduino           | Arduino Mega 2560 R3                                                     |
 | Raspberry Pi      | Raspberry Pi 3 B+                                                        |
-| Power Wire        |                                                                          |
-| Signal Wire       |                                                                          |
+| Power Wire        | KabelDirekt - Pure Copper Stereo Audio Speaker - 16 AWG Gauge - 50 Feet  |
+| Signal Wire       | EWCS 22 AWG 3/C Str CMR Riser Rated Non-Shielded Sound & Security Cable  |
 | PCBs              | Oshpark                                                                  |
 | Switches          | Cherry Red PCB Mount                                                     |
-| Filament          |                                                                          |
+| Filament          | SUNLU Wood Filament 2kg - 1.75 mm                                        |
+| Filament          | Essentium PCTG                                                           |
 | USB Cable         | SNANSHI 25 Foot USB 2.0 Type A Male to Type B Male                       |
+| Power Connectors  | WAGO 221-413 Lever-Nuts 3 Conductor Compact Connectors                   |
+| Twine             | Berkley Trilene Big Game Monofilament Custom Spool (30lbs)               |
+| Nozzle (Mounts)   | Micro Swiss Plated Wear Resistant Nozzle .5mm                            |
+| Nozzle (Tubes)    | Micro Swiss Plated Wear Resistant Nozzle .8mm for Robo 3D                |
+| Hotend            | RepRapDiscount Hexagon AO Hotend 1.75mm Kit                              |
