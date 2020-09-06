@@ -1,5 +1,5 @@
 pyserial==3.4
 timeout-decorator==0.4.1
-yaspin==0.16.0
+yaspin==1.0.0
 RPi.GPIO==0.7.0
 questionary==1.5.2
