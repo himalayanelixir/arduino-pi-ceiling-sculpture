@@ -4,7 +4,8 @@
 #include <Servo.h>
 #include <String.h>
 // constants
-#define MAXIMUM_DEBOUNCE 8
+// #define MAXIMUM_DEBOUNCE 8
+#define MAXIMUM_DEBOUNCE 40
 #define MAXIMUM_NUMBER_OF_MOTORS 22
 #define ARRAY_NUMBER 0
 #define NUMBER_OF_MOTORS 1
