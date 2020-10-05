@@ -6,7 +6,7 @@ sleep 20
 systemctl enable ssh
 # update and upgrade 
 apt-get update -y
-apt-get upgrade -y
+# apt-get upgrade -y
 # install programs
 apt-get install git zsh ufw python3-pip python3-venv -y
 # change default shell for pi user
