@@ -125,7 +125,7 @@ void PopulateArray() {
     } else if (value_1 == "Down") {
       motor_commands[i][0] = 2;
       motor_commands[i][1] = value_2.toInt() + 1;;
-      integrator[i] = 1;
+      integrator[i] = MAXIMUM_DEBOUNCE;
       motor_sensor_counter1[i] = 1;
       motor_sensor_counter2[i] = 1;
     } else {
