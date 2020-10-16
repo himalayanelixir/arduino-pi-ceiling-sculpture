@@ -255,7 +255,7 @@ int CheckSwitch(int motor_number, int switchPort) {
   /*Step 2: Update the output state based on the integrator.  Note that the
   output will only change states if the integrator has reached a limit,
   either 0 or MAXIMUM_DEBOUNCE. */
-  if (integrator[motor_number] == 0) {
+  if (integrator[motor_number] <= 0) {
     previous_value[motor_number] = 0;
     return (0);
   } else if (integrator[motor_number] >= MAXIMUM_DEBOUNCE) {
